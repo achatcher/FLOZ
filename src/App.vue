@@ -1,32 +1,23 @@
 <template>
   <div id="app" :class="{ 'loading': isLoading }">
-    <ErrorBoundary>
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
-    </ErrorBoundary>
+    <router-view v-slot="{ Component }">
+      <transition name="fade" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
 
     <!-- Global Loading Indicator -->
     <div v-if="isLoading" class="loading-overlay">
       <div class="spinner"></div>
     </div>
-
-    <!-- Global Toast Notifications -->
-    <Toast ref="toastRef" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useBusinessStore } from '@/stores/businessStore'
-import ErrorBoundary from '@/components/UI/ErrorBoundary.vue'
-import Toast from '@/components/UI/Toast.vue'
 
 const businessStore = useBusinessStore()
-const toastRef = ref(null)
-
 // Use the store's loading state instead of local loading state
 const isLoading = computed(() => businessStore.loading)
 </script>

@@ -88,42 +88,10 @@
             </button>
           </div>
 
-          <!-- Hours & Special Information -->
-          <div class="modal-hours-section">
-            <!-- Happy Hour -->
-            <div v-if="business.happyHour" class="special-info happy-hour">
-              <div class="special-icon">🍹</div>
-              <div class="special-content">
-                <h4 class="special-title">Happy Hour</h4>
-                <p class="special-time">{{ business.happyHour }}</p>
-              </div>
-            </div>
-
-            <!-- Live Music -->
-            <div v-if="business.liveMusic" class="special-info live-music">
-              <div class="special-icon">🎵</div>
-              <div class="special-content">
-                <h4 class="special-title">Live Music</h4>
-                <p class="special-time">{{ business.liveMusic.schedule }}</p>
-                <p class="special-detail">{{ business.liveMusic.time }}</p>
-              </div>
-            </div>
-
-            <!-- Hours -->
-            <div v-if="business.hours" class="hours-info">
-              <h4 class="hours-title">Hours</h4>
-              <div class="hours-grid">
-                <div v-for="(hours, day) in business.hours" :key="day" class="hours-row">
-                  <span class="day-name">{{ capitalizeFirst(day) }}:</span>
-                  <span class="day-hours">{{ hours }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Contact Information Section -->
+          <!-- FEATURE: Add hours, social media links, etc. here -->
           <div v-if="business.contact" class="modal-contact">
-            <h3 class="modal-contact-title">Contact & Location</h3>
+            <h3 class="modal-contact-title">Contact</h3>
             <p v-if="business.contact.phone" class="modal-contact-item">📞 {{ business.contact.phone }}</p>
             <p v-if="business.contact.email" class="modal-contact-item">📧 {{ business.contact.email }}</p>
             <p v-if="business.location?.address" class="modal-contact-item">📍 {{ business.location.address }}</p>
@@ -229,13 +197,6 @@ const openMaps = () => {
 const handleImageError = (e) => {
   // Use a simple data URL to avoid external request failures
   e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjMWExYTJlIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjAwIiBmaWxsPSIjMDBEOUZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiPkJ1c2luZXNzIEltYWdlPC90ZXh0Pgo8L3N2Zz4K'
-}
-
-/**
- * Capitalizes the first letter of a string
- */
-const capitalizeFirst = (str) => {
-  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 </script>
 

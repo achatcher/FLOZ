@@ -28,11 +28,10 @@
       </div>
     </div>
 
-    <!-- Loading State with Skeleton -->
+    <!-- Loading State -->
     <div v-if="eventsStore.loading" class="loading-state">
-      <div class="skeleton-container" :class="{ 'grid-view': viewMode === 'grid', 'list-view': viewMode === 'list' }">
-        <EventCardSkeleton v-for="n in 6" :key="n" />
-      </div>
+      <div class="loading-spinner"></div>
+      <p>Loading events...</p>
     </div>
 
     <!-- Events Grid/List -->
@@ -76,7 +75,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useEventsStore } from '@/stores/eventsStore'
 import EventCard from './EventCard.vue'
 import EventModal from './EventModal.vue'
-import EventCardSkeleton from '../UI/EventCardSkeleton.vue'
 
 const props = defineProps({
   title: {
@@ -238,19 +236,22 @@ onMounted(async () => {
 }
 
 .loading-state {
-  padding: var(--space-4) 0;
+  text-align: center;
+  padding: var(--space-8);
 }
 
-.skeleton-container.grid-view {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--space-4);
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(6, 182, 212, 0.3);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto var(--space-4);
 }
 
-.skeleton-container.list-view {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .events-container.grid-view {

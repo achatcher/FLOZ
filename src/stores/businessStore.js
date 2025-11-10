@@ -39,9 +39,7 @@ export const useBusinessStore = defineStore('business', {
     businesses: [],      // All business listings with tier information
     categories: [],      // Category structure with subcategories
     ads: [],            // Advertisement data for interstitials and banners
-    loading: false,     // Loading state for async operations
-    lastUpdated: null,  // Timestamp of last data update
-    initialized: false  // Flag to track if data has been loaded
+    loading: false      // Loading state for async operations
   }),
 
   // ===== COMPUTED GETTERS =====
@@ -206,37 +204,15 @@ export const useBusinessStore = defineStore('business', {
      * await businessStore.loadData()
      */
     async loadData() {
-      // Prevent duplicate loading if already initialized
-      if (this.initialized && this.businesses.length > 0) {
-        return
-      }
-
       this.loading = true
       try {
         // Load all data sources in parallel for better performance
-        const [businesses, categories, ads] = await Promise.all([
-          this.fetchBusinesses(),
-          this.fetchCategories(),
-          this.fetchAds()
-        ])
-
-        this.businesses = businesses
-        this.categories = categories
-        this.ads = ads
-        this.lastUpdated = new Date()
-        this.initialized = true
-
-        console.log('✅ Business data loaded successfully', {
-          businesses: this.businesses.length,
-          categories: this.categories.length,
-          ads: this.ads.length
-        })
+        this.businesses = await this.fetchBusinesses()
+        this.categories = await this.fetchCategories()
+        this.ads = await this.fetchAds()
       } catch (error) {
-        console.error('❌ Error loading data:', error)
-        // Add user-friendly error handling
-        if (window.$toast) {
-          window.$toast.error('Failed to load business data. Please refresh the page.')
-        }
+        console.error('Error loading data:', error)
+        // TODO: Add user-friendly error handling/retry mechanism
       } finally {
         this.loading = false
       }
@@ -2266,11 +2242,11 @@ export const useBusinessStore = defineStore('business', {
           }
         },
 
-        // ==================== RESTAURANTS & BARS - 8 businesses ====================
+        // ==================== DINING OUT - 8 businesses ====================
         {
           id: 300,
           name: "Shady Gators",
-          category: "Restaurants & Bars",
+          category: "Dining Out",
           subcategory: "Waterfront Dining",
           logo: "/images/businesses/shady-gators-logo.jpg",
           heroImage: "/images/businesses/shady-gators-hero.jpg",
@@ -2306,17 +2282,12 @@ export const useBusinessStore = defineStore('business', {
             friday: "11:00 AM - 11:00 PM",
             saturday: "11:00 AM - 11:00 PM",
             sunday: "11:00 AM - 10:00 PM"
-          },
-          happyHour: "3:00 PM - 6:00 PM Daily",
-          liveMusic: {
-            schedule: "Friday & Saturday nights",
-            time: "8:00 PM - 11:00 PM"
           }
         },
         {
           id: 301,
           name: "Margaritaville at the Lake of the Ozarks",
-          category: "Restaurants & Bars",
+          category: "Dining Out",
           subcategory: "Casual Dining",
           logo: "/images/businesses/margaritaville-logo.jpg",
           location: {
@@ -2339,27 +2310,13 @@ export const useBusinessStore = defineStore('business', {
             full_bar: true,
             private_dining: true,
             valet: true
-          },
-          hours: {
-            monday: "11:00 AM - 11:00 PM",
-            tuesday: "11:00 AM - 11:00 PM",
-            wednesday: "11:00 AM - 11:00 PM",
-            thursday: "11:00 AM - 11:00 PM",
-            friday: "11:00 AM - 12:00 AM",
-            saturday: "11:00 AM - 12:00 AM",
-            sunday: "11:00 AM - 11:00 PM"
-          },
-          happyHour: "2:00 PM - 5:00 PM Daily",
-          liveMusic: {
-            schedule: "Thursday - Sunday",
-            time: "7:00 PM - 10:00 PM"
           }
         },
         {
           id: 302,
           name: "JB Hooks",
-          category: "Restaurants & Bars",
-          subcategory: "Fine Dining",
+          category: "Dining Out",
+          subcategory: "Steakhouse",
           logo: "/images/businesses/jb-hooks-logo.jpg",
           location: {
             lat: 38.0845,
@@ -2381,23 +2338,13 @@ export const useBusinessStore = defineStore('business', {
             full_bar: true,
             private_dining: true,
             valet: false
-          },
-          hours: {
-            monday: "5:00 PM - 10:00 PM",
-            tuesday: "5:00 PM - 10:00 PM",
-            wednesday: "5:00 PM - 10:00 PM",
-            thursday: "5:00 PM - 10:00 PM",
-            friday: "5:00 PM - 11:00 PM",
-            saturday: "4:00 PM - 11:00 PM",
-            sunday: "4:00 PM - 9:00 PM"
-          },
-          happyHour: "4:00 PM - 6:00 PM Mon-Fri"
+          }
         },
         {
           id: 303,
           name: "Backwater Jacks Bar & Grill",
-          category: "Restaurants & Bars",
-          subcategory: "Sports Bars",
+          category: "Dining Out",
+          subcategory: "Sports Bar",
           logo: "/images/businesses/backwater-jacks-logo.jpg",
           location: {
             lat: 38.0756,
@@ -2419,20 +2366,6 @@ export const useBusinessStore = defineStore('business', {
             boat_access: true,
             live_music: true,
             sports_viewing: true
-          },
-          hours: {
-            monday: "11:00 AM - 1:00 AM",
-            tuesday: "11:00 AM - 1:00 AM",
-            wednesday: "11:00 AM - 1:00 AM",
-            thursday: "11:00 AM - 1:00 AM",
-            friday: "11:00 AM - 2:00 AM",
-            saturday: "11:00 AM - 2:00 AM",
-            sunday: "11:00 AM - 1:00 AM"
-          },
-          happyHour: "2:00 PM - 6:00 PM Daily",
-          liveMusic: {
-            schedule: "Wednesday - Saturday",
-            time: "9:00 PM - 1:00 AM"
           }
         },
         {
@@ -2723,65 +2656,132 @@ export const useBusinessStore = defineStore('business', {
       return [
         {
           id: 0,
-          name: "Restaurants & Bars",
+          name: "Dining Out",
           image: "/images/categories/dining.jpg",
           subcategories: [
             { name: "Waterfront Dining", image: "/images/subcategories/waterfront-dining.png" },
             { name: "Casual Dining", image: "/images/subcategories/casual-dining.png" },
-            { name: "Fine Dining", image: "/images/subcategories/fine-dining.png" },
-            { name: "Sports Bars", image: "/images/subcategories/sports-bar.png" },
-            { name: "Happy Hour", image: "/images/subcategories/happy-hour.png" },
-            { name: "Live Music", image: "/images/subcategories/live-music.png" }
+            { name: "Steakhouse", image: "/images/subcategories/steakhouse.png" },
+            { name: "Seafood", image: "/images/subcategories/seafood.png" },
+            { name: "Sports Bar", image: "/images/subcategories/sports-bar.png" },
+            { name: "Beach Bar", image: "/images/subcategories/beach-bar.png" },
+            { name: "Fine Dining", image: "/images/subcategories/fine-dining.png" }
           ]
         },
         {
           id: 1,
-          name: "Entertainment",
-          image: "/images/categories/entertainment.jpg",
+          name: "Fine Dining",
+          image: "/images/categories/dining.jpg",
           subcategories: [
-            { name: "Live Music", image: "/images/subcategories/live-music.png" },
-            { name: "Nightlife", image: "/images/subcategories/nightlife.png" },
-            { name: "Events", image: "/images/subcategories/events.png" }
+            { name: "Contemporary American", image: "/images/subcategories/contemporary-american.png" },
+            { name: "Steakhouse", image: "/images/subcategories/steakhouse.png" },
+            { name: "Seafood", image: "/images/subcategories/seafood.png" },
+            { name: "Italian", image: "/images/subcategories/italian.png" },
+            { name: "Farm-to-Table", image: "/images/subcategories/farm-to-table.png" },
+            { name: "Waterfront Dining", image: "/images/subcategories/waterfront.png" },
+            { name: "Wine & Tapas", image: "/images/subcategories/wine-tapas.png" },
+            { name: "Sunday Brunch", image: "/images/subcategories/brunch.png" },
+            { name: "Private Dining", image: "/images/subcategories/private-dining.png" }
           ]
         },
         {
           id: 2,
-          name: "Lodging",
-          image: "/images/categories/lodging.jpg",
+          name: "Golf & Country Clubs",
+          image: "/images/categories/golf.jpg",
           subcategories: [
-            { name: "Hotels & Resorts", image: "/images/subcategories/hotels.png" },
-            { name: "Vacation Rentals", image: "/images/subcategories/vacation-rentals.png" },
-            { name: "Camping & RV", image: "/images/subcategories/camping.png" }
+            { name: "Championship Golf", image: "/images/subcategories/championship-golf.png" },
+            { name: "Private Clubs", image: "/images/subcategories/private-clubs.png" },
+            { name: "Resort Golf", image: "/images/subcategories/resort-golf.png" }
           ]
         },
         {
           id: 3,
-          name: "Activities",
-          image: "/images/categories/activities.jpg",
+          name: "Luxury Real Estate",
+          image: "/images/categories/real-estate.jpg",
           subcategories: [
-            { name: "Water Sports", image: "/images/subcategories/water-sports.png" },
-            { name: "Golf", image: "/images/subcategories/golf.png" },
-            { name: "Tours & Attractions", image: "/images/subcategories/tours.png" }
+            { name: "Luxury Sales", image: "/images/subcategories/luxury-sales.png" },
+            { name: "Vacation Rentals", image: "/images/subcategories/vacation-rentals.png" },
+            { name: "Property Management", image: "/images/subcategories/property-management.png" }
           ]
         },
         {
           id: 4,
-          name: "Services",
-          image: "/images/categories/services.jpg",
+          name: "Live Entertainment",
+          image: "/images/categories/live-events.jpg",
           subcategories: [
-            { name: "Marine Services", image: "/images/subcategories/marine.png" },
-            { name: "Real Estate", image: "/images/subcategories/real-estate.png" },
-            { name: "Professional Services", image: "/images/subcategories/professional.png" }
+            { name: "Cruises & Shows", image: "/images/subcategories/cruises-shows.png" },
+            { name: "Nightlife & Bars", image: "/images/subcategories/nightlife.png" },
+            { name: "Concerts & Events", image: "/images/subcategories/concerts.png" },
+            { name: "Comedy Clubs", image: "/images/subcategories/comedy.png" },
+            { name: "Theater & Arts", image: "/images/subcategories/theater.png" }
           ]
         },
         {
           id: 5,
-          name: "Shopping",
+          name: "Luxury Services",
+          image: "/images/categories/luxury-services.jpg",
+          subcategories: [
+            { name: "Concierge", image: "/images/subcategories/concierge.png" },
+            { name: "Boat Rentals", image: "/images/subcategories/boat-rentals.png" },
+            { name: "Spa & Wellness", image: "/images/subcategories/spa.png" },
+            { name: "Transportation", image: "/images/subcategories/transportation.png" },
+            { name: "Private Dining", image: "/images/subcategories/private-chef.png" },
+            { name: "Tours & Activities", image: "/images/subcategories/tours.png" },
+            { name: "Marinas", image: "/images/subcategories/marinas.png" },
+            { name: "Event Planning", image: "/images/subcategories/event-planning.png" }
+          ]
+        },
+        {
+          id: 6,
+          name: "Wellness & Fitness",
+          image: "/images/categories/wellness.jpg",
+          subcategories: [
+            { name: "Fitness Centers", image: "/images/subcategories/fitness.png" },
+            { name: "Personal Training", image: "/images/subcategories/personal-training.png" },
+            { name: "Yoga & Pilates", image: "/images/subcategories/yoga.png" },
+            { name: "Nutrition & Wellness", image: "/images/subcategories/nutrition.png" },
+            { name: "Outdoor Fitness", image: "/images/subcategories/outdoor-fitness.png" }
+          ]
+        },
+        {
+          id: 7,
+          name: "Shopping & Retail",
           image: "/images/categories/shopping.jpg",
           subcategories: [
-            { name: "Retail & Gifts", image: "/images/subcategories/retail.png" },
-            { name: "Groceries & Markets", image: "/images/subcategories/groceries.png" },
-            { name: "Marine Supplies", image: "/images/subcategories/marine-supplies.png" }
+            { name: "Fashion & Boutiques", image: "/images/subcategories/fashion.png" },
+            { name: "Home & Decor", image: "/images/subcategories/home-decor.png" },
+            { name: "Art & Gifts", image: "/images/subcategories/art-gifts.png" },
+            { name: "Wine & Spirits", image: "/images/subcategories/wine.png" },
+            { name: "Jewelry", image: "/images/subcategories/jewelry.png" },
+            { name: "Gourmet Food", image: "/images/subcategories/gourmet.png" },
+            { name: "Books & Gifts", image: "/images/subcategories/books.png" }
+          ]
+        },
+        {
+          id: 8,
+          name: "Charity & Community",
+          image: "/images/categories/charities.jpg",
+          subcategories: [
+            { name: "Foundations", image: "/images/subcategories/foundations.png" },
+            { name: "Youth Services", image: "/images/subcategories/youth.png" },
+            { name: "Animal Welfare", image: "/images/subcategories/animals.png" },
+            { name: "Healthcare", image: "/images/subcategories/healthcare.png" },
+            { name: "Arts & Culture", image: "/images/subcategories/arts-culture.png" },
+            { name: "Food Security", image: "/images/subcategories/food-security.png" },
+            { name: "Housing", image: "/images/subcategories/housing.png" },
+            { name: "Education", image: "/images/subcategories/education.png" }
+          ]
+        },
+        {
+          id: 9,
+          name: "Events & Festivals",
+          image: "/images/categories/events.jpg",
+          subcategories: [
+            { name: "Annual Events", image: "/images/subcategories/annual-events.png" },
+            { name: "Concert Series", image: "/images/subcategories/concert-series.png" },
+            { name: "Business Events", image: "/images/subcategories/business-events.png" },
+            { name: "Food & Wine", image: "/images/subcategories/food-wine.png" },
+            { name: "Holiday Events", image: "/images/subcategories/holiday.png" }
           ]
         }
       ]

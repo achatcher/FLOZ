@@ -29,7 +29,6 @@
  */
 
 import { defineStore } from 'pinia'
-import analytics from '@/utils/analytics'
 
 export const useEventsStore = defineStore('events', {
   // ===== STATE DEFINITION =====
@@ -38,8 +37,7 @@ export const useEventsStore = defineStore('events', {
     categories: [],       // Event categories
     loading: false,       // Loading state for async operations
     lastUpdated: null,    // Timestamp of last data update
-    favorites: [],        // User's favorite events
-    initialized: false    // Flag to track if data has been loaded
+    favorites: []         // User's favorite events
   }),
 
   // ===== COMPUTED GETTERS =====
@@ -116,21 +114,11 @@ export const useEventsStore = defineStore('events', {
      * Loads all events data
      */
     async loadEventsData() {
-      // Prevent duplicate loading if already initialized
-      if (this.initialized && this.events.length > 0) {
-        return
-      }
-
       this.loading = true
       try {
         // Load static events data first
-        const [staticEvents, categories] = await Promise.all([
-          this.fetchStaticEvents(),
-          this.fetchEventCategories()
-        ])
-
-        this.events = staticEvents
-        this.categories = categories
+        this.events = await this.fetchStaticEvents()
+        this.categories = await this.fetchEventCategories()
 
         // Try to fetch live events from external sources
         try {
@@ -141,17 +129,8 @@ export const useEventsStore = defineStore('events', {
         }
 
         this.lastUpdated = new Date()
-        this.initialized = true
-
-        console.log('✅ Events data loaded successfully', {
-          events: this.events.length,
-          categories: this.categories.length
-        })
       } catch (error) {
-        console.error('❌ Error loading events data:', error)
-        if (window.$toast) {
-          window.$toast.error('Failed to load events data. Please refresh the page.')
-        }
+        console.error('Error loading events data:', error)
       } finally {
         this.loading = false
       }
@@ -626,11 +605,6 @@ export const useEventsStore = defineStore('events', {
     addToFavorites(eventId) {
       if (!this.favorites.includes(eventId)) {
         this.favorites.push(eventId)
-
-        // Track analytics
-        analytics.trackEventInteraction(eventId, 'add_to_favorites', {
-          favorites_count: this.favorites.length
-        })
       }
     },
 
