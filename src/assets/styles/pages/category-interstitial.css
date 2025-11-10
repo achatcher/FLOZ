@@ -1,0 +1,296 @@
+/*
+ * Category Interstitial Page Styles
+ *
+ * Styles for the advertisement interstitial screen between category selection and listing.
+ * Features full-screen advertisement display with countdown timer and business integration.
+ * Uses FLOZ CSS Framework variables for easy customization.
+ */
+
+/* ===== CATEGORY INTERSTITIAL VIEW LAYOUT ===== */
+
+.interstitial-view {
+  min-height: 100vh;
+  background: var(--color-bg-primary);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--bottom-nav-height);
+}
+
+.interstitial-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5) var(--space-4);
+  max-width: var(--container-lg);
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ===== ADVERTISEMENT CONTAINER ===== */
+
+.ad-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-primary);
+  cursor: pointer;
+  transition: var(--transition-all);
+}
+
+.ad-container:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-primary-lg);
+}
+
+/* Advertisement image */
+.ad-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ===== ADVERTISEMENT OVERLAY ===== */
+
+.ad-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+  padding: var(--space-6) var(--space-5);
+  color: var(--color-text-primary);
+}
+
+.ad-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.ad-description {
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+}
+
+.ad-cta {
+  margin-top: var(--space-2);
+}
+
+.tap-indicator {
+  background: rgba(var(--color-primary-rgb), 0.2);
+  color: var(--color-primary);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  display: inline-block;
+  border: 1px solid rgba(var(--color-primary-rgb), 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* ===== FALLBACK ADVERTISEMENT ===== */
+
+.ad-container.fallback {
+  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-surface) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fallback-content {
+  text-align: center;
+  padding: var(--space-10) var(--space-5);
+}
+
+.category-icon {
+  font-size: 80px;
+  margin-bottom: var(--space-5);
+  filter: drop-shadow(0 4px 8px rgba(var(--color-primary-rgb), 0.3));
+  font-style: normal;
+}
+
+.fallback-title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-primary);
+  margin: 0 0 var(--space-2) 0;
+  text-transform: uppercase;
+}
+
+.fallback-text {
+  font-size: var(--font-size-xl);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* ===== ACTION CONTROLS CONTAINER ===== */
+
+.action-container {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+/* Continue button - primary call to action */
+.continue-button {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-bg-primary);
+  border: none;
+  padding: var(--btn-padding-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--btn-border-radius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: var(--transition-all);
+  box-shadow: var(--shadow-primary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  margin-bottom: var(--space-3);
+}
+
+.continue-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-primary-lg);
+}
+
+.continue-button:active {
+  transform: translateY(0);
+}
+
+.arrow {
+  font-size: var(--font-size-xl);
+  transition: var(--transition-fast);
+}
+
+.continue-button:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* Skip button - secondary action */
+.skip-button {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--btn-padding-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--btn-border-radius);
+  cursor: pointer;
+  transition: var(--transition-all);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  display: block;
+  margin: 0 auto var(--space-3);
+  backdrop-filter: blur(10px);
+}
+
+.skip-button:hover {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Timer display text */
+.timer-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-2);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ===== ADVERTISEMENT ATTRIBUTION ===== */
+
+.ad-info {
+  text-align: center;
+  margin-top: auto;
+}
+
+.sponsored-text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+/* ===== SLIDE TRANSITION FOR SIDE MENU ===== */
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform var(--transition-slow);
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(-100%);
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
+/* Tablet (640px+) */
+@media (min-width: 640px) {
+  .interstitial-content {
+    padding: var(--space-10) var(--space-8);
+  }
+
+  .ad-title {
+    font-size: var(--font-size-5xl);
+  }
+
+  .ad-description {
+    font-size: var(--font-size-xl);
+  }
+
+  .continue-button {
+    font-size: var(--font-size-2xl);
+    padding: var(--space-5) var(--space-12);
+  }
+
+  .category-icon {
+    font-size: 100px;
+  }
+
+  .fallback-title {
+    font-size: var(--font-size-6xl);
+  }
+
+  .fallback-text {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .interstitial-content {
+    max-width: var(--container-xl);
+  }
+
+  .ad-container:hover {
+    transform: scale(1.01);
+  }
+
+  .category-icon {
+    font-size: 120px;
+  }
+}

@@ -1,0 +1,385 @@
+/*
+ * Home Page Styles
+ *
+ * Styles specific to the home page including hero banner and category grid layout.
+ * Uses FLOZ CSS Framework variables for easy customization.
+ */
+
+/* ===== HOME VIEW LAYOUT ===== */
+
+.home-view {
+  min-height: 100vh;
+  background: var(--color-bg-primary);
+  padding-bottom: var(--bottom-nav-height);
+}
+
+.home-content {
+  padding-bottom: var(--space-5);
+}
+
+/* ===== HERO BANNER ===== */
+
+.hero-banner {
+  width: 100%;
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.hero-image {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  display: block;
+}
+
+/* ===== CATEGORY GRID SYSTEM ===== */
+
+/* 6-column grid system for consistent category layout across all screen sizes */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+}
+
+/* ===== CATEGORY CARD COMPONENTS ===== */
+
+/* Base category card styling */
+.category-card {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition-all);
+  background: var(--color-bg-tertiary);
+}
+
+.category-card:active {
+  transform: scale(0.98);
+}
+
+/* Large category cards - 3 columns each (2 side by side) */
+.category-card.large {
+  grid-column: span 3;
+  aspect-ratio: 1; /* Square on mobile */
+}
+
+/* Medium category cards - 2 columns each (3 per row) */
+.category-card.medium {
+  grid-column: span 2;
+  aspect-ratio: 1;
+}
+
+/* ===== CATEGORY CARD CONTENT ===== */
+
+/* Category image styling */
+.category-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+/* Placeholder fallback when image fails to load */
+.category-placeholder {
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background: var(--color-bg-surface);
+}
+
+.category-placeholder .icon {
+  font-size: 35px;
+  opacity: 0.3;
+  font-style: normal;
+}
+
+.category-card.large .category-placeholder .icon {
+  font-size: 40px;
+}
+
+/* ===== CATEGORY OVERLAY SYSTEM ===== */
+
+/* Gradient overlay for text readability */
+.category-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+  padding: var(--space-3);
+  display: flex;
+  align-items: flex-end;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.category-card.large .category-overlay {
+  padding: var(--space-3);
+}
+
+/* Category text container */
+.category-text {
+  width: 100%;
+}
+
+/* Category subtitle (e.g., "WATCH NOW!", "NEW ARRIVALS") */
+.category-subtitle {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  margin-bottom: var(--space-1);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.category-card.large .category-subtitle {
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--space-1);
+}
+
+/* Category name (main title) */
+.category-name {
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: var(--letter-spacing-wide);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  line-height: var(--line-height-tight);
+}
+
+.category-card.large .category-name {
+  font-size: var(--font-size-base);
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.category-card.medium .category-name {
+  font-size: var(--font-size-sm);
+}
+
+/* ===== COMING SOON SPECIAL CARD ===== */
+
+.category-card.coming-soon {
+  background: linear-gradient(135deg, var(--color-warning) 0%, #FFA500 100%);
+}
+
+.coming-soon-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.megaphone {
+  font-size: 30px;
+  margin-bottom: var(--space-2);
+  animation: pulse 2s infinite;
+  font-style: normal;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.category-card.coming-soon .category-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-bg-primary);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-1);
+}
+
+.category-card.coming-soon .category-name {
+  color: var(--color-bg-primary);
+  font-size: var(--font-size-sm);
+  text-shadow: none;
+}
+
+/* ===== SLIDE TRANSITION FOR SIDE MENU ===== */
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform var(--transition-slow);
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(-100%);
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
+/* Small Mobile (375px+) */
+@media (min-width: 375px) {
+  .category-name {
+    font-size: var(--font-size-base);
+  }
+
+  .category-card.large .category-name {
+    font-size: var(--font-size-md);
+  }
+
+  .category-card.medium .category-name {
+    font-size: var(--font-size-base);
+  }
+
+  .category-subtitle {
+    font-size: var(--font-size-xs);
+  }
+
+  .category-card.large .category-subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .megaphone {
+    font-size: 35px;
+  }
+
+  .category-card.coming-soon .category-name {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* Tablet (640px+) */
+@media (min-width: 640px) {
+  .category-grid {
+    gap: var(--space-4);
+    max-width: var(--container-xl);
+    margin: 0 auto;
+    padding: 0 var(--space-6);
+  }
+
+  .category-card.large {
+    aspect-ratio: 16/9; /* Wider aspect ratio on tablet */
+  }
+
+  .category-name {
+    font-size: var(--font-size-lg);
+  }
+
+  .category-card.large .category-name {
+    font-size: var(--font-size-xl);
+  }
+
+  .category-card.medium .category-name {
+    font-size: var(--font-size-md);
+  }
+
+  .category-subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .category-card.large .category-subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .category-overlay {
+    padding: var(--space-3);
+  }
+
+  .category-card.large .category-overlay {
+    padding: var(--space-4);
+  }
+
+  .category-placeholder .icon {
+    font-size: 45px;
+  }
+
+  .category-card.large .category-placeholder .icon {
+    font-size: 60px;
+  }
+
+  .megaphone {
+    font-size: 40px;
+  }
+
+  .category-card.coming-soon .category-name {
+    font-size: var(--font-size-base);
+  }
+
+  .hero-banner {
+    padding: var(--space-5) var(--space-6);
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .category-grid {
+    gap: var(--space-5);
+  }
+
+  .category-name {
+    font-size: var(--font-size-xl);
+  }
+
+  .category-card.large .category-name {
+    font-size: var(--font-size-3xl);
+  }
+
+  .category-card.medium .category-name {
+    font-size: var(--font-size-lg);
+  }
+
+  .category-subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .category-card.large .category-subtitle {
+    font-size: var(--font-size-md);
+  }
+
+  .category-overlay {
+    padding: var(--space-4);
+  }
+
+  .category-card.large .category-overlay {
+    padding: var(--space-5);
+  }
+
+  .megaphone {
+    font-size: 45px;
+  }
+
+  .category-card.coming-soon .category-subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .category-card.coming-soon .category-name {
+    font-size: var(--font-size-lg);
+  }
+
+  /* Hover effects for desktop */
+  .category-card:hover {
+    box-shadow: var(--shadow-primary-lg);
+    transform: translateY(-2px);
+  }
+
+  .category-card:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .category-placeholder .icon {
+    font-size: 55px;
+  }
+
+  .category-card.large .category-placeholder .icon {
+    font-size: 75px;
+  }
+}

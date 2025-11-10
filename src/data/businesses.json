@@ -1,0 +1,26 @@
+{
+  "businesses": [
+    {
+      "id": 1,
+      "name": "Pappo's Pizza",
+      "category": "Pizza",
+      "logo": "/images/pappos-logo.jpg",
+      "location": {
+        "lat": 38.0881,
+        "lng": -92.6308
+      },
+      "phone": "555-1234",
+      "address": "123 Lake Rd",
+      "description": "Best pizza at the lake!",
+      "featured": true
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Dining Out",
+      "image": "/images/dining.jpg",
+      "filterTags": ["Pizza", "Restaurant", "Bar"]
+    }
+  ]
+}

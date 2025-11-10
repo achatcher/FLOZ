@@ -1,0 +1,500 @@
+/*
+ * Subcategory Listing Page Styles
+ *
+ * Styles for the three-tier business display system within subcategories.
+ * Features Signature, Premier, and Curated business tiers with filtering capabilities.
+ * Uses FLOZ CSS Framework variables for easy customization.
+ */
+
+/* ===== SUBCATEGORY LISTING VIEW LAYOUT ===== */
+
+.subcategory-listing-view {
+  min-height: 100vh;
+  background: var(--color-bg-primary);
+  padding-bottom: var(--bottom-nav-height);
+}
+
+.listing-content {
+  padding-bottom: var(--space-5);
+}
+
+/* ===== FILTER BAR SYSTEM ===== */
+
+.filter-bar {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  overflow-x: auto;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+  scrollbar-width: none;
+}
+
+.filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-btn {
+  padding: var(--btn-padding-sm);
+  background: transparent;
+  border: 1px solid var(--color-border-muted);
+  color: var(--color-text-muted);
+  border-radius: var(--btn-border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--transition-all);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.filter-btn.active {
+  background: var(--color-primary);
+  color: var(--color-bg-primary);
+  border-color: var(--color-primary);
+}
+
+.filter-btn:hover {
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+/* ===== SECTION TITLES ===== */
+
+.section-title {
+  color: var(--color-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  margin: var(--space-5) var(--space-4) var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.1);
+}
+
+.section-title .icon {
+  font-size: var(--font-size-xl);
+  font-style: normal;
+}
+
+/* ===== TIER 1: SIGNATURE ESTABLISHMENTS ===== */
+
+.signature-section {
+  margin-bottom: var(--space-8);
+}
+
+.signature-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+}
+
+.signature-card {
+  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-surface) 100%);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition-all);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-md);
+}
+
+.signature-card:hover {
+  border-color: rgba(var(--color-primary-rgb), 0.3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary);
+}
+
+/* Signature card image container */
+.signature-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.signature-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-slow);
+}
+
+.signature-card:hover .signature-image {
+  transform: scale(1.05);
+}
+
+/* Badge overlay system */
+.badge-overlay {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+}
+
+.top-badge {
+  background: rgba(var(--color-primary-rgb), 0.95);
+  color: var(--color-bg-primary);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* Signature card content */
+.signature-info {
+  padding: var(--space-4);
+}
+
+.signature-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-2);
+}
+
+.signature-card .business-name {
+  color: var(--color-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  flex: 1;
+  line-height: var(--line-height-tight);
+}
+
+.signature-card .price-range {
+  color: rgba(var(--color-primary-rgb), 0.8);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  margin-left: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  background: rgba(var(--color-primary-rgb), 0.1);
+  border-radius: var(--radius-sm);
+}
+
+.signature-card .business-description {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  margin: 0 0 var(--space-3) 0;
+}
+
+/* Feature tags system */
+.features-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.feature-tag {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  color: rgba(var(--color-primary-rgb), 0.8);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* ===== TIER 2: PREMIER BUSINESSES ===== */
+
+.premier-section {
+  margin-bottom: var(--space-8);
+}
+
+.premier-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+}
+
+.premier-card {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: var(--transition-all);
+  border: 1px solid var(--color-border-subtle);
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.premier-card:hover {
+  border-color: rgba(var(--color-primary-rgb), 0.2);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-primary);
+  background: rgba(var(--color-primary-rgb), 0.02);
+}
+
+.premier-logo {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-4);
+  border: 2px solid var(--color-border-muted);
+}
+
+.premier-info {
+  text-align: center;
+}
+
+.premier-card .business-name {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-2);
+}
+
+.business-description-short {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.premier-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.premier-card .price-range {
+  font-size: var(--font-size-lg);
+}
+
+.badge-inline {
+  background: rgba(var(--color-primary-rgb), 0.15);
+  color: var(--color-primary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+}
+
+/* ===== TIER 3: CURATED BUSINESSES ===== */
+
+.curated-section {
+  margin-bottom: var(--space-8);
+}
+
+.curated-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  margin: 0 var(--space-4);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.curated-item {
+  background: rgba(255, 255, 255, 0.02);
+  padding: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  transition: var(--transition-all);
+}
+
+.curated-item:hover {
+  background: rgba(var(--color-primary-rgb), 0.05);
+}
+
+.curated-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+  border: 1px solid var(--color-border-subtle);
+}
+
+.curated-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.curated-item .business-name {
+  font-size: var(--font-size-base);
+  margin: 0 0 var(--space-1) 0;
+  font-weight: var(--font-weight-semibold);
+}
+
+.curated-item .business-description-short {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: var(--line-height-snug);
+}
+
+.curated-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.curated-item .price-range {
+  font-size: var(--font-size-sm);
+}
+
+.curated-meta .arrow {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xl);
+}
+
+/* ===== EMPTY STATE ===== */
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-20) var(--space-5);
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: var(--space-5);
+  opacity: 0.5;
+  font-style: normal;
+}
+
+.empty-title {
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-2);
+}
+
+.empty-text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-8);
+}
+
+.back-button {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-bg-primary);
+  border: none;
+  padding: var(--btn-padding-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--btn-border-radius);
+  cursor: pointer;
+  transition: var(--transition-all);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.back-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary-lg);
+}
+
+.back-button:active {
+  transform: translateY(0);
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
+/* Tablet (640px+) */
+@media (min-width: 640px) {
+  .listing-content {
+    max-width: var(--container-2xl);
+    margin: 0 auto;
+  }
+
+  .filter-bar {
+    padding: var(--space-5) var(--space-8);
+  }
+
+  .section-title {
+    font-size: var(--font-size-3xl);
+    margin: var(--space-10) var(--space-8) var(--space-6);
+  }
+
+  .signature-grid {
+    padding: 0 var(--space-8);
+    gap: var(--space-8);
+  }
+
+  .signature-image-wrapper {
+    height: 300px;
+  }
+
+  .signature-info {
+    padding: var(--space-6);
+  }
+
+  .signature-card .business-name {
+    font-size: var(--font-size-3xl);
+  }
+
+  .signature-card .business-description {
+    font-size: var(--font-size-lg);
+  }
+
+  .premier-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+    padding: 0 var(--space-8);
+  }
+
+  .premier-card .business-name {
+    font-size: var(--font-size-xl);
+  }
+
+  .curated-list {
+    margin: 0 var(--space-8);
+  }
+
+  .curated-item {
+    padding: var(--space-5);
+  }
+
+  .curated-logo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .curated-item .business-name {
+    font-size: var(--font-size-xl);
+  }
+
+  .empty-icon {
+    font-size: 100px;
+  }
+
+  .empty-title {
+    font-size: var(--font-size-4xl);
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .premier-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .signature-image-wrapper {
+    height: 350px;
+  }
+
+  .empty-icon {
+    font-size: 120px;
+  }
+}
