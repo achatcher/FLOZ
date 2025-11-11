@@ -1,18 +1,31 @@
 {
-  "name": "floz-app",
+  "name": "multi-location-lifestyle-directory",
   "version": "1.0.0",
-  "description": "Local business directory app for Lake of the Ozarks",
+  "description": "Scalable lifestyle directory platform for multiple geographic markets - easily adaptable for any location",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-icons": "node scripts/generate-icons.js",
+    "icons": "npm run generate-icons",
+
+    "deploy:location": "node scripts/deploy-location.js",
+    "deploy:bloomfield-hills": "npm run deploy:location bloomfield_hills production",
+    "deploy:bloomfield-hills:staging": "npm run deploy:location bloomfield_hills staging",
+    "deploy:new-location": "npm run deploy:location new_location production",
+
+    "validate:location": "node scripts/validate-location.js",
+    "setup:location": "node scripts/setup-location.js",
+    "clean": "rm -rf dist node_modules/.vite .env.local",
+    "reset": "npm run clean && npm install"
   },
   "dependencies": {
-    "vue": "^3.3.4",
-    "vue-router": "^4.2.4",
-    "pinia": "^2.1.6",
+    "leaflet": "^1.9.4",
     "mapbox-gl": "^2.15.0",
-    "qrcode.vue": "^3.4.1"
+    "pinia": "^2.1.6",
+    "qrcode.vue": "^3.4.1",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.3.4",

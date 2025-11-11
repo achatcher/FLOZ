@@ -55,12 +55,27 @@ export const useBusinessStore = defineStore('business', {
      * Usage: businessStore.getBusinessesByCategory('Dining Out')
      */
     getBusinessesByCategory: (state) => (categoryName) => {
-      return state.businesses
-        .filter(b => b.category.toLowerCase() === categoryName.toLowerCase())
+      console.log('🔍 Searching for category:', categoryName)
+      console.log('📊 Total businesses in store:', state.businesses.length)
+      console.log('📋 Available categories:', [...new Set(state.businesses.map(b => b.category))])
+
+      const matchedBusinesses = state.businesses
+        .filter(b => {
+          const match = b.category.toLowerCase() === categoryName.toLowerCase()
+          if (!match) {
+            console.log(`❌ No match: "${b.category}" vs "${categoryName}"`)
+          } else {
+            console.log(`✅ Match found: ${b.name} (${b.category})`)
+          }
+          return match
+        })
         .sort((a, b) => {
           const tierOrder = { signature: 0, premier: 1, curated: 2 }
           return tierOrder[a.listing_tier] - tierOrder[b.listing_tier]
         })
+
+      console.log('🎯 Matched businesses:', matchedBusinesses.length)
+      return matchedBusinesses
     },
 
     /**
@@ -243,16 +258,32 @@ export const useBusinessStore = defineStore('business', {
     },
 
     /**
-     * Fetches business data from API or mock data source
+     * Fetches business data from businesses.json data file
      * In production, this would connect to your backend API
      *
      * CUSTOMIZATION: Replace with real API endpoint
      * Example: return await fetch('/api/businesses').then(r => r.json())
      */
     async fetchBusinesses() {
+      try {
+        // Load businesses from the businesses.json file
+        const businessData = await import('@/data/businesses.json')
+        return businessData.businesses || []
+      } catch (error) {
+        console.error('Error loading businesses:', error)
+        // Fallback to empty array if loading fails
+        return []
+      }
+    },
+
+    /**
+     * Legacy hardcoded business data - kept for reference
+     * This data has been moved to businesses.json
+     */
+    async fetchBusinessesLegacy() {
       // Simulate API delay for realistic development experience
       await new Promise(resolve => setTimeout(resolve, 500))
-      
+
       return [
         // ==================== FINE DINING - 12 businesses ====================
         {
@@ -2713,78 +2744,18 @@ export const useBusinessStore = defineStore('business', {
     },
 
     /**
-     * Fetches category and subcategory structure
-     * Defines the navigation hierarchy for the app
-     *
-     * CUSTOMIZATION: Replace with real API endpoint
-     * Example: return await fetch('/api/categories').then(r => r.json())
+     * Loads categories from businesses.json data file
+     * Returns categories with subcategories that match The Hills Guide business data
      */
     async fetchCategories() {
-      return [
-        {
-          id: 0,
-          name: "Restaurants & Bars",
-          image: "/images/categories/dining.jpg",
-          subcategories: [
-            { name: "Waterfront Dining", image: "/images/subcategories/waterfront-dining.png" },
-            { name: "Casual Dining", image: "/images/subcategories/casual-dining.png" },
-            { name: "Fine Dining", image: "/images/subcategories/fine-dining.png" },
-            { name: "Sports Bars", image: "/images/subcategories/sports-bar.png" },
-            { name: "Happy Hour", image: "/images/subcategories/happy-hour.png" },
-            { name: "Live Music", image: "/images/subcategories/live-music.png" }
-          ]
-        },
-        {
-          id: 1,
-          name: "Entertainment",
-          image: "/images/categories/entertainment.jpg",
-          subcategories: [
-            { name: "Live Music", image: "/images/subcategories/live-music.png" },
-            { name: "Nightlife", image: "/images/subcategories/nightlife.png" },
-            { name: "Events", image: "/images/subcategories/events.png" }
-          ]
-        },
-        {
-          id: 2,
-          name: "Lodging",
-          image: "/images/categories/lodging.jpg",
-          subcategories: [
-            { name: "Hotels & Resorts", image: "/images/subcategories/hotels.png" },
-            { name: "Vacation Rentals", image: "/images/subcategories/vacation-rentals.png" },
-            { name: "Camping & RV", image: "/images/subcategories/camping.png" }
-          ]
-        },
-        {
-          id: 3,
-          name: "Activities",
-          image: "/images/categories/activities.jpg",
-          subcategories: [
-            { name: "Water Sports", image: "/images/subcategories/water-sports.png" },
-            { name: "Golf", image: "/images/subcategories/golf.png" },
-            { name: "Tours & Attractions", image: "/images/subcategories/tours.png" }
-          ]
-        },
-        {
-          id: 4,
-          name: "Services",
-          image: "/images/categories/services.jpg",
-          subcategories: [
-            { name: "Marine Services", image: "/images/subcategories/marine.png" },
-            { name: "Real Estate", image: "/images/subcategories/real-estate.png" },
-            { name: "Professional Services", image: "/images/subcategories/professional.png" }
-          ]
-        },
-        {
-          id: 5,
-          name: "Shopping",
-          image: "/images/categories/shopping.jpg",
-          subcategories: [
-            { name: "Retail & Gifts", image: "/images/subcategories/retail.png" },
-            { name: "Groceries & Markets", image: "/images/subcategories/groceries.png" },
-            { name: "Marine Supplies", image: "/images/subcategories/marine-supplies.png" }
-          ]
-        }
-      ]
+      try {
+        // Load categories from the businesses.json file
+        const businessData = await import('@/data/businesses.json')
+        return businessData.categories || []
+      } catch (error) {
+        console.error('Error loading categories:', error)
+        return []
+      }
     },
 
     /**
@@ -2931,6 +2902,20 @@ export const useBusinessStore = defineStore('business', {
           image: "/images/ads/margaritaville-banner.jpg",
           link: "https://margaritavilleresorts.com",
           position: "inline"
+        },
+        {
+          id: 11,
+          business_id: 31,
+          business_name: "Little Explorers Academy",
+          type: "interstitial",
+          category: "Children",
+          image: "/images/ads/little-explorers-interstitial.jpg",
+          link: "https://littleexplorers.com",
+          title: "Little Explorers Academy",
+          description: "Premier educational center with interactive STEM programs for young minds",
+          business: "Little Explorers Academy",
+          cta_text: "Explore Children Activities",
+          priority: 1
         }
       ]
     },

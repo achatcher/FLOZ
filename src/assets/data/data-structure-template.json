@@ -1,0 +1,342 @@
+{
+  "_meta": {
+    "description": "Multi-Location Business Directory Data Structure Template",
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-01T00:00:00.000Z",
+    "locationId": "template",
+    "dataSource": "manual",
+    "totalBusinesses": 0,
+    "categories": []
+  },
+
+  "businesses": [
+    {
+      "id": 1,
+      "name": "Example Business Name",
+      "category_id": "fine-dining",
+      "subcategory": "Steakhouses",
+      "listing_tier": "signature",
+      "featured": true,
+
+      "_location_data": {
+        "location_id": "bloomfield_hills",
+        "region": "Michigan",
+        "market_type": "luxury",
+        "target_audience": "affluent_residents"
+      },
+
+      "_contact_information": {
+        "phone": "+1 (248) 555-0123",
+        "email": "info@examplebusiness.com",
+        "website": "https://www.examplebusiness.com",
+        "address": "123 Main Street, Bloomfield Hills, MI 48301",
+        "coordinates": {
+          "latitude": 42.5831,
+          "longitude": -83.2455
+        }
+      },
+
+      "_business_details": {
+        "description": "Comprehensive business description highlighting unique value proposition and key offerings",
+        "short_description": "Brief description for cards and listings",
+        "established_year": 2020,
+        "business_type": "restaurant",
+        "price_range": "$$$",
+        "dress_code": "business_casual"
+      },
+
+      "_media_assets": {
+        "logo": "https://images.example.com/logos/business-1.png",
+        "heroImage": "https://images.example.com/heroes/business-1.jpg",
+        "gallery": [
+          "https://images.example.com/gallery/business-1-1.jpg",
+          "https://images.example.com/gallery/business-1-2.jpg"
+        ],
+        "thumbnail": "https://images.example.com/thumbnails/business-1.jpg"
+      },
+
+      "_operational_data": {
+        "hours": {
+          "monday": { "open": "17:00", "close": "22:00", "closed": false },
+          "tuesday": { "open": "17:00", "close": "22:00", "closed": false },
+          "wednesday": { "open": "17:00", "close": "22:00", "closed": false },
+          "thursday": { "open": "17:00", "close": "22:00", "closed": false },
+          "friday": { "open": "17:00", "close": "23:00", "closed": false },
+          "saturday": { "open": "17:00", "close": "23:00", "closed": false },
+          "sunday": { "open": "17:00", "close": "21:00", "closed": false }
+        },
+        "seasonal_hours": null,
+        "reservation_required": true,
+        "accepts_walk_ins": false
+      },
+
+      "_features_amenities": {
+        "badges": ["On The Water", "Michelin Rated", "Wine Spectator Award"],
+        "amenities": [
+          "Valet Parking",
+          "Private Dining Room",
+          "Wine Cellar",
+          "Outdoor Seating",
+          "Live Music"
+        ],
+        "payment_methods": ["Cash", "Credit Card", "Apple Pay"],
+        "accessibility": ["Wheelchair Accessible", "Braille Menu"],
+        "special_features": ["Chef's Table", "Wine Pairing", "Private Events"]
+      },
+
+      "_social_media": {
+        "facebook": "https://facebook.com/examplebusiness",
+        "instagram": "https://instagram.com/examplebusiness",
+        "twitter": "https://twitter.com/examplebusiness",
+        "linkedin": null,
+        "youtube": null
+      },
+
+      "_marketing_data": {
+        "seo_keywords": ["fine dining", "steakhouse", "luxury restaurant", "bloomfield hills"],
+        "marketing_tags": ["romantic", "special_occasion", "business_dining"],
+        "promotion_active": true,
+        "featured_promotion": "20% off wine pairings this month"
+      },
+
+      "_analytics_tracking": {
+        "views": 0,
+        "clicks": 0,
+        "calls": 0,
+        "website_visits": 0,
+        "direction_requests": 0,
+        "last_updated": "2024-01-01T00:00:00.000Z"
+      },
+
+      "_advertisement_data": {
+        "has_ads": true,
+        "ad_tier": "premium",
+        "interstitial_ad": {
+          "enabled": true,
+          "image": "https://images.example.com/ads/business-1-interstitial.jpg",
+          "title": "Experience Fine Dining Excellence",
+          "description": "Award-winning cuisine in an elegant atmosphere",
+          "cta_text": "Make Reservation",
+          "cta_url": "https://reservations.examplebusiness.com"
+        },
+        "banner_ads": [
+          {
+            "placement": "home_hero",
+            "image": "https://images.example.com/ads/business-1-banner.jpg",
+            "link": "https://www.examplebusiness.com"
+          }
+        ]
+      },
+
+      "_reviews_ratings": {
+        "average_rating": 4.8,
+        "total_reviews": 127,
+        "review_sources": {
+          "google": { "rating": 4.9, "count": 84 },
+          "yelp": { "rating": 4.7, "count": 43 }
+        },
+        "featured_reviews": [
+          {
+            "source": "google",
+            "rating": 5,
+            "text": "Exceptional dining experience with impeccable service",
+            "author": "Jane D.",
+            "date": "2024-01-15"
+          }
+        ]
+      }
+    }
+  ],
+
+  "events": [
+    {
+      "id": 1,
+      "title": "Example Event Title",
+      "date": "2024-06-15",
+      "time": "19:00",
+      "end_time": "22:00",
+      "tier": "signature",
+      "featured": true,
+
+      "_location_data": {
+        "venue": "Example Venue Name",
+        "address": "456 Event Street, Bloomfield Hills, MI 48301",
+        "coordinates": {
+          "latitude": 42.5831,
+          "longitude": -83.2455
+        }
+      },
+
+      "_event_details": {
+        "description": "Detailed event description highlighting key attractions and experiences",
+        "short_description": "Brief event summary for listings",
+        "category": "culinary",
+        "event_type": "ticketed",
+        "capacity": 100,
+        "dress_code": "cocktail_attire"
+      },
+
+      "_media_assets": {
+        "image": "https://images.example.com/events/event-1.jpg",
+        "gallery": [
+          "https://images.example.com/events/event-1-gallery-1.jpg"
+        ]
+      },
+
+      "_ticketing_info": {
+        "ticketUrl": "https://tickets.example.com/event-1",
+        "price_range": "$75 - $125",
+        "ticket_types": [
+          {
+            "name": "General Admission",
+            "price": 75,
+            "available": true
+          },
+          {
+            "name": "VIP Experience",
+            "price": 125,
+            "available": true,
+            "includes": ["Premium seating", "Champagne reception"]
+          }
+        ]
+      },
+
+      "_organizer_info": {
+        "organizer": "Event Organizer Name",
+        "contact_email": "events@example.com",
+        "contact_phone": "+1 (248) 555-0199",
+        "website": "https://www.eventorganizer.com"
+      }
+    }
+  ],
+
+  "advertisements": [
+    {
+      "id": 1,
+      "type": "interstitial",
+      "category_id": "fine-dining",
+      "location_id": "bloomfield_hills",
+      "active": true,
+
+      "_ad_content": {
+        "title": "Premium Restaurant Advertisement",
+        "description": "Experience luxury dining at its finest",
+        "image": "https://images.example.com/ads/interstitial-1.jpg",
+        "logo": "https://images.example.com/ads/advertiser-logo-1.png"
+      },
+
+      "_targeting": {
+        "categories": ["fine-dining", "luxury-retail"],
+        "user_segments": ["luxury_shoppers", "fine_diners"],
+        "geographic_targeting": ["bloomfield_hills", "birmingham", "troy"]
+      },
+
+      "_campaign_data": {
+        "campaign_name": "Q1 Luxury Dining Campaign",
+        "start_date": "2024-01-01",
+        "end_date": "2024-03-31",
+        "budget": 5000,
+        "cpc": 2.50
+      },
+
+      "_performance_metrics": {
+        "impressions": 0,
+        "clicks": 0,
+        "ctr": 0,
+        "conversions": 0
+      }
+    }
+  ],
+
+  "_configuration": {
+    "location_settings": {
+      "currency": "USD",
+      "timezone": "America/Detroit",
+      "date_format": "MM/DD/YYYY",
+      "phone_format": "+1 (###) ###-####"
+    },
+
+    "business_categories": {
+      "fine-dining": {
+        "display_name": "Fine Dining",
+        "icon": "🍽️",
+        "description": "Upscale restaurants and culinary experiences",
+        "subcategories": [
+          "Steakhouses",
+          "International Cuisine",
+          "Wine Bars",
+          "Chef's Table"
+        ]
+      },
+      "private-clubs": {
+        "display_name": "Private Clubs",
+        "icon": "🏌️",
+        "description": "Exclusive membership clubs and societies",
+        "subcategories": [
+          "Golf Clubs",
+          "Country Clubs",
+          "Business Clubs",
+          "Social Clubs"
+        ]
+      }
+    },
+
+    "listing_tiers": {
+      "signature": {
+        "display_name": "Signature",
+        "color": "#D4AF37",
+        "features": ["Hero placement", "Enhanced listing", "Priority support"],
+        "price": 500
+      },
+      "premier": {
+        "display_name": "Premier",
+        "color": "#B8941F",
+        "features": ["Featured placement", "Enhanced visibility"],
+        "price": 250
+      },
+      "curated": {
+        "display_name": "Curated",
+        "color": "#8A7A2A",
+        "features": ["Standard listing", "Quality assured"],
+        "price": 100
+      }
+    },
+
+    "feature_flags": {
+      "enable_events": true,
+      "enable_reviews": true,
+      "enable_reservations": true,
+      "enable_online_ordering": false,
+      "enable_user_generated_content": false
+    }
+  },
+
+  "_import_mappings": {
+    "google_places": {
+      "name": "name",
+      "address": "formatted_address",
+      "phone": "formatted_phone_number",
+      "website": "website",
+      "rating": "rating",
+      "coordinates": ["geometry.location.lat", "geometry.location.lng"]
+    },
+
+    "yelp": {
+      "name": "name",
+      "address": "location.display_address",
+      "phone": "phone",
+      "website": "url",
+      "rating": "rating",
+      "coordinates": ["coordinates.latitude", "coordinates.longitude"]
+    },
+
+    "eventbrite": {
+      "title": "name.text",
+      "description": "description.text",
+      "start_time": "start.utc",
+      "end_time": "end.utc",
+      "venue": "venue.name",
+      "address": "venue.address.localized_address_display"
+    }
+  }
+}

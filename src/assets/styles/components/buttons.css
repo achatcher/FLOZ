@@ -39,6 +39,14 @@
   padding: var(--btn-padding-base);
   border-radius: var(--btn-border-radius);
   font-size: var(--font-size-base);
+
+  /* Mobile-optimized touch targets */
+  min-height: var(--btn-height-base);
+  min-width: var(--btn-min-width);
+
+  /* Remove tap delay on mobile */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn:disabled {
@@ -52,11 +60,13 @@
 .btn-sm {
   padding: var(--btn-padding-sm);
   font-size: var(--font-size-sm);
+  min-height: var(--btn-height-sm);
 }
 
 .btn-lg {
   padding: var(--btn-padding-lg);
   font-size: var(--font-size-lg);
+  min-height: var(--btn-height-lg);
 }
 
 .btn-xl {
@@ -160,8 +170,8 @@
 
 /* Close Button - Circle with X */
 .btn-close {
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target-recommended);
+  height: var(--touch-target-recommended);
   padding: 0;
   border-radius: var(--radius-full);
   background: rgba(0, 0, 0, 0.9);
@@ -169,6 +179,8 @@
   border: 1px solid var(--color-border-primary);
   backdrop-filter: var(--backdrop-blur-base);
   box-shadow: var(--shadow-md);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-close:hover {
@@ -180,10 +192,12 @@
 
 /* Icon Button */
 .btn-icon {
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target-recommended);
+  height: var(--touch-target-recommended);
   padding: 0;
   border-radius: var(--radius-md);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Floating Action Button */
@@ -208,10 +222,50 @@
 
 /* ===== RESPONSIVE BUTTONS ===== */
 
+/* Mobile-first button spacing */
+@media (max-width: 639px) {
+  .btn {
+    /* Ensure adequate spacing between buttons on mobile */
+    margin: var(--touch-spacing);
+  }
+
+  .btn-group .btn {
+    margin: 0; /* Reset margin for grouped buttons */
+  }
+
+  /* Full-width mobile buttons */
+  .btn-mobile-full {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Stacked button layout for mobile */
+  .btn-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--touch-spacing);
+  }
+
+  .btn-stack .btn {
+    width: 100%;
+    margin: 0;
+  }
+}
+
 @media (min-width: 640px) {
   .btn-responsive {
     padding: var(--space-4) var(--space-8);
     font-size: var(--font-size-lg);
+  }
+
+  /* Horizontal button layout for larger screens */
+  .btn-stack {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .btn-stack .btn {
+    width: auto;
   }
 }
 

@@ -107,6 +107,35 @@ export const useEventsStore = defineStore('events', {
         .filter(event => event.featured)
         .sort((a, b) => new Date(a.date) - new Date(b.date))
         .slice(0, 5) // Top 5 featured events
+    },
+
+    /**
+     * Gets events for a specific date
+     * @param {string} dateString - Date in YYYY-MM-DD format
+     */
+    getEventsForDate: (state) => (dateString) => {
+      return state.events
+        .filter(event => {
+          // Check if event date matches
+          if (event.date === dateString) return true
+
+          // Check if event spans multiple days and includes this date
+          if (event.endDate) {
+            const eventStart = new Date(event.date)
+            const eventEnd = new Date(event.endDate)
+            const targetDate = new Date(dateString)
+            return targetDate >= eventStart && targetDate <= eventEnd
+          }
+
+          return false
+        })
+        .sort((a, b) => {
+          // Sort by time if available
+          if (a.time && b.time) {
+            return a.time.localeCompare(b.time)
+          }
+          return a.title.localeCompare(b.title)
+        })
     }
   },
 
@@ -167,54 +196,58 @@ export const useEventsStore = defineStore('events', {
       return [
         {
           id: 1,
-          title: "Lake of the Ozarks Shootout",
-          category: "Annual Event",
-          date: "2024-08-24",
-          time: "10:00 AM",
-          endDate: "2024-08-25",
-          location: "Captain Ron's Bar & Grill",
-          address: "1000 Hurricane Deck Rd, Lake Ozark, MO",
-          coordinates: { lat: 38.0756, lng: -92.6074 },
-          description: "The world's largest unsanctioned boat race featuring high-speed powerboats and exciting entertainment.",
-          image: "/images/events/shootout-2024.jpg",
-          ticketPrice: "Free",
-          website: "https://shootout.com",
-          phone: "(573) 365-2020",
+          title: "Annual Charity Gala & Auction",
+          category: "Luxury Event",
+          date: "2024-11-15",
+          time: "6:30 PM",
+          endDate: "2024-11-15",
+          location: "The Grand Ballroom at Heritage Hills",
+          address: "2500 Heritage Club Boulevard",
+          coordinates: { lat: 38.0901, lng: -92.6278 },
+          description: "Black-tie charity gala featuring live auction, champagne reception, and five-course dinner prepared by Michelin-starred chefs. Proceeds benefit local children's education initiatives.",
+          image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=600&fit=crop&crop=center",
+          ticketPrice: "$250-$500",
+          website: "https://heritagehillsgala.com",
+          phone: "(555) 345-6789",
           featured: true,
-          organizer: "Lake of the Ozarks Shootout Committee"
+          organizer: "Heritage Hills Foundation",
+          tier: "signature",
+          amenities: ["Valet Parking", "Champagne Reception", "Live Auction", "Premium Gift Bags"]
         },
         {
           id: 2,
-          title: "Fourth of July Fireworks Spectacular",
-          category: "Holiday Event",
-          date: "2024-07-04",
-          time: "9:30 PM",
-          location: "Bagnell Dam",
-          address: "Bagnell Dam Blvd, Lake Ozark, MO",
-          coordinates: { lat: 38.0823, lng: -92.6074 },
-          description: "Annual fireworks display over Lake of the Ozarks with live music and food vendors.",
-          image: "/images/events/fireworks-2024.jpg",
-          ticketPrice: "Free",
+          title: "Private Wine Tasting: Bordeaux Collection",
+          category: "Wine & Spirits",
+          date: "2024-12-08",
+          time: "7:00 PM",
+          location: "Le Bernardin Hills Private Dining Room",
+          address: "1200 Summit Ridge Drive",
+          coordinates: { lat: 38.0881, lng: -92.6308 },
+          description: "Exclusive wine tasting featuring rare Bordeaux vintages from private collectors. Limited to 24 guests with sommelier-guided tasting and paired hors d'oeuvres.",
+          image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&h=600&fit=crop&crop=center",
+          ticketPrice: "$185 per person",
           featured: true,
-          organizer: "City of Lake Ozark"
+          organizer: "Le Bernardin Hills Wine Society",
+          tier: "premier",
+          amenities: ["Expert Sommelier", "Take-home Wine", "Artisan Pairings", "Exclusive Access"]
         },
         {
           id: 3,
-          title: "Jazz on the Lake Concert Series",
-          category: "Concert",
-          date: "2024-07-15",
-          time: "7:00 PM",
-          endDate: "2024-08-15",
-          location: "Lake Ozark Amphitheater",
-          address: "918 Passover Rd, Osage Beach, MO",
-          coordinates: { lat: 38.0889, lng: -92.6312 },
-          description: "Weekly jazz concerts featuring local and touring musicians in an outdoor amphitheater setting.",
-          image: "/images/events/jazz-concert.jpg",
-          ticketPrice: "$25-45",
-          website: "https://jazzonthelake.com",
-          recurring: "Weekly",
+          title: "Chamber Music Soirée",
+          category: "Classical Arts",
+          date: "2024-11-22",
+          time: "8:00 PM",
+          location: "Heritage Hills Arts Center",
+          address: "2500 Heritage Club Boulevard",
+          coordinates: { lat: 38.0901, lng: -92.6278 },
+          description: "Intimate evening of chamber music performed by internationally acclaimed musicians. Post-performance reception with the artists included.",
+          image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center",
+          ticketPrice: "$75-125",
+          website: "https://heritagehillsarts.com",
           featured: false,
-          organizer: "Lake Area Music Association"
+          organizer: "Heritage Hills Cultural Society",
+          tier: "curated",
+          amenities: ["Artist Meet & Greet", "Premium Seating", "Reception Included", "Program Notes"]
         },
         {
           id: 4,
@@ -227,7 +260,7 @@ export const useEventsStore = defineStore('events', {
           address: "1011 KK Dr, Osage Beach, MO",
           coordinates: { lat: 38.0901, lng: -92.6234 },
           description: "Annual wine tasting festival featuring Missouri wineries, live music, and local cuisine.",
-          image: "/images/events/wine-festival.jpg",
+          image: "https://images.unsplash.com/photo-1566737236500-c8ac43014a8e?w=800&h=600&fit=crop&crop=center",
           ticketPrice: "$30-65",
           website: "https://lakewinefestival.com",
           featured: true,
@@ -243,7 +276,7 @@ export const useEventsStore = defineStore('events', {
           address: "52 Lighthouse Rd, Lake Ozark, MO",
           coordinates: { lat: 38.0634, lng: -92.6287 },
           description: "Stand-up comedy show featuring touring comedians and local talent.",
-          image: "/images/events/comedy-night.jpg",
+          image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop&crop=center",
           ticketPrice: "$20",
           phone: "(573) 365-3000",
           recurring: "Monthly",
@@ -260,7 +293,7 @@ export const useEventsStore = defineStore('events', {
           address: "Bagnell Dam Blvd, Lake Ozark, MO",
           coordinates: { lat: 38.0867, lng: -92.6074 },
           description: "Annual motorcycle and car cruise showcasing classic and custom vehicles.",
-          image: "/images/events/strip-run.jpg",
+          image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&h=600&fit=crop&crop=center",
           ticketPrice: "Free",
           featured: false,
           organizer: "Lake Area Classic Car Club"
@@ -273,14 +306,14 @@ export const useEventsStore = defineStore('events', {
      */
     async fetchEventCategories() {
       return [
-        { id: 1, name: "Concert", icon: "🎵", color: "#E67E22" },
-        { id: 2, name: "Festival", icon: "🎪", color: "#8E44AD" },
-        { id: 3, name: "Annual Event", icon: "📅", color: "#3498DB" },
-        { id: 4, name: "Holiday Event", icon: "🎆", color: "#E74C3C" },
-        { id: 5, name: "Food & Wine", icon: "🍷", color: "#C0392B" },
-        { id: 6, name: "Comedy", icon: "😂", color: "#F39C12" },
-        { id: 7, name: "Sports", icon: "🏁", color: "#27AE60" },
-        { id: 8, name: "Entertainment", icon: "🎭", color: "#9B59B6" }
+        { id: 1, name: "Luxury Event", icon: "✨", color: "#D4AF37" },
+        { id: 2, name: "Wine & Spirits", icon: "🥂", color: "#8E44AD" },
+        { id: 3, name: "Classical Arts", icon: "🎼", color: "#D4AF37" },
+        { id: 4, name: "Private Clubs", icon: "🏛️", color: "#E74C3C" },
+        { id: 5, name: "Fine Dining", icon: "🍽️", color: "#C0392B" },
+        { id: 6, name: "Cultural Events", icon: "🎨", color: "#F39C12" },
+        { id: 7, name: "Exclusive Shopping", icon: "💎", color: "#27AE60" },
+        { id: 8, name: "Private Events", icon: "🎭", color: "#9B59B6" }
       ]
     },
 
@@ -419,7 +452,7 @@ export const useEventsStore = defineStore('events', {
               address: event.place?.location ?
                 `${event.place.location.street || ''}, ${event.place.location.city || ''}, ${event.place.location.state || ''}`.trim().replace(/^,\s*|,\s*$/g, '') : null,
               category: 'Live Entertainment',
-              image: event.cover?.source || '/images/events/default-event.jpg',
+              image: event.cover?.source || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop&crop=center',
               website: event.ticket_uri || `https://facebook.com/events/${event.id}`,
               ticketPrice: 'See event page',
               organizer: event.place?.name || pageId,
@@ -487,7 +520,7 @@ export const useEventsStore = defineStore('events', {
             location: 'Margaritaville Lake Resort',
             address: '494 Tan Tar A Dr, Osage Beach, MO 65065',
             category: 'Live Entertainment',
-            image: '/images/events/live-music.jpg',
+            image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center',
             website: 'https://margaritavilleresorts.com/lake-of-the-ozarks',
             ticketPrice: 'Free',
             organizer: 'Margaritaville Lake Resort',
@@ -504,7 +537,7 @@ export const useEventsStore = defineStore('events', {
             location: 'Backwater Jack\'s',
             address: '4836 Keelboat Ct, Lake Ozark, MO 65049',
             category: 'Live Entertainment',
-            image: '/images/events/karaoke.jpg',
+            image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=600&fit=crop&crop=center',
             website: 'https://backwaterjacks.com',
             ticketPrice: 'Free',
             organizer: 'Backwater Jack\'s',
@@ -521,7 +554,7 @@ export const useEventsStore = defineStore('events', {
             location: 'Shady Gators',
             address: '4466 Osage Beach Pkwy, Osage Beach, MO 65065',
             category: 'Entertainment',
-            image: '/images/events/trivia-night.jpg',
+            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop&crop=center',
             website: 'https://shadygators.com',
             ticketPrice: 'Free',
             organizer: 'Shady Gators',
@@ -587,7 +620,7 @@ export const useEventsStore = defineStore('events', {
           lng: parseFloat(event.venue?.longitude || -92.6074)
         },
         description: event.description?.text || '',
-        image: event.logo?.url || '/images/events/default-event.jpg',
+        image: event.logo?.url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop&crop=center',
         ticketPrice: event.ticket_availability?.minimum_ticket_price?.display || 'Check Website',
         website: event.url,
         featured: false,

@@ -1,20 +1,12 @@
 <template>
   <div class="share-view">
-    <TopBar title="Share FLOZ" :show-back="true" />
+    <TopBar title="Share The Hills Guide" :show-back="true" />
 
     <div class="share-content">
       <!-- Hero Section -->
       <div class="hero-section">
-        <div class="hero-animation">
-          <div class="floating-icons">
-            <span class="floating-icon" style="--delay: 0s">🚤</span>
-            <span class="floating-icon" style="--delay: 0.5s">🎣</span>
-            <span class="floating-icon" style="--delay: 1s">☀️</span>
-            <span class="floating-icon" style="--delay: 1.5s">🏖️</span>
-          </div>
-        </div>
-        <h1 class="hero-title">Spread the Lake Love! 💙</h1>
-        <p class="hero-subtitle">Help others discover the magic of Lake of the Ozarks</p>
+        <h1 class="hero-title">Share The Hills Guide</h1>
+        <p class="hero-subtitle">Invite others to discover luxury lifestyle experiences in The Hills</p>
       </div>
 
       <!-- QR Code Section -->
@@ -32,21 +24,31 @@
             />
             <div class="qr-center-logo">
               <div class="logo-circle">
-                <span class="logo-text">FLOZ</span>
+                <span class="logo-text">THG</span>
               </div>
             </div>
           </div>
         </div>
 
         <div class="qr-info">
-          <h3 class="qr-title">📱 Scan & Go!</h3>
+          <h3 class="qr-title">
+            <svg class="title-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9.5 6.5V8.5H16V15H14V16.5H16.5V15V8.5V6.5H9.5ZM16.5 6.5H18V8.5V15V16.5H16.5V18H15V16.5H8.5V15V8.5V6.5H15V5H16.5V6.5ZM15 8.5V15H9.5V8.5H15Z"/>
+            </svg>
+            Scan & Access
+          </h3>
           <p class="qr-description">Point your camera here for instant access</p>
 
           <div class="share-url">
             <div class="url-container">
               <span class="url-text">{{ shareUrl }}</span>
               <button class="copy-btn" @click="copyLink" :class="{ copied: linkCopied }">
-                <span class="copy-icon">{{ linkCopied ? '✓' : '📋' }}</span>
+                <svg v-if="linkCopied" class="copy-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z"/>
+                </svg>
+                <svg v-else class="copy-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/>
+                </svg>
                 {{ linkCopied ? 'Copied!' : 'Copy' }}
               </button>
             </div>
@@ -54,120 +56,43 @@
         </div>
       </div>
 
-      <!-- Quick Share Actions -->
-      <div class="quick-share">
-        <h3 class="section-title">✨ Quick Share</h3>
-        <div class="share-grid">
-          <button class="share-card primary" @click="handleNativeShare">
-            <div class="share-card-icon">📤</div>
-            <div class="share-card-content">
-              <span class="share-card-title">Share App</span>
-              <span class="share-card-subtitle">Native sharing</span>
-            </div>
-            <div class="share-card-shine"></div>
-          </button>
-
-          <button class="share-card facebook" @click="shareOnFacebook">
-            <div class="share-card-icon">📘</div>
-            <div class="share-card-content">
-              <span class="share-card-title">Facebook</span>
-              <span class="share-card-subtitle">Post to timeline</span>
-            </div>
-            <div class="share-card-shine"></div>
-          </button>
-
-          <button class="share-card twitter" @click="shareOnTwitter">
-            <div class="share-card-icon">🐦</div>
-            <div class="share-card-content">
-              <span class="share-card-title">Twitter</span>
-              <span class="share-card-subtitle">Tweet about us</span>
-            </div>
-            <div class="share-card-shine"></div>
-          </button>
-
-          <button class="share-card email" @click="shareViaEmail">
-            <div class="share-card-icon">📧</div>
-            <div class="share-card-content">
-              <span class="share-card-title">Email</span>
-              <span class="share-card-subtitle">Send to friends</span>
-            </div>
-            <div class="share-card-shine"></div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Install Section -->
-      <div class="install-section">
-        <h3 class="section-title">🚀 Get the App</h3>
-        <p class="section-subtitle">Install FLOZ for the ultimate Lake experience</p>
-
-        <!-- PWA Install Card -->
-        <div class="install-card" v-if="canInstall">
-          <div class="install-icon">📱</div>
-          <div class="install-content">
-            <h4 class="install-title">Install FLOZ App</h4>
-            <p class="install-description">• Works offline • Lightning fast • No app store needed</p>
-            <button class="install-btn" @click="installPWA">
-              Install Now
-              <span class="install-arrow">→</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Manual Install Instructions -->
-        <div class="manual-install" v-else>
-          <div class="install-steps">
-            <div class="install-step">
-              <div class="step-icon">📱</div>
-              <div class="step-content">
-                <strong>On Mobile:</strong>
-                <p>Tap the share button in your browser → "Add to Home Screen"</p>
-              </div>
-            </div>
-            <div class="install-step">
-              <div class="step-icon">💻</div>
-              <div class="step-content">
-                <strong>On Desktop:</strong>
-                <p>Look for the install icon in your address bar or bookmark this page</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Community Stats -->
       <div class="stats-section">
-        <h3 class="section-title">🌊 Join Our Community</h3>
+        <h3 class="section-title">
+          <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 22L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+          </svg>
+          Join Our Community
+        </h3>
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon">🏢</div>
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h2v-2h2v-2h2v8z"/>
+              </svg>
+            </div>
             <div class="stat-number">500+</div>
             <div class="stat-label">Local Businesses</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">🎉</div>
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 2C5.45 2 5 2.45 5 3V4H4C2.9 4 2 4.9 2 6V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V6C22 4.9 21.1 4 20 4H19V3C19 2.45 18.55 2 18 2S17 2.45 17 3V4H7V3C7 2.45 6.55 2 6 2Z"/>
+              </svg>
+            </div>
             <div class="stat-number">50+</div>
             <div class="stat-label">Monthly Events</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">❤️</div>
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
             <div class="stat-number">10K+</div>
             <div class="stat-label">Happy Users</div>
           </div>
-        </div>
-      </div>
-
-      <!-- Final CTA -->
-      <div class="cta-section">
-        <div class="cta-background">
-          <div class="cta-waves"></div>
-          <h3 class="cta-title">🏖️ Love Lake of the Ozarks?</h3>
-          <p class="cta-description">Help us grow the community by sharing FLOZ with fellow lake lovers!</p>
-          <button class="cta-button" @click="handleNativeShare">
-            <span class="cta-sparkle">✨</span>
-            Share the Love
-            <span class="cta-sparkle">✨</span>
-          </button>
         </div>
       </div>
     </div>
@@ -208,8 +133,8 @@ onMounted(() => {
 
 const handleNativeShare = async () => {
   const shareData = {
-    title: 'FLOZ - Lake of the Ozarks Guide',
-    text: '🌊 Discover the best of Lake of the Ozarks! Find businesses, events, dining, and more with FLOZ - your ultimate lake companion! 🚤',
+    title: 'The Hills Guide - Luxury Lifestyle Directory',
+    text: 'Discover luxury lifestyle experiences in The Hills - your curated guide to fine dining, private clubs, and exclusive establishments.',
     url: shareUrl.value
   }
 
@@ -220,7 +145,7 @@ const handleNativeShare = async () => {
       await navigator.share(shareData)
       analytics.track('share_completed', { method: 'native' })
       if (window.$toast) {
-        window.$toast.success('Thanks for sharing FLOZ! 🎉')
+        window.$toast.success('Thanks for sharing The Hills Guide!')
       }
     } catch (err) {
       if (err.name !== 'AbortError') {
@@ -234,7 +159,7 @@ const handleNativeShare = async () => {
 }
 
 const shareOnFacebook = () => {
-  const text = '🌊 Discover the best of Lake of the Ozarks with FLOZ! Your ultimate guide to local businesses, events, dining, and lake life! 🚤'
+  const text = 'Discover luxury lifestyle experiences in The Hills - your curated guide to fine dining, private clubs, and exclusive establishments.'
   const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl.value)}&quote=${encodeURIComponent(text)}`
 
   analytics.track('share_completed', { method: 'facebook' })
@@ -242,7 +167,7 @@ const shareOnFacebook = () => {
 }
 
 const shareOnTwitter = () => {
-  const text = '🌊 Just found the perfect Lake of the Ozarks guide! FLOZ has everything - local businesses, events, dining spots, and more! 🚤 #LakeOfTheOzarks #FLOZ'
+  const text = 'Discover luxury lifestyle experiences in The Hills - your curated guide to fine dining, private clubs, and exclusive establishments. #TheHillsGuide'
   const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl.value)}`
 
   analytics.track('share_completed', { method: 'twitter' })
@@ -250,8 +175,8 @@ const shareOnTwitter = () => {
 }
 
 const shareViaEmail = () => {
-  const subject = '🌊 Check out FLOZ - Lake of the Ozarks Guide!'
-  const body = `Hey!\n\nI found this amazing app for Lake of the Ozarks and thought you'd love it!\n\nFLOZ has everything you need:\n🏢 Local businesses & services\n🎉 Live events & entertainment\n🍽️ Best dining spots\n🚤 Lake activities & marinas\n\nCheck it out: ${shareUrl.value}\n\nIt's become my go-to guide for everything at the lake!\n\nCheers! 🏖️`
+  const subject = 'Check out The Hills Guide - Luxury Lifestyle Directory'
+  const body = `Hello!\n\nI wanted to share The Hills Guide with you - it's a curated directory of luxury lifestyle experiences.\n\nThe Hills Guide features:\n• Fine dining establishments\n• Private clubs and exclusive venues\n• Luxury services and amenities\n• Curated events and experiences\n\nCheck it out: ${shareUrl.value}\n\nI think you'll find it quite valuable for discovering premium experiences in the area.\n\nBest regards!`
 
   analytics.track('share_completed', { method: 'email' })
   window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
@@ -288,7 +213,7 @@ const installPWA = async () => {
     if (outcome === 'accepted') {
       canInstall.value = false
       if (window.$toast) {
-        window.$toast.success('FLOZ installed! Check your home screen! 🎉')
+        window.$toast.success('The Hills Guide installed! Check your home screen!')
       }
     }
 
@@ -301,7 +226,7 @@ const installPWA = async () => {
 /* ===== GLOBAL STYLES ===== */
 .share-view {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e  50%, #16213e 100%);
+  background: var(--color-bg-primary);
   padding-bottom: 80px;
   position: relative;
   overflow-x: hidden;
@@ -320,62 +245,13 @@ const installPWA = async () => {
   position: relative;
 }
 
-.hero-animation {
-  height: 120px;
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.floating-icons {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.floating-icon {
-  position: absolute;
-  font-size: 32px;
-  animation: float 6s ease-in-out infinite;
-  filter: drop-shadow(0 4px 8px rgba(6, 182, 212, 0.3));
-}
-
-.floating-icon:nth-child(1) {
-  left: 10%;
-  top: 20%;
-  animation-delay: 0s;
-}
-
-.floating-icon:nth-child(2) {
-  right: 15%;
-  top: 10%;
-  animation-delay: 1.5s;
-}
-
-.floating-icon:nth-child(3) {
-  left: 20%;
-  bottom: 10%;
-  animation-delay: 3s;
-}
-
-.floating-icon:nth-child(4) {
-  right: 10%;
-  bottom: 20%;
-  animation-delay: 4.5s;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  25% { transform: translateY(-15px) rotate(5deg); }
-  50% { transform: translateY(-10px) rotate(-3deg); }
-  75% { transform: translateY(-20px) rotate(3deg); }
-}
 
 .hero-title {
   color: white;
   font-size: 32px;
   font-weight: 800;
   margin: 0 0 12px 0;
-  background: linear-gradient(45deg, #06b6d4, #3b82f6, #8b5cf6);
+  background: linear-gradient(45deg, var(--color-primary), var(--color-primary-light), var(--color-primary));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -403,17 +279,23 @@ const installPWA = async () => {
 
 .qr-glow {
   position: absolute;
-  inset: -20px;
-  background: linear-gradient(45deg, #06b6d4, #3b82f6, #8b5cf6, #06b6d4);
+  inset: -15px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.1), transparent);
   border-radius: 30px;
-  animation: rotate 4s linear infinite;
-  filter: blur(20px);
-  opacity: 0.7;
+  animation: pulse 3s ease-in-out infinite;
+  filter: blur(15px);
+  opacity: 0.6;
 }
 
-@keyframes rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
 }
 
 .qr-wrapper {
@@ -440,7 +322,7 @@ const installPWA = async () => {
 .logo-circle {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  background: var(--color-primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -495,7 +377,7 @@ const installPWA = async () => {
 }
 
 .copy-btn {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  background: var(--color-primary);
   border: none;
   border-radius: 12px;
   padding: 10px 16px;
@@ -507,7 +389,7 @@ const installPWA = async () => {
   align-items: center;
   gap: 8px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 4px 12px var(--color-primary-alpha-30);
 }
 
 .copy-btn:hover {
@@ -519,8 +401,21 @@ const installPWA = async () => {
   background: linear-gradient(135deg, #10b981, #059669);
 }
 
-.copy-icon {
-  font-size: 16px;
+.copy-icon, .title-icon, .section-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.section-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
 }
 
 /* ===== SHARE SECTION ===== */
@@ -544,69 +439,65 @@ const installPWA = async () => {
 
 .share-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 24px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-4);
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition-all);
   backdrop-filter: blur(10px);
-  overflow: hidden;
 }
 
 .share-card:hover {
-  transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
 }
 
 .share-card.primary {
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2));
-  border-color: rgba(6, 182, 212, 0.4);
+  border-color: var(--color-primary);
 }
 
 .share-card.facebook {
-  background: linear-gradient(135deg, rgba(24, 119, 242, 0.2), rgba(24, 119, 242, 0.1));
-  border-color: rgba(24, 119, 242, 0.4);
+  border-color: rgba(24, 119, 242, 0.3);
+}
+
+.share-card.facebook:hover {
+  border-color: rgba(24, 119, 242, 0.8);
 }
 
 .share-card.twitter {
-  background: linear-gradient(135deg, rgba(15, 20, 25, 0.3), rgba(0, 0, 0, 0.2));
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(29, 161, 242, 0.3);
+}
+
+.share-card.twitter:hover {
+  border-color: rgba(29, 161, 242, 0.8);
 }
 
 .share-card.email {
-  background: linear-gradient(135deg, rgba(234, 67, 53, 0.2), rgba(234, 67, 53, 0.1));
-  border-color: rgba(234, 67, 53, 0.4);
+  border-color: rgba(234, 67, 53, 0.3);
 }
 
-.share-card-shine {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: rotate(45deg);
-  transition: all 0.6s ease;
-  opacity: 0;
+.share-card.email:hover {
+  border-color: rgba(234, 67, 53, 0.8);
 }
 
-.share-card:hover .share-card-shine {
-  opacity: 1;
-  animation: shine 1.5s ease-in-out;
-}
-
-@keyframes shine {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-}
 
 .share-card-icon {
-  font-size: 32px;
-  margin-bottom: 12px;
-  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.share-card-icon svg {
+  width: 24px;
+  height: 24px;
 }
 
 .share-card-content {
@@ -640,7 +531,7 @@ const installPWA = async () => {
 
 .install-card {
   background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.1));
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  border: 1px solid var(--color-primary-alpha-30);
   border-radius: 24px;
   padding: 30px;
   display: flex;
@@ -672,7 +563,7 @@ const installPWA = async () => {
 }
 
 .install-btn {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  background: var(--color-primary);
   border: none;
   border-radius: 12px;
   padding: 12px 24px;
@@ -768,9 +659,18 @@ const installPWA = async () => {
 }
 
 .stat-icon {
-  font-size: 32px;
-  display: block;
-  margin-bottom: 12px;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.stat-icon svg {
+  width: 24px;
+  height: 24px;
 }
 
 .stat-number {
@@ -787,89 +687,6 @@ const installPWA = async () => {
   font-weight: 500;
 }
 
-/* ===== CTA SECTION ===== */
-.cta-section {
-  margin-bottom: 20px;
-}
-
-.cta-background {
-  position: relative;
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2));
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  border-radius: 24px;
-  padding: 40px 30px;
-  text-align: center;
-  overflow: hidden;
-}
-
-.cta-waves {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" fill="%23ffffff08"><path d="M0,60 C200,100 400,20 600,60 C800,100 1000,20 1200,60 L1200,120 L0,120 Z"/></svg>') repeat-x;
-  animation: wave 10s linear infinite;
-  opacity: 0.3;
-}
-
-@keyframes wave {
-  0% { background-position: 0 0; }
-  100% { background-position: 1200px 0; }
-}
-
-.cta-title {
-  color: white;
-  font-size: 28px;
-  font-weight: 800;
-  margin: 0 0 12px 0;
-  position: relative;
-  z-index: 1;
-}
-
-.cta-description {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 16px;
-  margin: 0 0 30px 0;
-  position: relative;
-  z-index: 1;
-}
-
-.cta-button {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
-  border: none;
-  border-radius: 16px;
-  padding: 16px 32px;
-  color: white;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 1;
-  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
-}
-
-.cta-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(6, 182, 212, 0.5);
-}
-
-.cta-sparkle {
-  animation: sparkle 2s ease-in-out infinite;
-}
-
-.cta-sparkle:last-child {
-  animation-delay: 1s;
-}
-
-@keyframes sparkle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.2); }
-}
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 640px) {

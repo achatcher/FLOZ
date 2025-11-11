@@ -1,34 +1,131 @@
+<!--
+  The Hills Guide - Root Application Component
+
+  This is the main application wrapper that provides:
+  1. Global error boundary for graceful error handling
+  2. Router view with smooth page transitions
+  3. Global loading indicator for data operations
+  4. Toast notification system for user feedback
+  5. Mobile-optimized layout structure
+
+  Architecture:
+  - Single Page Application (SPA) with Vue Router
+  - Component-based architecture with error boundaries
+  - Reactive state management via Pinia stores
+  - Mobile-first responsive design with safe area support
+
+  Key Features:
+  - Smooth page transitions with fade effects
+  - Centralized loading state management
+  - Error boundary prevents app crashes
+  - Mobile-safe area handling for notched devices
+-->
+
 <template>
+  <!--
+    Main app container with conditional loading class
+    The loading class can be used to disable interactions during data loading
+  -->
   <div id="app" :class="{ 'loading': isLoading }">
+
+    <!--
+      Error Boundary Component
+      Catches and handles any JavaScript errors in child components
+      Prevents the entire app from crashing due to component errors
+      Shows user-friendly error messages instead of blank screens
+    -->
     <ErrorBoundary>
+
+      <!--
+        Vue Router View with Transitions
+        Renders the current route's component with smooth transitions
+        Uses slot-scope to access the component for transition wrapping
+      -->
       <router-view v-slot="{ Component }">
+        <!--
+          Fade Transition Between Routes
+          - mode="out-in": Wait for old component to fade out before new one fades in
+          - Provides smooth navigation experience between pages
+          - 200ms duration for snappy mobile performance
+        -->
         <transition name="fade" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
+
     </ErrorBoundary>
 
-    <!-- Global Loading Indicator -->
+    <!--
+      Global Loading Overlay
+      Displays when data is being loaded (business directory, events, etc.)
+      Prevents user interaction during critical operations
+      Uses luxury gold spinner matching brand colors
+    -->
     <div v-if="isLoading" class="loading-overlay">
       <div class="spinner"></div>
     </div>
 
-    <!-- Global Toast Notifications -->
+    <!--
+      Global Toast Notification System
+      Provides app-wide notifications for:
+      - Success messages (business saved, event added, etc.)
+      - Error messages (network failures, invalid actions)
+      - Information messages (feature updates, tips)
+      - Warning messages (offline mode, permission requests)
+
+      Usage in components:
+      this.$refs.toastRef.show('Message', 'success')
+    -->
     <Toast ref="toastRef" />
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useBusinessStore } from '@/stores/businessStore'
-import ErrorBoundary from '@/components/UI/ErrorBoundary.vue'
-import Toast from '@/components/UI/Toast.vue'
+/**
+ * Root Component Setup
+ *
+ * Manages the overall application state and provides global functionality
+ * Uses Composition API for modern, reactive component development
+ */
 
+// ===== CORE VUE IMPORTS =====
+import { ref, computed } from 'vue'
+
+// ===== STORE MANAGEMENT =====
+// Business store manages loading states for the entire application
+// When businesses are loading, the global loading indicator appears
+import { useBusinessStore } from '@/stores/businessStore'
+
+// ===== UI COMPONENTS =====
+// Global components that provide app-wide functionality
+import ErrorBoundary from '@/components/UI/ErrorBoundary.vue'  // Error handling
+import Toast from '@/components/UI/Toast.vue'                  // Notifications
+
+// ===== REACTIVE STATE =====
+// Get business store instance for loading state management
 const businessStore = useBusinessStore()
+
+// Template ref for accessing toast component methods
 const toastRef = ref(null)
 
-// Use the store's loading state instead of local loading state
+// ===== COMPUTED PROPERTIES =====
+/**
+ * Global Loading State
+ *
+ * Computed property that reflects the overall app loading state
+ * Currently tied to business store loading, but can be expanded
+ * to include other store loading states (events, user data, etc.)
+ *
+ * @returns {boolean} True when any critical data is loading
+ */
 const isLoading = computed(() => businessStore.loading)
+
+// Future enhancement: Combined loading state from multiple stores
+// const isLoading = computed(() =>
+//   businessStore.loading || eventsStore.loading || userStore.loading
+// )
+
 </script>
 
 <style>
@@ -40,22 +137,22 @@ const isLoading = computed(() => businessStore.loading)
 }
 
 :root {
-  --primary-navy: #1e3a8a;
-  --primary-cyan: #06b6d4;
-  --background-black: #000000;
+  --primary-gold: #D4AF37;
+  --primary-dark: #B8941F;
+  --background-luxury: #0A0A0A;
   --text-white: #ffffff;
-  --text-gray: rgba(255, 255, 255, 0.6);
+  --text-gold: #D4AF37;
+  --text-platinum: #E5E4E2;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--background-black);
+  background: var(--background-luxury);
   color: var(--text-white);
   overflow-x: hidden;
+  line-height: 1.5;
 }
 
 #app {
@@ -91,8 +188,8 @@ body {
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid rgba(6, 182, 212, 0.3);
-  border-top-color: var(--primary-cyan);
+  border: 4px solid rgba(212, 175, 55, 0.3);
+  border-top-color: var(--primary-gold);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -126,12 +223,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-cyan);
+  background: var(--primary-gold);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0891b2;
+  background: var(--primary-dark);
 }
 
 /* Mobile Safe Area */

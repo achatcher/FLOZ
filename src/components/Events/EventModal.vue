@@ -1,135 +1,80 @@
 <template>
-  <div v-if="isVisible" class="modal-overlay" @click="closeModal">
-    <div class="event-modal" @click.stop>
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <button class="close-btn" @click="closeModal">✕</button>
-      </div>
+  <BaseModal
+    :is-visible="isVisible"
+    :title="event?.title"
+    :description="event?.description"
+    :hero-image="event?.image"
+    :actions="modalActions"
+    @close="closeModal"
+  >
+    <!-- Event Details Content -->
+    <template #content>
+      <div v-if="event" class="event-details">
 
-      <!-- Event Image -->
-      <div class="event-hero">
-        <img
-          :src="event.image"
-          :alt="event.title"
-          class="event-hero-image"
-          @error="handleImageError"
-        />
-        <div v-if="event.featured" class="featured-overlay">
-          ⭐ Featured Event
+        <!-- Ticket Price Badge -->
+        <div v-if="event.ticketPrice" class="event-price">
+          <svg class="price-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 2H6C4.9 2 4 2.9 4 4V8.5C4.8 8.5 5.5 9.2 5.5 10S4.8 11.5 4 11.5V16C4 17.1 4.9 18 6 18H18C19.1 18 20 17.1 20 16V11.5C19.2 11.5 18.5 10.8 18.5 10S19.2 8.5 20 8.5V4C20 2.9 19.1 2 18 2ZM18 8.97C17.16 9.45 16.5 10.16 16.5 11S17.16 12.55 18 13.03V16H6V13.03C6.84 12.55 7.5 11.84 7.5 11S6.84 9.45 6 8.97V4H18V8.97Z"/>
+          </svg>
+          <span>{{ event.ticketPrice }}</span>
         </div>
-      </div>
 
-      <!-- Event Content -->
-      <div class="modal-content">
-        <div class="event-category-badge">{{ event.category }}</div>
-
-        <h1 class="event-title">{{ event.title }}</h1>
-
-        <!-- Event Details Grid -->
-        <div class="event-details-grid">
-          <div class="detail-item">
-            <div class="detail-label">📅 Date</div>
-            <div class="detail-value">
-              {{ formatDate(event.date) }}
-              <span v-if="event.endDate && event.endDate !== event.date">
-                - {{ formatDate(event.endDate) }}
-              </span>
+        <!-- Event Date & Time -->
+        <div class="event-datetime">
+          <div class="datetime-item">
+            <svg class="datetime-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 3H18V1H16V3H8V1H6V3H5C3.89 3 3.01 3.9 3.01 5L3 19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V8H19V19ZM7 10H12V15H7Z"/>
+            </svg>
+            <div class="datetime-content">
+              <h4 class="datetime-label">Date</h4>
+              <p class="datetime-value">{{ formatEventDate(event.date) }}</p>
             </div>
           </div>
 
-          <div class="detail-item">
-            <div class="detail-label">🕐 Time</div>
-            <div class="detail-value">{{ event.time }}</div>
-          </div>
-
-          <div class="detail-item">
-            <div class="detail-label">📍 Location</div>
-            <div class="detail-value">
-              <div>{{ event.location }}</div>
-              <div v-if="event.address" class="detail-address">{{ event.address }}</div>
+          <div v-if="event.time" class="datetime-item">
+            <svg class="datetime-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2ZM12 20C7.59 20 4 16.41 4 12S7.59 4 12 4 20 7.59 20 12 16.41 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z"/>
+            </svg>
+            <div class="datetime-content">
+              <h4 class="datetime-label">Time</h4>
+              <p class="datetime-value">{{ event.time }}</p>
             </div>
           </div>
+        </div>
 
-          <div v-if="event.ticketPrice" class="detail-item">
-            <div class="detail-label">🎫 Tickets</div>
-            <div class="detail-value">{{ event.ticketPrice }}</div>
-          </div>
-
-          <div v-if="event.organizer" class="detail-item">
-            <div class="detail-label">👥 Organizer</div>
-            <div class="detail-value">{{ event.organizer }}</div>
-          </div>
-
-          <div v-if="event.recurring" class="detail-item">
-            <div class="detail-label">🔄 Frequency</div>
-            <div class="detail-value">{{ event.recurring }}</div>
+        <!-- Event Location -->
+        <div v-if="event.location" class="event-location">
+          <svg class="location-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22S19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9S10.62 6.5 12 6.5 14.5 7.62 14.5 9 13.38 11.5 12 11.5Z"/>
+          </svg>
+          <div class="location-content">
+            <h4 class="location-label">Location</h4>
+            <p class="location-value">{{ event.location }}</p>
           </div>
         </div>
 
-        <!-- Event Description -->
-        <div class="event-description">
-          <h3>About This Event</h3>
-          <p>{{ event.description }}</p>
+        <!-- Event Category -->
+        <div v-if="event.category" class="event-category">
+          <svg class="category-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L13.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+          <span class="category-label">{{ event.category }}</span>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="event-actions">
-          <button
-            class="favorite-btn"
-            :class="{ active: isFavorite }"
-            @click="toggleFavorite"
-          >
-            {{ isFavorite ? '❤️ Remove from Favorites' : '🤍 Add to Favorites' }}
-          </button>
-
-          <div class="action-links">
-            <a
-              v-if="event.website"
-              :href="event.website"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="action-btn primary"
-            >
-              🌐 Visit Website
-            </a>
-
-            <a
-              v-if="event.phone"
-              :href="`tel:${event.phone}`"
-              class="action-btn secondary"
-            >
-              📞 Call {{ formatPhone(event.phone) }}
-            </a>
-
-            <button
-              v-if="event.coordinates"
-              @click="openDirections"
-              class="action-btn secondary"
-            >
-              🗺️ Get Directions
-            </button>
-
-            <button
-              @click="shareEvent"
-              class="action-btn secondary"
-            >
-              📤 Share Event
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { useEventsStore } from '@/stores/eventsStore'
+import BaseModal from '@/components/UI/BaseModal.vue'
+import { ICONS } from '@/utils/icons'
 
 const props = defineProps({
   event: {
     type: Object,
-    required: true
+    default: null
   },
   isVisible: {
     type: Boolean,
@@ -139,59 +84,91 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const eventsStore = useEventsStore()
-
-const isFavorite = computed(() => eventsStore.isEventFavorite(props.event.id))
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
-
-const formatPhone = (phone) => {
-  if (!phone) return ''
-  const cleaned = phone.replace(/\D/g, '')
-  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
-  if (match) {
-    return `(${match[1]}) ${match[2]}-${match[3]}`
-  }
-  return phone
-}
-
 const closeModal = () => {
   emit('close')
 }
 
-const toggleFavorite = () => {
-  if (isFavorite.value) {
-    eventsStore.removeFromFavorites(props.event.id)
-  } else {
-    eventsStore.addToFavorites(props.event.id)
+// Modal Actions with white SVG icons
+const modalActions = computed(() => {
+  if (!props.event) return []
+
+  const actions = []
+
+  if (props.event.website) {
+    actions.push({
+      label: 'Website',
+      icon: ICONS.WEBSITE,
+      handler: openWebsite,
+      variant: 'primary',
+      tooltip: 'Visit event website'
+    })
+  }
+
+  if (props.event.phone) {
+    actions.push({
+      label: 'Call',
+      icon: ICONS.PHONE,
+      handler: callPhone,
+      variant: 'secondary',
+      tooltip: 'Call organizer'
+    })
+  }
+
+  if (props.event.coordinates || props.event.address || props.event.location) {
+    actions.push({
+      label: 'Directions',
+      icon: ICONS.DIRECTIONS,
+      handler: openDirections,
+      variant: 'secondary',
+      tooltip: 'Get directions'
+    })
+  }
+
+  actions.push({
+    label: 'Share',
+    icon: ICONS.SHARE,
+    handler: shareEvent,
+    variant: 'ghost',
+    tooltip: 'Share event'
+  })
+
+  return actions
+})
+
+// Action Functions
+const openWebsite = () => {
+  if (props.event?.website) {
+    window.open(props.event.website, '_blank')
+  }
+}
+
+const callPhone = () => {
+  if (props.event?.phone) {
+    window.location.href = `tel:${props.event.phone}`
   }
 }
 
 const openDirections = () => {
-  if (props.event.coordinates) {
+  if (props.event?.coordinates) {
     const { lat, lng } = props.event.coordinates
     const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
     window.open(url, '_blank')
-  } else if (props.event.address) {
+  } else if (props.event?.address) {
     const encodedAddress = encodeURIComponent(props.event.address)
     const url = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`
+    window.open(url, '_blank')
+  } else if (props.event?.location) {
+    const encodedLocation = encodeURIComponent(props.event.location)
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodedLocation}`
     window.open(url, '_blank')
   }
 }
 
 const shareEvent = async () => {
   const shareData = {
-    title: props.event.title,
-    text: `Check out this event: ${props.event.title} on ${formatDate(props.event.date)}`,
-    url: props.event.website || window.location.href
+    title: props.event?.title,
+    text: `Check out this event: ${props.event?.title} on ${formatEventDate(props.event?.date)}`,
+    url: props.event?.website || window.location.href
   }
 
   if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
@@ -208,14 +185,13 @@ const shareEvent = async () => {
 }
 
 const fallbackShare = () => {
-  const text = `Check out this event: ${props.event.title} on ${formatDate(props.event.date)}`
-  const url = props.event.website || window.location.href
+  const text = `Check out this event: ${props.event?.title} on ${formatEventDate(props.event?.date)}`
+  const url = props.event?.website || window.location.href
 
   if (navigator.clipboard) {
     navigator.clipboard.writeText(`${text}\n${url}`)
     alert('Event details copied to clipboard!')
   } else {
-    // Fallback for older browsers
     const textArea = document.createElement('textarea')
     textArea.value = `${text}\n${url}`
     document.body.appendChild(textArea)
@@ -226,267 +202,164 @@ const fallbackShare = () => {
   }
 }
 
-const handleImageError = (e) => {
-  e.target.src = '/images/events/default-event.jpg'
+const formatEventDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
 }
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+/* Event-specific styling for BaseModal content */
+.event-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Ticket Price Badge */
+.event-price {
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: var(--space-4);
-  backdrop-filter: blur(5px);
-}
-
-.event-modal {
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-2xl);
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.modal-header {
-  position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
-  z-index: 10;
-}
-
-.close-btn {
-  background: rgba(0, 0, 0, 0.7);
-  border: none;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: var(--font-size-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition-all);
-}
-
-.close-btn:hover {
-  background: rgba(0, 0, 0, 0.9);
-  transform: scale(1.1);
-}
-
-.event-hero {
-  position: relative;
-  aspect-ratio: 16/9;
-  overflow: hidden;
-  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-}
-
-.event-hero-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.featured-overlay {
-  position: absolute;
-  bottom: var(--space-4);
-  left: var(--space-4);
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  color: #000;
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-full);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  font-size: var(--font-size-sm);
-}
-
-.modal-content {
-  padding: var(--space-6);
-}
-
-.event-category-badge {
-  display: inline-block;
-  background: rgba(var(--color-primary-rgb), 0.1);
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-primary-alpha-10);
+  border: 1px solid var(--color-primary-alpha-30);
+  border-radius: var(--radius-lg);
   color: var(--color-primary);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
-  margin-bottom: var(--space-3);
 }
 
-.event-title {
-  color: var(--color-text-primary);
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-  margin-bottom: var(--space-6);
+.price-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
-.event-details-grid {
+/* Event Date & Time Section */
+.event-datetime {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--space-4);
-  margin-bottom: var(--space-6);
-  background: rgba(255, 255, 255, 0.02);
-  padding: var(--space-4);
-  border-radius: var(--radius-xl);
 }
 
-.detail-item {
+.datetime-item {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-primary);
 }
 
-.detail-label {
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  min-width: 80px;
-  font-size: var(--font-size-sm);
+.datetime-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.detail-value {
-  color: var(--color-text-primary);
-  font-size: var(--font-size-sm);
+.datetime-content {
   flex: 1;
 }
 
-.detail-address {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  margin-top: var(--space-1);
-}
-
-.event-description {
-  margin-bottom: var(--space-6);
-}
-
-.event-description h3 {
-  color: var(--color-text-primary);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--space-3);
-}
-
-.event-description p {
-  color: var(--color-text-secondary);
-  line-height: var(--line-height-relaxed);
-  font-size: var(--font-size-base);
-}
-
-.event-actions {
-  border-top: 1px solid var(--color-border-subtle);
-  padding-top: var(--space-6);
-}
-
-.favorite-btn {
-  width: 100%;
-  padding: var(--btn-padding-lg);
-  border: 1px solid var(--color-border-muted);
-  border-radius: var(--btn-border-radius);
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--color-text-primary);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition: var(--transition-all);
-  margin-bottom: var(--space-4);
-}
-
-.favorite-btn:hover {
-  border-color: var(--color-primary);
-  background: rgba(var(--color-primary-rgb), 0.05);
-}
-
-.favorite-btn.active {
-  border-color: #ff4444;
-  background: rgba(255, 68, 68, 0.05);
-  color: #ff4444;
-}
-
-.action-links {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: var(--space-3);
-}
-
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--btn-padding-base);
-  border-radius: var(--btn-border-radius);
-  text-decoration: none;
+.datetime-label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  transition: var(--transition-all);
-  border: none;
-  cursor: pointer;
-  gap: var(--space-2);
+  color: var(--color-text-tertiary);
+  margin: 0 0 var(--space-1);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
 }
 
-.action-btn.primary {
-  background: var(--color-primary);
-  color: #000;
-}
-
-.action-btn.primary:hover {
-  background: var(--color-primary-light);
-  transform: translateY(-1px);
-}
-
-.action-btn.secondary {
-  background: rgba(255, 255, 255, 0.05);
+.datetime-value {
+  font-size: var(--font-size-base);
   color: var(--color-text-primary);
-  border: 1px solid var(--color-border-muted);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
 }
 
-.action-btn.secondary:hover {
-  border-color: var(--color-primary);
-  background: rgba(var(--color-primary-rgb), 0.1);
+/* Event Location Section */
+.event-location {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-primary);
 }
 
-/* Mobile Responsive */
-@media (max-width: 640px) {
-  .modal-overlay {
-    padding: 0;
-    align-items: flex-end;
-  }
+.location-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
 
-  .event-modal {
-    max-height: 95vh;
-    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-    margin: 0;
-  }
+.location-content {
+  flex: 1;
+}
 
-  .modal-content {
-    padding: var(--space-4);
-  }
+.location-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-tertiary);
+  margin: 0 0 var(--space-1);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
 
-  .event-title {
-    font-size: var(--font-size-2xl);
-  }
+.location-value {
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
 
-  .event-details-grid {
+/* Event Category Badge */
+.event-category {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  width: fit-content;
+}
+
+.category-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.category-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .event-datetime {
     grid-template-columns: 1fr;
   }
 
-  .action-links {
-    grid-template-columns: 1fr;
+  .datetime-item,
+  .event-location {
+    padding: var(--space-3);
   }
 }
 </style>

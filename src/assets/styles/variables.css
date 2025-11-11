@@ -14,20 +14,21 @@
 
 :root {
   /* ===== BRAND COLORS ===== */
-  /* Primary Brand Colors - Update these for rebranding */
-  --color-primary: #00D9FF;           /* Main brand cyan */
-  --color-primary-dark: #0099CC;      /* Darker cyan for gradients */
-  --color-primary-light: #33E1FF;     /* Lighter cyan for accents */
-  --color-primary-rgb: 0, 217, 255;   /* RGB values for rgba() usage */
-  --color-primary-alpha-10: rgba(0, 217, 255, 0.1);
-  --color-primary-alpha-20: rgba(0, 217, 255, 0.2);
-  --color-primary-alpha-30: rgba(0, 217, 255, 0.3);
+  /* Primary Brand Colors - Sophisticated Gold & Black */
+  --color-primary: #D4AF37;           /* Elegant gold */
+  --color-primary-dark: #B8941F;      /* Darker gold for gradients */
+  --color-primary-light: #E6C756;     /* Lighter gold for accents */
+  --color-primary-rgb: 212, 175, 55;  /* RGB values for rgba() usage */
+  --color-primary-alpha-10: rgba(212, 175, 55, 0.1);
+  --color-primary-alpha-20: rgba(212, 175, 55, 0.2);
+  --color-primary-alpha-30: rgba(212, 175, 55, 0.3);
 
-  /* Background Colors */
-  --color-bg-primary: #000000;        /* Main app background */
-  --color-bg-secondary: #0a0a0a;      /* Card/modal backgrounds */
-  --color-bg-tertiary: #111111;       /* Elevated surfaces */
-  --color-bg-surface: #1a1a1a;        /* Interactive surfaces */
+  /* Background Colors - Elegant Dark Palette */
+  --color-bg-primary: #0A0A0A;        /* Rich black background */
+  --color-bg-secondary: #121212;      /* Elevated charcoal surfaces */
+  --color-bg-tertiary: #1A1A1A;       /* Card backgrounds */
+  --color-bg-surface: #1F1F1F;        /* Interactive surfaces */
+  --color-bg-luxury: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);  /* Premium gradient */
 
   /* Text Colors */
   --color-text-primary: #ffffff;      /* Main text */
@@ -45,15 +46,21 @@
   --color-border-accent: var(--color-primary-alpha-30);
 
   /* Status Colors */
-  --color-success: #00FF88;
-  --color-warning: #FFD700;
-  --color-error: #FF4444;
+  --color-success: #10B981;          /* Refined green */
+  --color-warning: #F59E0B;          /* Sophisticated amber */
+  --color-error: #DC2626;            /* Elegant red */
   --color-info: var(--color-primary);
 
+  /* Luxury Accent Colors */
+  --color-platinum: #E5E4E2;         /* Premium platinum */
+  --color-champagne: #F7E7CE;        /* Luxury champagne */
+  --color-charcoal: #2C2C2C;         /* Deep charcoal grey */
+
   /* ===== TYPOGRAPHY ===== */
-  /* Font Families */
-  --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-family-heading: var(--font-family-primary);
+  /* Font Families - Elegant & Sophisticated */
+  --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+  --font-family-heading: 'Playfair Display', 'Times New Roman', Georgia, serif;  /* Elegant serif for headings */
+  --font-family-luxury: 'Cormorant Garamond', 'Times New Roman', Georgia, serif; /* Ultra-luxury serif */
   --font-family-monospace: 'SF Mono', Monaco, 'Cascadia Code', monospace;
 
   /* Font Sizes - Mobile First */
@@ -156,11 +163,22 @@
 
   /* ===== COMPONENT-SPECIFIC VARIABLES ===== */
 
-  /* Buttons - Consistent Professional Styling */
+  /* Mobile Touch Interactions */
+  --touch-target-min: 44px;          /* iOS minimum touch target size */
+  --touch-target-recommended: 48px;  /* Recommended touch target size */
+  --touch-spacing: var(--space-3);   /* Minimum spacing between touch targets */
+  --swipe-threshold: 50px;           /* Minimum distance for swipe gestures */
+  --tap-delay: 0ms;                  /* Remove 300ms tap delay on mobile */
+
+  /* Buttons - Mobile-Optimized Touch Targets */
+  --btn-height-sm: var(--touch-target-min);
+  --btn-height-base: var(--touch-target-recommended);
+  --btn-height-lg: 56px;
   --btn-padding-sm: var(--space-2) var(--space-4);
   --btn-padding-base: var(--space-3) var(--space-5);
-  --btn-padding-lg: var(--space-3) var(--space-6);
+  --btn-padding-lg: var(--space-4) var(--space-6);
   --btn-border-radius: var(--radius-base);
+  --btn-min-width: var(--touch-target-recommended);
 
   /* Cards */
   --card-padding: var(--space-6);
@@ -183,14 +201,31 @@
 }
 
 /* ===== RESPONSIVE BREAKPOINTS ===== */
-/* These can be used with @media queries */
+/* Mobile-First Design System */
 
-/* Mobile: Default (320px+) */
+/* Base Mobile: 320px+ (Default) */
+:root {
+  /* Mobile-optimized touch targets */
+  --btn-height-mobile: var(--touch-target-recommended);
+  --nav-item-height: var(--touch-target-recommended);
+  --card-min-height: var(--touch-target-recommended);
+
+  /* Mobile-optimized spacing */
+  --page-padding: var(--space-4);
+  --section-spacing: var(--space-6);
+  --element-spacing: var(--space-3);
+
+  /* Mobile-optimized font sizes */
+  --mobile-font-scale: 0.9;
+}
+
 /* Small Mobile: 375px+ */
 @media (min-width: 375px) {
   :root {
     --font-size-base: 15px;
     --font-size-lg: 17px;
+    --mobile-font-scale: 1;
+    --page-padding: var(--space-5);
   }
 }
 

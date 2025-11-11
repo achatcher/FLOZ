@@ -95,14 +95,17 @@
   background: var(--color-bg-surface);
 }
 
+/* Elegant SVG icons for category placeholders */
 .category-placeholder .icon {
-  font-size: 35px;
+  width: 35px;
+  height: 35px;
   opacity: 0.3;
-  font-style: normal;
+  color: var(--color-text-tertiary);
 }
 
 .category-card.large .category-placeholder .icon {
-  font-size: 40px;
+  width: 40px;
+  height: 40px;
 }
 
 /* ===== CATEGORY OVERLAY SYSTEM ===== */
@@ -382,4 +385,208 @@
   .category-card.large .category-placeholder .icon {
     font-size: 75px;
   }
+}
+
+/* ===== LUXURY ENHANCEMENTS ===== */
+
+/* Hero Banner Overlay */
+.hero-banner {
+  position: relative;
+  /* Reduced top margin for better professional spacing */
+  margin-top: var(--space-2);
+}
+
+.hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+  padding: var(--space-8) var(--space-4) var(--space-6);
+  color: white;
+  /* Ensure text is never cut off by adding extra top padding */
+  padding-top: calc(var(--space-8) + var(--space-4));
+}
+
+.hero-content {
+  max-width: var(--container-md);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.hero-subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-platinum);
+  margin-bottom: var(--space-6);
+  font-style: italic;
+}
+
+.hero-features {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-platinum);
+  font-weight: var(--font-weight-medium);
+}
+
+.feature-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
+}
+
+/* Tier Indicators */
+.tier-indicator {
+  display: inline-block;
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  margin-top: var(--space-2);
+}
+
+.tier-indicator.signature {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: var(--color-bg-primary);
+  box-shadow: 0 2px 8px var(--color-primary-alpha-30);
+}
+
+.tier-indicator.premier {
+  background: var(--color-platinum);
+  color: var(--color-bg-primary);
+  box-shadow: 0 2px 8px rgba(229, 228, 226, 0.3);
+}
+
+.tier-indicator.curated {
+  background: var(--color-midnight);
+  color: var(--color-text-primary);
+  box-shadow: 0 2px 8px rgba(25, 25, 112, 0.3);
+}
+
+/* Exclusive Access Card */
+.category-card.exclusive-access {
+  background: linear-gradient(135deg, var(--color-primary-alpha-10), var(--color-primary-alpha-20));
+  border: 2px solid var(--color-primary-alpha-30);
+}
+
+.exclusive-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.exclusive-icon {
+  font-size: 45px;
+  margin-bottom: var(--space-2);
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.exclusive-content .category-subtitle {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--space-1);
+}
+
+.exclusive-content .category-name {
+  color: var(--color-primary);
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  text-shadow: none;
+  margin-bottom: var(--space-2);
+}
+
+/* Responsive Hero Adjustments */
+@media (min-width: 640px) {
+  .hero-banner {
+    /* Maintain professional spacing on tablets */
+    margin-top: var(--space-3);
+  }
+
+  .hero-overlay {
+    /* More generous padding on larger screens */
+    padding-top: calc(var(--space-12) + var(--space-4));
+  }
+
+  .hero-title {
+    font-size: var(--font-size-5xl);
+  }
+
+  .hero-subtitle {
+    font-size: var(--font-size-xl);
+  }
+
+  .feature-item {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-banner {
+    /* Professional spacing maintained on desktop */
+    margin-top: var(--space-4);
+  }
+
+  .hero-title {
+    font-size: var(--font-size-6xl);
+  }
+
+  .hero-overlay {
+    padding: var(--space-12) var(--space-8) var(--space-10);
+    /* Ensure plenty of top padding for text visibility */
+    padding-top: calc(var(--space-16) + var(--space-4));
+  }
+
+  .exclusive-icon {
+    font-size: 60px;
+  }
+}
+
+/* ===== TIER BADGE STYLING ===== */
+/* Matches the signature/premier badge styling from other pages */
+
+.tier-badge {
+  display: inline-block;
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+}
+
+.tier-badge.signature {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: var(--color-bg-primary);
+  box-shadow: 0 2px 8px var(--color-primary-alpha-30);
 }

@@ -109,7 +109,7 @@ const toggleFavorite = () => {
 }
 
 const handleImageError = (e) => {
-  e.target.src = '/images/events/default-event.jpg'
+  e.target.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop&crop=center'
 }
 </script>
 

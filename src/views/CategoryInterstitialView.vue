@@ -30,34 +30,18 @@
     <TopBar :title="categoryName" @toggle-menu="toggleSideMenu" :show-back="true" />
 
     <div class="interstitial-content">
-      <!-- ===== MAIN ADVERTISEMENT DISPLAY ===== -->
-      <!-- Interactive ad with business integration - click opens business modal -->
-      <div v-if="ad" class="ad-container" @click="openBusinessModal">
+      <!-- ===== HERO BANNER ADVERTISEMENT ===== -->
+      <!-- MONETIZATION: Premium advertising space consistent with category pages -->
+      <div v-if="heroBanner" class="hero-banner">
         <img
-          :src="ad.image"
-          :alt="ad.title"
-          class="ad-image"
+          :src="heroBanner.image"
+          :alt="heroBanner.title"
+          class="hero-image"
+          @click="openAdLink(heroBanner.link)"
           @error="handleImageError"
         />
-        <!-- Overlay with ad content and call-to-action -->
-        <div class="ad-overlay">
-          <h2 class="ad-title">{{ ad.title }}</h2>
-          <p v-if="ad.description" class="ad-description">{{ ad.description }}</p>
-          <div class="ad-cta">
-            <span class="tap-indicator">👆 Tap to learn more</span>
-          </div>
-        </div>
       </div>
 
-      <!-- ===== FALLBACK CONTENT ===== -->
-      <!-- Shown when no advertisement is available for this category -->
-      <div v-else class="ad-container fallback">
-        <div class="fallback-content">
-          <div class="category-icon">{{ getCategoryIcon(categoryName) }}</div>
-          <h2 class="fallback-title">{{ categoryName }}</h2>
-          <p class="fallback-text">Discover premier establishments</p>
-        </div>
-      </div>
 
       <!-- ===== ACTION CONTROLS ===== -->
       <!-- User controls for navigation and countdown display -->
@@ -138,6 +122,7 @@ const businessStore = useBusinessStore()
 const showSideMenu = ref(false)                    // Side menu visibility
 const countdown = ref(3)                           // Timer countdown (3 seconds for affluent users)
 let countdownInterval = null                       // Timer interval reference
+const heroBanner = ref(null)                       // Hero banner advertisement
 
 // Business Modal State
 const selectedBusiness = ref(null)                 // Selected business for modal
@@ -150,41 +135,9 @@ const showBusinessModal = ref(false)               // Modal visibility state
  */
 const categoryName = computed(() => route.params.categoryName || 'Category')
 
-/**
- * Fetches interstitial advertisement for current category
- * Returns null if no ad is configured for this category
- */
-const ad = computed(() => {
-  return businessStore.getInterstitialAd(categoryName.value)
-})
 
 // ===== UTILITY FUNCTIONS =====
 
-/**
- * Maps category names to display icons for fallback content
- * CUSTOMIZATION: Add new categories and their representative emojis here
- */
-const getCategoryIcon = (category) => {
-  const iconMap = {
-    'Dining Out': '🍽️',
-    'Fine Dining': '🍽️',
-    'Golf & Country Clubs': '⛳',
-    'Luxury Real Estate': '🏠',
-    'Live Entertainment': '🎸',
-    'Luxury Services': '⚓',
-    'Wellness & Fitness': '🏋️',
-    'Shopping & Retail': '🛍️',
-    'Charity & Community': '❤️',
-    'Events & Festivals': '🎉',
-    'Lake Services': '⚓',
-    'Lake Fun': '🎉',
-    'Local Media': '📰',
-    'West Side': '🏔️',
-    'LOZ Deals': '💰',
-    'Podcast Network': '🎙️'
-  }
-  return iconMap[category] || '📍' // Default icon for unmapped categories
-}
 
 // ===== EVENT HANDLERS =====
 
@@ -218,24 +171,6 @@ const handleImageError = (e) => {
   e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjMWExYTJlIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjAwIiBmaWxsPSIjMDBEOUZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiPkFkdmVydGlzZW1lbnQ8L3RleHQ+Cjwvc3ZnPgo='
 }
 
-/**
- * Opens business modal when ad is clicked
- * Integrates advertisement with detailed business information for lead generation
- * Pauses countdown timer while modal is open
- */
-const openBusinessModal = () => {
-  if (ad.value?.business_id) {
-    const business = businessStore.getBusinessById(ad.value.business_id)
-    if (business) {
-      selectedBusiness.value = business
-      showBusinessModal.value = true
-      // Pause the countdown when modal opens for better UX
-      if (countdownInterval) {
-        clearInterval(countdownInterval)
-      }
-    }
-  }
-}
 
 /**
  * Closes business modal and resumes countdown timer
@@ -255,13 +190,82 @@ const closeBusinessModal = () => {
   }
 }
 
+/**
+ * Handles hero banner ad clicks
+ * Opens business modal if ad has business_id, otherwise opens external link
+ */
+const openAdLink = (link) => {
+  // Check if this is a banner ad with a business_id
+  if (heroBanner.value?.business_id) {
+    const business = businessStore.getBusinessById(heroBanner.value.business_id)
+    if (business) {
+      selectedBusiness.value = business
+      showBusinessModal.value = true
+      // Pause countdown when modal opens
+      if (countdownInterval) {
+        clearInterval(countdownInterval)
+      }
+      return
+    }
+  }
+
+  // Fallback to opening external link
+  if (link && link !== '#') {
+    window.open(link, '_blank')
+  }
+}
+
 // ===== LIFECYCLE HOOKS =====
 
 /**
- * Component initialization - starts the countdown timer
+ * Component initialization - starts the countdown timer and loads hero banner
  * Timer automatically progresses to category listing after 3 seconds
  */
 onMounted(() => {
+  // Initialize hero banner with category-specific ads using actual business images
+  heroBanner.value = businessStore.getBannerAd(categoryName.value, 'hero')
+
+  if (!heroBanner.value) {
+    // Category-specific ads using actual business images
+    let featuredBusiness = null
+
+    if (categoryName.value === 'Cocktail Hour') {
+      featuredBusiness = businessStore.getBusinessById(8) // The Brass Monkey
+    } else if (categoryName.value === 'Fine Dining') {
+      featuredBusiness = businessStore.getBusinessById(1) // Le Bernardin Hills
+    } else if (categoryName.value === 'Wellness & Spa') {
+      featuredBusiness = businessStore.getBusinessById(10) // Serenity Hills Spa
+    } else if (categoryName.value === 'Luxury Real Estate') {
+      featuredBusiness = businessStore.getBusinessById(11) // Hills Premier Properties
+    } else if (categoryName.value === 'Luxury Shopping') {
+      featuredBusiness = businessStore.getBusinessById(9) // Cartier Boutique
+    } else if (categoryName.value === 'Arts & Culture') {
+      featuredBusiness = businessStore.getBusinessById(12) // Hills Cultural Center
+    } else if (categoryName.value === 'Athletics') {
+      featuredBusiness = businessStore.getBusinessById(13) // Elite Athletic Club
+    } else if (categoryName.value === 'Private Clubs') {
+      featuredBusiness = businessStore.getBusinessById(2) // The Country Club
+    } else if (categoryName.value === 'Children') {
+      featuredBusiness = businessStore.getBusinessById(31) // Little Explorers Academy
+    }
+
+    if (featuredBusiness) {
+      heroBanner.value = {
+        image: featuredBusiness.heroImage || featuredBusiness.logo || featuredBusiness.image,
+        title: featuredBusiness.name,
+        business_id: featuredBusiness.id,
+        link: '#'
+      }
+    } else {
+      heroBanner.value = {
+        image: '/images/ads/default-hero.jpg',
+        title: 'Featured Business',
+        link: '#'
+      }
+    }
+  }
+
+  // Start countdown timer
   countdownInterval = setInterval(() => {
     countdown.value--
     if (countdown.value <= 0) {

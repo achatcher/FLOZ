@@ -32,13 +32,13 @@
 }
 
 .spacer {
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target-recommended);
+  height: var(--touch-target-recommended);
 }
 
 .top-bar-btn {
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target-recommended);
+  height: var(--touch-target-recommended);
   background: transparent;
   border: none;
   color: var(--color-text-primary);
@@ -49,6 +49,8 @@
   justify-content: center;
   border-radius: var(--radius-md);
   transition: var(--transition-fast);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .top-bar-btn:hover {
@@ -98,6 +100,9 @@
   padding: var(--space-2);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wide);
+  min-height: var(--nav-item-height);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .bottom-nav-item:hover,
@@ -138,17 +143,23 @@
 .side-menu-header {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  justify-content: space-between;
   margin-bottom: var(--space-8);
   padding-bottom: var(--space-6);
   border-bottom: 1px solid var(--color-border-secondary);
   position: relative;
 }
 
-.menu-logo {
-  width: 50px;
-  height: 50px;
-  border-radius: var(--radius-lg);
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.menu-logo-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--color-primary);
 }
 
 .side-menu-logo {
@@ -184,6 +195,9 @@
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wide);
   font-size: var(--font-size-sm);
+  min-height: var(--nav-item-height);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .side-menu-link:hover,
@@ -199,15 +213,18 @@
 }
 
 .side-menu-close {
-  position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
   background: transparent;
   border: none;
   color: var(--color-text-muted);
-  font-size: var(--font-size-xl);
   cursor: pointer;
   transition: var(--transition-fast);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.side-menu-close svg {
+  width: 20px;
+  height: 20px;
 }
 
 .side-menu-close:hover {
