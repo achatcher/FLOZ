@@ -1,26 +1,18 @@
 <template>
   <div class="share-view">
-    <TopBar title="Share FLOZ" :show-back="true" />
+    <TopBar title="Share The Greenville Social" :show-back="true" />
 
-    <div class="share-content">
+    <main class="share-content">
       <!-- Hero Section -->
-      <div class="hero-section">
-        <div class="hero-animation">
-          <div class="floating-icons">
-            <span class="floating-icon" style="--delay: 0s">🚤</span>
-            <span class="floating-icon" style="--delay: 0.5s">🎣</span>
-            <span class="floating-icon" style="--delay: 1s">☀️</span>
-            <span class="floating-icon" style="--delay: 1.5s">🏖️</span>
-          </div>
-        </div>
-        <h1 class="hero-title">Spread the Lake Love! 💙</h1>
-        <p class="hero-subtitle">Help others discover the magic of Lake of the Ozarks</p>
-      </div>
+      <header class="hero-section">
+        <h1 class="hero-title">Share The Greenville Social</h1>
+        <p class="hero-subtitle">Invite others to discover authentic Greenville lifestyle experiences</p>
+      </header>
 
       <!-- QR Code Section -->
-      <div class="qr-section">
+      <section class="qr-section" aria-labelledby="qr-heading">
         <div class="qr-container">
-          <div class="qr-glow"></div>
+          <div class="qr-glow" aria-hidden="true"></div>
           <div class="qr-wrapper">
             <qrcode-vue
               :value="shareUrl"
@@ -29,148 +21,169 @@
               :margin="2"
               render-as="svg"
               class="qr-code"
+              :alt="`QR code linking to ${shareUrl}`"
             />
-            <div class="qr-center-logo">
+            <div class="qr-center-logo" aria-hidden="true">
               <div class="logo-circle">
-                <span class="logo-text">FLOZ</span>
+                <span class="logo-text">GS</span>
               </div>
             </div>
           </div>
         </div>
 
         <div class="qr-info">
-          <h3 class="qr-title">📱 Scan & Go!</h3>
-          <p class="qr-description">Point your camera here for instant access</p>
+          <h2 id="qr-heading" class="qr-title">
+            <svg class="title-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M9.5 6.5V8.5H16V15H14V16.5H16.5V15V8.5V6.5H9.5ZM16.5 6.5H18V8.5V15V16.5H16.5V18H15V16.5H8.5V15V8.5V6.5H15V5H16.5V6.5ZM15 8.5V15H9.5V8.5H15Z"/>
+            </svg>
+            Scan & Access Instantly
+          </h2>
+          <p class="qr-description">Point your camera at the QR code for immediate access to The Greenville Social</p>
 
           <div class="share-url">
             <div class="url-container">
-              <span class="url-text">{{ shareUrl }}</span>
-              <button class="copy-btn" @click="copyLink" :class="{ copied: linkCopied }">
-                <span class="copy-icon">{{ linkCopied ? '✓' : '📋' }}</span>
-                {{ linkCopied ? 'Copied!' : 'Copy' }}
+              <label for="share-url-input" class="visually-hidden">App URL</label>
+              <input
+                id="share-url-input"
+                type="text"
+                readonly
+                :value="shareUrl"
+                class="url-input"
+                aria-label="App URL for sharing"
+              />
+              <button
+                class="copy-btn"
+                @click="copyLink"
+                :class="{ copied: linkCopied }"
+                :aria-label="linkCopied ? 'Link copied to clipboard' : 'Copy link to clipboard'"
+              >
+                <svg v-if="linkCopied" class="copy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z"/>
+                </svg>
+                <svg v-else class="copy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/>
+                </svg>
+                <span>{{ linkCopied ? 'Copied!' : 'Copy Link' }}</span>
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Quick Share Actions -->
-      <div class="quick-share">
-        <h3 class="section-title">✨ Quick Share</h3>
+      <!-- Share Methods Section -->
+      <section class="share-methods-section" aria-labelledby="share-methods-heading">
+        <h2 id="share-methods-heading" class="section-title">
+          <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12S8.96 11.53 8.91 11.3L15.96 7.19C16.5 7.69 17.21 8 18 8C19.66 8 21 6.66 21 5S19.66 2 18 2 15 3.34 15 5C15 5.24 15.04 5.47 15.09 5.7L8.04 9.81C7.5 9.31 6.79 9 6 9C4.34 9 3 10.34 3 12S4.34 15 6 15C6.79 15 7.5 14.69 8.04 14.19L15.16 18.34C15.11 18.55 15.08 18.77 15.08 19C15.08 20.61 16.39 21.92 18 21.92S20.92 20.61 20.92 19C20.92 17.39 19.61 16.08 18 16.08Z"/>
+          </svg>
+          Share With Others
+        </h2>
         <div class="share-grid">
-          <button class="share-card primary" @click="handleNativeShare">
-            <div class="share-card-icon">📤</div>
-            <div class="share-card-content">
-              <span class="share-card-title">Share App</span>
-              <span class="share-card-subtitle">Native sharing</span>
+          <button
+            class="share-card primary"
+            @click="handleNativeShare"
+            aria-label="Share using device's native sharing"
+          >
+            <div class="share-card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12S8.96 11.53 8.91 11.3L15.96 7.19C16.5 7.69 17.21 8 18 8C19.66 8 21 6.66 21 5S19.66 2 18 2 15 3.34 15 5C15 5.24 15.04 5.47 15.09 5.7L8.04 9.81C7.5 9.31 6.79 9 6 9C4.34 9 3 10.34 3 12S4.34 15 6 15C6.79 15 7.5 14.69 8.04 14.19L15.16 18.34C15.11 18.55 15.08 18.77 15.08 19C15.08 20.61 16.39 21.92 18 21.92S20.92 20.61 20.92 19C20.92 17.39 19.61 16.08 18 16.08Z"/>
+              </svg>
             </div>
-            <div class="share-card-shine"></div>
+            <div class="share-card-content">
+              <span class="share-card-title">Quick Share</span>
+              <span class="share-card-subtitle">Use your device's share menu</span>
+            </div>
           </button>
 
-          <button class="share-card facebook" @click="shareOnFacebook">
-            <div class="share-card-icon">📘</div>
-            <div class="share-card-content">
-              <span class="share-card-title">Facebook</span>
-              <span class="share-card-subtitle">Post to timeline</span>
+          <button
+            class="share-card email"
+            @click="shareViaEmail"
+            aria-label="Share via email"
+          >
+            <div class="share-card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"/>
+              </svg>
             </div>
-            <div class="share-card-shine"></div>
-          </button>
-
-          <button class="share-card twitter" @click="shareOnTwitter">
-            <div class="share-card-icon">🐦</div>
-            <div class="share-card-content">
-              <span class="share-card-title">Twitter</span>
-              <span class="share-card-subtitle">Tweet about us</span>
-            </div>
-            <div class="share-card-shine"></div>
-          </button>
-
-          <button class="share-card email" @click="shareViaEmail">
-            <div class="share-card-icon">📧</div>
             <div class="share-card-content">
               <span class="share-card-title">Email</span>
-              <span class="share-card-subtitle">Send to friends</span>
+              <span class="share-card-subtitle">Send via email client</span>
             </div>
-            <div class="share-card-shine"></div>
+          </button>
+
+          <button
+            class="share-card facebook"
+            @click="shareOnFacebook"
+            aria-label="Share on Facebook"
+          >
+            <div class="share-card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </div>
+            <div class="share-card-content">
+              <span class="share-card-title">Facebook</span>
+              <span class="share-card-subtitle">Share on Facebook</span>
+            </div>
+          </button>
+
+          <button
+            class="share-card twitter"
+            @click="shareOnTwitter"
+            aria-label="Share on Twitter"
+          >
+            <div class="share-card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+              </svg>
+            </div>
+            <div class="share-card-content">
+              <span class="share-card-title">Twitter</span>
+              <span class="share-card-subtitle">Share on Twitter</span>
+            </div>
           </button>
         </div>
-      </div>
-
-      <!-- Install Section -->
-      <div class="install-section">
-        <h3 class="section-title">🚀 Get the App</h3>
-        <p class="section-subtitle">Install FLOZ for the ultimate Lake experience</p>
-
-        <!-- PWA Install Card -->
-        <div class="install-card" v-if="canInstall">
-          <div class="install-icon">📱</div>
-          <div class="install-content">
-            <h4 class="install-title">Install FLOZ App</h4>
-            <p class="install-description">• Works offline • Lightning fast • No app store needed</p>
-            <button class="install-btn" @click="installPWA">
-              Install Now
-              <span class="install-arrow">→</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Manual Install Instructions -->
-        <div class="manual-install" v-else>
-          <div class="install-steps">
-            <div class="install-step">
-              <div class="step-icon">📱</div>
-              <div class="step-content">
-                <strong>On Mobile:</strong>
-                <p>Tap the share button in your browser → "Add to Home Screen"</p>
-              </div>
-            </div>
-            <div class="install-step">
-              <div class="step-icon">💻</div>
-              <div class="step-content">
-                <strong>On Desktop:</strong>
-                <p>Look for the install icon in your address bar or bookmark this page</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </section>
 
       <!-- Community Stats -->
-      <div class="stats-section">
-        <h3 class="section-title">🌊 Join Our Community</h3>
+      <section class="stats-section" aria-labelledby="stats-heading">
+        <h2 id="stats-heading" class="section-title">
+          <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 22L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+          </svg>
+          Join Our Thriving Community
+        </h2>
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon">🏢</div>
-            <div class="stat-number">500+</div>
-            <div class="stat-label">Local Businesses</div>
+            <div class="stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h2v-2h2v-2h2v8z"/>
+              </svg>
+            </div>
+            <div class="stat-number">{{ dynamicStats.totalBusinesses }}+</div>
+            <div class="stat-label">Authentic Local Businesses</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">🎉</div>
-            <div class="stat-number">50+</div>
-            <div class="stat-label">Monthly Events</div>
+            <div class="stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 2C5.45 2 5 2.45 5 3V4H4C2.9 4 2 4.9 2 6V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V6C22 4.9 21.1 4 20 4H19V3C19 2.45 18.55 2 18 2S17 2.45 17 3V4H7V3C7 2.45 6.55 2 6 2Z"/>
+              </svg>
+            </div>
+            <div class="stat-number">{{ dynamicStats.categoryCount }}</div>
+            <div class="stat-label">Business Categories</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">❤️</div>
-            <div class="stat-number">10K+</div>
-            <div class="stat-label">Happy Users</div>
+            <div class="stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <div class="stat-number">100%</div>
+            <div class="stat-label">{{ dynamicStats.locationName }} Focused</div>
           </div>
         </div>
-      </div>
-
-      <!-- Final CTA -->
-      <div class="cta-section">
-        <div class="cta-background">
-          <div class="cta-waves"></div>
-          <h3 class="cta-title">🏖️ Love Lake of the Ozarks?</h3>
-          <p class="cta-description">Help us grow the community by sharing FLOZ with fellow lake lovers!</p>
-          <button class="cta-button" @click="handleNativeShare">
-            <span class="cta-sparkle">✨</span>
-            Share the Love
-            <span class="cta-sparkle">✨</span>
-          </button>
-        </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <BottomNav />
   </div>
@@ -181,17 +194,45 @@ import { ref, computed, onMounted } from 'vue'
 import QrcodeVue from 'qrcode.vue'
 import TopBar from '@/components/Navigation/TopBar.vue'
 import BottomNav from '@/components/Navigation/BottomNav.vue'
+import { useBusinessStore } from '@/stores/businessStore'
+import { useAppConfig } from '@/composables/useAppConfig'
 import analytics from '@/utils/analytics'
+
+const businessStore = useBusinessStore()
+const { initializeApp, getCurrentBusinesses, getConfig } = useAppConfig()
 
 const shareUrl = computed(() => window.location.origin)
 const qrSize = ref(250)
 const linkCopied = ref(false)
 const canInstall = ref(false)
 
+// Dynamic stats based on actual business data
+const dynamicStats = computed(() => {
+  const businesses = getCurrentBusinesses.value || []
+  const config = getConfig.value || {}
+
+  // Get unique categories from actual business data
+  const categories = [...new Set(businesses.map(b => b.category))].filter(Boolean)
+
+  return {
+    totalBusinesses: businesses.length,
+    categoryCount: categories.length,
+    locationName: config.location || 'Greenville'
+  }
+})
+
 // PWA Install Prompt
 let deferredPrompt = null
 
-onMounted(() => {
+onMounted(async () => {
+  // Initialize app configuration and load business data
+  try {
+    await initializeApp()
+    await businessStore.loadData()
+  } catch (error) {
+    console.error('Failed to initialize app data for ShareView:', error)
+  }
+
   // Check if PWA can be installed
   if (window.deferredPrompt) {
     canInstall.value = true
@@ -208,8 +249,8 @@ onMounted(() => {
 
 const handleNativeShare = async () => {
   const shareData = {
-    title: 'FLOZ - Lake of the Ozarks Guide',
-    text: '🌊 Discover the best of Lake of the Ozarks! Find businesses, events, dining, and more with FLOZ - your ultimate lake companion! 🚤',
+    title: 'The Greenville Social - Mountain Community Lifestyle',
+    text: 'Discover mountain lifestyle experiences in Greenville - your guide to dining, outdoor adventures, and community connections.',
     url: shareUrl.value
   }
 
@@ -220,7 +261,7 @@ const handleNativeShare = async () => {
       await navigator.share(shareData)
       analytics.track('share_completed', { method: 'native' })
       if (window.$toast) {
-        window.$toast.success('Thanks for sharing FLOZ! 🎉')
+        window.$toast.success('Thanks for sharing The Greenville Social!')
       }
     } catch (err) {
       if (err.name !== 'AbortError') {
@@ -234,7 +275,7 @@ const handleNativeShare = async () => {
 }
 
 const shareOnFacebook = () => {
-  const text = '🌊 Discover the best of Lake of the Ozarks with FLOZ! Your ultimate guide to local businesses, events, dining, and lake life! 🚤'
+  const text = 'Discover mountain lifestyle experiences in Greenville - your guide to dining, outdoor adventures, and community connections.'
   const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl.value)}&quote=${encodeURIComponent(text)}`
 
   analytics.track('share_completed', { method: 'facebook' })
@@ -242,7 +283,7 @@ const shareOnFacebook = () => {
 }
 
 const shareOnTwitter = () => {
-  const text = '🌊 Just found the perfect Lake of the Ozarks guide! FLOZ has everything - local businesses, events, dining spots, and more! 🚤 #LakeOfTheOzarks #FLOZ'
+  const text = 'Discover mountain lifestyle experiences in Greenville - your guide to dining, outdoor adventures, and community connections. #GreenvilleSocial'
   const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl.value)}`
 
   analytics.track('share_completed', { method: 'twitter' })
@@ -250,8 +291,8 @@ const shareOnTwitter = () => {
 }
 
 const shareViaEmail = () => {
-  const subject = '🌊 Check out FLOZ - Lake of the Ozarks Guide!'
-  const body = `Hey!\n\nI found this amazing app for Lake of the Ozarks and thought you'd love it!\n\nFLOZ has everything you need:\n🏢 Local businesses & services\n🎉 Live events & entertainment\n🍽️ Best dining spots\n🚤 Lake activities & marinas\n\nCheck it out: ${shareUrl.value}\n\nIt's become my go-to guide for everything at the lake!\n\nCheers! 🏖️`
+  const subject = 'Check out The Greenville Social - Mountain Community Lifestyle'
+  const body = `Hello!\n\nI wanted to share The Greenville Social with you - it's a curated guide to mountain community lifestyle in Greenville, SC.\n\nThe Greenville Social features:\n• Fine dining establishments\n• Hiking trails and outdoor recreation\n• Community events and experiences\n• Local services and amenities\n\nCheck it out: ${shareUrl.value}\n\nI think you'll find it quite valuable for discovering the best of Greenville's mountain lifestyle.\n\nBest regards!`
 
   analytics.track('share_completed', { method: 'email' })
   window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
@@ -288,7 +329,7 @@ const installPWA = async () => {
     if (outcome === 'accepted') {
       canInstall.value = false
       if (window.$toast) {
-        window.$toast.success('FLOZ installed! Check your home screen! 🎉')
+        window.$toast.success('The Greenville Social installed! Check your home screen!')
       }
     }
 
@@ -298,17 +339,30 @@ const installPWA = async () => {
 </script>
 
 <style scoped>
+/* ===== ACCESSIBILITY UTILITIES ===== */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ===== GLOBAL STYLES ===== */
 .share-view {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e  50%, #16213e 100%);
+  background: var(--color-bg-luxury);
   padding-bottom: 80px;
   position: relative;
   overflow-x: hidden;
 }
 
 .share-content {
-  padding: 20px;
+  padding: 32px 20px;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -316,117 +370,77 @@ const installPWA = async () => {
 /* ===== HERO SECTION ===== */
 .hero-section {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 56px;
   position: relative;
-}
-
-.hero-animation {
-  height: 120px;
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.floating-icons {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.floating-icon {
-  position: absolute;
-  font-size: 32px;
-  animation: float 6s ease-in-out infinite;
-  filter: drop-shadow(0 4px 8px rgba(6, 182, 212, 0.3));
-}
-
-.floating-icon:nth-child(1) {
-  left: 10%;
-  top: 20%;
-  animation-delay: 0s;
-}
-
-.floating-icon:nth-child(2) {
-  right: 15%;
-  top: 10%;
-  animation-delay: 1.5s;
-}
-
-.floating-icon:nth-child(3) {
-  left: 20%;
-  bottom: 10%;
-  animation-delay: 3s;
-}
-
-.floating-icon:nth-child(4) {
-  right: 10%;
-  bottom: 20%;
-  animation-delay: 4.5s;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  25% { transform: translateY(-15px) rotate(5deg); }
-  50% { transform: translateY(-10px) rotate(-3deg); }
-  75% { transform: translateY(-20px) rotate(3deg); }
+  padding: 0;
 }
 
 .hero-title {
-  color: white;
+  color: var(--color-text-primary);
   font-size: 32px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0 0 12px 0;
-  background: linear-gradient(45deg, #06b6d4, #3b82f6, #8b5cf6);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.3;
+  letter-spacing: -0.25px;
+  font-family: var(--font-family-heading);
 }
 
 .hero-subtitle {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 18px;
+  color: var(--color-text-secondary);
+  font-size: 17px;
   margin: 0;
   font-weight: 400;
+  line-height: 1.5;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ===== QR CODE SECTION ===== */
 .qr-section {
-  margin-bottom: 50px;
+  margin-bottom: 64px;
   text-align: center;
 }
 
 .qr-container {
   position: relative;
   display: inline-block;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .qr-glow {
   position: absolute;
   inset: -20px;
-  background: linear-gradient(45deg, #06b6d4, #3b82f6, #8b5cf6, #06b6d4);
-  border-radius: 30px;
-  animation: rotate 4s linear infinite;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.4), rgba(212, 175, 55, 0.15), transparent);
+  border-radius: 32px;
+  animation: pulse 4s ease-in-out infinite;
   filter: blur(20px);
   opacity: 0.7;
 }
 
-@keyframes rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.8;
+  }
 }
 
 .qr-wrapper {
   position: relative;
-  background: white;
-  padding: 30px;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+  padding: 36px;
+  border-radius: 28px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .qr-code {
   display: block;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 .qr-center-logo {
@@ -438,192 +452,225 @@ const installPWA = async () => {
 }
 
 .logo-circle {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  width: 64px;
+  height: 64px;
+  background: #D4AF37;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 4px solid white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 4px solid #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 .logo-text {
-  color: white;
+  color: #ffffff;
   font-weight: 900;
-  font-size: 14px;
-  letter-spacing: 1px;
+  font-size: 16px;
+  letter-spacing: 0.5px;
 }
 
-.qr-info h3 {
-  color: white;
+.qr-title {
+  color: var(--color-text-primary);
   font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-family-heading);
+}
+
+.title-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--color-primary);
 }
 
 .qr-description {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
   font-size: 16px;
-  margin: 0 0 25px 0;
+  margin: 0 0 32px 0;
+  line-height: 1.5;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 32px;
 }
 
 .share-url {
-  margin-top: 20px;
+  margin-top: 32px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .url-container {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  padding: 16px 20px;
-  backdrop-filter: blur(10px);
+  align-items: stretch;
+  gap: 0;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
 }
 
-.url-text {
+.url-input {
   flex: 1;
-  color: rgba(255, 255, 255, 0.9);
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
   font-size: 14px;
-  font-family: 'Monaco', monospace;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-family: var(--font-family-monospace);
+  padding: 16px 20px;
+  outline: none;
+}
+
+.url-input::selection {
+  background: var(--color-primary-alpha-20);
+}
+
+.url-input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
 }
 
 .copy-btn {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  background: var(--color-primary);
   border: none;
-  border-radius: 12px;
-  padding: 10px 16px;
-  color: white;
+  padding: 16px 20px;
+  color: var(--color-text-primary);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  gap: 6px;
+  transition: var(--transition-all);
+  border-radius: 0;
+  min-width: 120px;
+  justify-content: center;
 }
 
 .copy-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(6, 182, 212, 0.4);
+  background: var(--color-primary-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-primary);
+}
+
+.copy-btn:focus {
+  outline: 2px solid var(--color-forest-green);
+  outline-offset: 2px;
 }
 
 .copy-btn.copied {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: var(--color-success);
+  color: #ffffff;
 }
 
 .copy-icon {
-  font-size: 16px;
-}
-
-/* ===== SHARE SECTION ===== */
-.quick-share {
-  margin-bottom: 50px;
+  width: 18px;
+  height: 18px;
 }
 
 .section-title {
-  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--color-text-primary);
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   text-align: center;
-  margin: 0 0 25px 0;
+  margin: 0 0 32px 0;
+  font-family: var(--font-family-heading);
+}
+
+.section-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--color-primary);
+}
+
+/* ===== SHARE SECTION ===== */
+.share-methods-section {
+  margin-bottom: 64px;
 }
 
 .share-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .share-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 24px 16px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  overflow: hidden;
+  transition: var(--transition-all);
+  box-shadow: var(--shadow-sm);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .share-card:hover {
-  transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
 }
 
-.share-card.primary {
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2));
-  border-color: rgba(6, 182, 212, 0.4);
-}
-
-.share-card.facebook {
-  background: linear-gradient(135deg, rgba(24, 119, 242, 0.2), rgba(24, 119, 242, 0.1));
-  border-color: rgba(24, 119, 242, 0.4);
-}
-
-.share-card.twitter {
-  background: linear-gradient(135deg, rgba(15, 20, 25, 0.3), rgba(0, 0, 0, 0.2));
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.share-card.email {
-  background: linear-gradient(135deg, rgba(234, 67, 53, 0.2), rgba(234, 67, 53, 0.1));
-  border-color: rgba(234, 67, 53, 0.4);
-}
-
-.share-card-shine {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: rotate(45deg);
-  transition: all 0.6s ease;
-  opacity: 0;
-}
-
-.share-card:hover .share-card-shine {
-  opacity: 1;
-  animation: shine 1.5s ease-in-out;
-}
-
-@keyframes shine {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+.share-card:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .share-card-icon {
-  font-size: 32px;
-  margin-bottom: 12px;
-  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  background: var(--color-primary-alpha-10);
+  border-radius: var(--radius-md);
+}
+
+.share-card-icon svg {
+  width: 20px;
+  height: 20px;
 }
 
 .share-card-content {
-  color: white;
+  color: var(--color-text-primary);
 }
 
 .share-card-title {
   display: block;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 0;
+  color: var(--color-text-primary);
+  line-height: 1.2;
 }
 
 .share-card-subtitle {
-  display: block;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  display: none;
 }
 
 /* ===== INSTALL SECTION ===== */
@@ -640,7 +687,7 @@ const installPWA = async () => {
 
 .install-card {
   background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.1));
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  border: 1px solid var(--color-primary-alpha-30);
   border-radius: 24px;
   padding: 30px;
   display: flex;
@@ -672,7 +719,7 @@ const installPWA = async () => {
 }
 
 .install-btn {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  background: var(--color-primary);
   border: none;
   border-radius: 12px;
   padding: 12px 24px;
@@ -742,139 +789,78 @@ const installPWA = async () => {
 
 /* ===== STATS SECTION ===== */
 .stats-section {
-  margin-bottom: 50px;
+  margin-bottom: 64px;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  margin-top: 25px;
+  margin-top: 32px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  padding: 24px 16px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  padding: 28px 20px;
   text-align: center;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  transition: var(--transition-all);
+  box-shadow: var(--shadow-sm);
 }
 
 .stat-card:hover {
   transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
 }
 
 .stat-icon {
-  font-size: 32px;
-  display: block;
-  margin-bottom: 12px;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  background: var(--color-primary-alpha-10);
+  border-radius: var(--radius-lg);
+}
+
+.stat-icon svg {
+  width: 28px;
+  height: 28px;
 }
 
 .stat-number {
-  color: white;
-  font-size: 24px;
+  color: var(--color-text-primary);
+  font-size: 32px;
   font-weight: 800;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+  font-family: var(--font-family-heading);
 }
 
 .stat-label {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
   font-weight: 500;
+  line-height: 1.3;
 }
 
-/* ===== CTA SECTION ===== */
-.cta-section {
-  margin-bottom: 20px;
-}
-
-.cta-background {
-  position: relative;
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2));
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  border-radius: 24px;
-  padding: 40px 30px;
-  text-align: center;
-  overflow: hidden;
-}
-
-.cta-waves {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" fill="%23ffffff08"><path d="M0,60 C200,100 400,20 600,60 C800,100 1000,20 1200,60 L1200,120 L0,120 Z"/></svg>') repeat-x;
-  animation: wave 10s linear infinite;
-  opacity: 0.3;
-}
-
-@keyframes wave {
-  0% { background-position: 0 0; }
-  100% { background-position: 1200px 0; }
-}
-
-.cta-title {
-  color: white;
-  font-size: 28px;
-  font-weight: 800;
-  margin: 0 0 12px 0;
-  position: relative;
-  z-index: 1;
-}
-
-.cta-description {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 16px;
-  margin: 0 0 30px 0;
-  position: relative;
-  z-index: 1;
-}
-
-.cta-button {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
-  border: none;
-  border-radius: 16px;
-  padding: 16px 32px;
-  color: white;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 1;
-  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
-}
-
-.cta-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(6, 182, 212, 0.5);
-}
-
-.cta-sparkle {
-  animation: sparkle 2s ease-in-out infinite;
-}
-
-.cta-sparkle:last-child {
-  animation-delay: 1s;
-}
-
-@keyframes sparkle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.2); }
-}
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 640px) {
   .share-content {
-    padding: 16px;
+    padding: 24px 16px;
+  }
+
+  .hero-section {
+    margin-bottom: 48px;
   }
 
   .hero-title {
@@ -883,28 +869,99 @@ const installPWA = async () => {
 
   .hero-subtitle {
     font-size: 16px;
+    max-width: 100%;
   }
 
-  .floating-icon {
-    font-size: 24px;
+  .qr-section {
+    margin-bottom: 48px;
+  }
+
+  .qr-container {
+    margin-bottom: 32px;
   }
 
   .qr-wrapper {
-    padding: 20px;
+    padding: 24px;
   }
 
-  .url-container {
-    flex-direction: column;
-    gap: 8px;
+  .qr-title {
+    font-size: 22px;
+  }
+
+  .qr-description {
+    font-size: 15px;
+    max-width: 100%;
+  }
+
+  .share-url {
+    max-width: 100%;
+  }
+
+  .url-input {
+    padding: 14px 16px;
+    font-size: 13px;
   }
 
   .copy-btn {
-    width: 100%;
-    justify-content: center;
+    padding: 14px 16px;
+    font-size: 13px;
+    min-width: 100px;
+  }
+
+  .share-methods-section {
+    margin-bottom: 48px;
+  }
+
+  .section-title {
+    font-size: 22px;
+    margin-bottom: 24px;
   }
 
   .share-grid {
-    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .share-card {
+    width: 70px;
+    height: 70px;
+    padding: var(--space-3);
+  }
+
+  .share-card-icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+  }
+
+  .share-card-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .share-card-title {
+    font-size: 11px;
+  }
+
+  .stats-section {
+    margin-bottom: 48px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    max-width: 280px;
+  }
+
+  .stat-card {
+    padding: 20px 16px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  .stat-label {
+    font-size: 13px;
   }
 
   .install-card {

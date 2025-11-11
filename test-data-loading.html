@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Data Loading</title>
+</head>
+<body>
+    <h1>Testing Business Data Loading</h1>
+    <div id="results"></div>
+
+    <script type="module">
+        async function testDataLoading() {
+            const results = document.getElementById('results');
+
+            try {
+                // Test app config loading
+                results.innerHTML += '<p>Testing app config...</p>';
+                const appResponse = await fetch('/config/app-config.json');
+                const appConfig = await appResponse.json();
+                results.innerHTML += `<p>✅ App config loaded: ${appConfig.app.name}</p>`;
+
+                // Test business data loading
+                results.innerHTML += '<p>Testing business data...</p>';
+                const businessResponse = await fetch('/config/locations/greenville/businesses.json');
+                const businessData = await businessResponse.json();
+                results.innerHTML += `<p>✅ Business data loaded: ${businessData.businesses.length} businesses</p>`;
+
+                // List businesses
+                results.innerHTML += '<h3>Businesses:</h3>';
+                businessData.businesses.forEach(business => {
+                    results.innerHTML += `<p>• ${business.name} (${business.tier}) - ${business.category}</p>`;
+                });
+
+            } catch (error) {
+                results.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+            }
+        }
+
+        testDataLoading();
+    </script>
+</body>
+</html>

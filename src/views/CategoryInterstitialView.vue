@@ -30,34 +30,26 @@
     <TopBar :title="categoryName" @toggle-menu="toggleSideMenu" :show-back="true" />
 
     <div class="interstitial-content">
-      <!-- ===== MAIN ADVERTISEMENT DISPLAY ===== -->
-      <!-- Interactive ad with business integration - click opens business modal -->
-      <div v-if="ad" class="ad-container" @click="openBusinessModal">
+      <!-- ===== HERO BANNER ADVERTISEMENT ===== -->
+      <!-- MONETIZATION: Premium advertising space consistent with category pages -->
+      <div v-if="heroBanner" class="hero-banner">
         <img
-          :src="ad.image"
-          :alt="ad.title"
-          class="ad-image"
+          :src="heroBanner.image"
+          :alt="heroBanner.title"
+          class="hero-image"
+          @click="openAdLink(heroBanner.link)"
           @error="handleImageError"
         />
-        <!-- Overlay with ad content and call-to-action -->
-        <div class="ad-overlay">
-          <h2 class="ad-title">{{ ad.title }}</h2>
-          <p v-if="ad.description" class="ad-description">{{ ad.description }}</p>
-          <div class="ad-cta">
-            <span class="tap-indicator">👆 Tap to learn more</span>
-          </div>
+
+        <!-- ===== COMPANY BRANDING/SPONSORSHIP ===== -->
+        <!-- Shows clear sponsorship attribution for transparency and brand awareness -->
+        <div class="sponsorship-branding">
+          <p class="sponsored-by-text">
+            Sponsored by <span class="company-name">{{ heroBanner.title }}</span>
+          </p>
         </div>
       </div>
 
-      <!-- ===== FALLBACK CONTENT ===== -->
-      <!-- Shown when no advertisement is available for this category -->
-      <div v-else class="ad-container fallback">
-        <div class="fallback-content">
-          <div class="category-icon">{{ getCategoryIcon(categoryName) }}</div>
-          <h2 class="fallback-title">{{ categoryName }}</h2>
-          <p class="fallback-text">Discover premier establishments</p>
-        </div>
-      </div>
 
       <!-- ===== ACTION CONTROLS ===== -->
       <!-- User controls for navigation and countdown display -->
@@ -124,6 +116,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBusinessStore } from '@/stores/businessStore'
+import { useAppConfig } from '@/composables/useAppConfig'
 import TopBar from '@/components/Navigation/TopBar.vue'
 import BottomNav from '@/components/Navigation/BottomNav.vue'
 import SideMenu from '@/components/Navigation/SideMenu.vue'
@@ -133,11 +126,14 @@ import BusinessModal from '@/components/Business/BusinessModal.vue'
 const route = useRoute()
 const router = useRouter()
 const businessStore = useBusinessStore()
+const { initializeApp, getCurrentBusinesses } = useAppConfig()
 
 // ===== REACTIVE STATE =====
 const showSideMenu = ref(false)                    // Side menu visibility
 const countdown = ref(3)                           // Timer countdown (3 seconds for affluent users)
 let countdownInterval = null                       // Timer interval reference
+const heroBanner = ref(null)                       // Hero banner advertisement
+const ad = ref(null)                               // Interstitial advertisement data
 
 // Business Modal State
 const selectedBusiness = ref(null)                 // Selected business for modal
@@ -150,41 +146,9 @@ const showBusinessModal = ref(false)               // Modal visibility state
  */
 const categoryName = computed(() => route.params.categoryName || 'Category')
 
-/**
- * Fetches interstitial advertisement for current category
- * Returns null if no ad is configured for this category
- */
-const ad = computed(() => {
-  return businessStore.getInterstitialAd(categoryName.value)
-})
 
 // ===== UTILITY FUNCTIONS =====
 
-/**
- * Maps category names to display icons for fallback content
- * CUSTOMIZATION: Add new categories and their representative emojis here
- */
-const getCategoryIcon = (category) => {
-  const iconMap = {
-    'Dining Out': '🍽️',
-    'Fine Dining': '🍽️',
-    'Golf & Country Clubs': '⛳',
-    'Luxury Real Estate': '🏠',
-    'Live Entertainment': '🎸',
-    'Luxury Services': '⚓',
-    'Wellness & Fitness': '🏋️',
-    'Shopping & Retail': '🛍️',
-    'Charity & Community': '❤️',
-    'Events & Festivals': '🎉',
-    'Lake Services': '⚓',
-    'Lake Fun': '🎉',
-    'Local Media': '📰',
-    'West Side': '🏔️',
-    'LOZ Deals': '💰',
-    'Podcast Network': '🎙️'
-  }
-  return iconMap[category] || '📍' // Default icon for unmapped categories
-}
 
 // ===== EVENT HANDLERS =====
 
@@ -214,28 +178,10 @@ const continueToCategory = () => {
  * CUSTOMIZATION: Replace placeholder URL with branded fallback image
  */
 const handleImageError = (e) => {
-  // Use a simple data URL to avoid external request failures
-  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjMWExYTJlIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjAwIiBmaWxsPSIjMDBEOUZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiPkFkdmVydGlzZW1lbnQ8L3RleHQ+Cjwvc3ZnPgo='
+  // Use a brand-appropriate fallback image with forest green theme
+  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjMkY1MjMzIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjAwIiBmaWxsPSIjRDRBRjM3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSJib2xkIj5GZWF0dXJlZCBBZHZlcnRpc2VtZW50PC90ZXh0Pgo8L3N2Zz4K'
 }
 
-/**
- * Opens business modal when ad is clicked
- * Integrates advertisement with detailed business information for lead generation
- * Pauses countdown timer while modal is open
- */
-const openBusinessModal = () => {
-  if (ad.value?.business_id) {
-    const business = businessStore.getBusinessById(ad.value.business_id)
-    if (business) {
-      selectedBusiness.value = business
-      showBusinessModal.value = true
-      // Pause the countdown when modal opens for better UX
-      if (countdownInterval) {
-        clearInterval(countdownInterval)
-      }
-    }
-  }
-}
 
 /**
  * Closes business modal and resumes countdown timer
@@ -255,13 +201,115 @@ const closeBusinessModal = () => {
   }
 }
 
+/**
+ * Handles hero banner ad clicks
+ * Opens business modal if ad has business_id, otherwise opens external link
+ */
+const openAdLink = (link) => {
+  console.log('🔍 Interstitial ad clicked', {
+    category: categoryName.value,
+    business_id: heroBanner.value?.business_id,
+    link: link,
+    heroBanner: heroBanner.value
+  })
+
+  // Check if this is a banner ad with a business_id
+  if (heroBanner.value?.business_id) {
+    const allBusinesses = getCurrentBusinesses.value || []
+    const business = allBusinesses.find(b => b.id === heroBanner.value.business_id)
+    console.log('📋 Business found for ad:', business)
+
+    if (business) {
+      console.log('✅ Opening business modal for:', business.name)
+      selectedBusiness.value = business
+      showBusinessModal.value = true
+      // Pause countdown when modal opens
+      if (countdownInterval) {
+        clearInterval(countdownInterval)
+        countdownInterval = null
+      }
+      return
+    } else {
+      console.error('❌ Business not found for ID:', heroBanner.value.business_id)
+    }
+  }
+
+  // Fallback to opening external link
+  if (link && link !== '#') {
+    console.log('🔗 Opening external link:', link)
+    window.open(link, '_blank')
+  } else {
+    console.log('❌ No valid link or business_id found')
+  }
+}
+
 // ===== LIFECYCLE HOOKS =====
 
 /**
- * Component initialization - starts the countdown timer
+ * Component initialization - starts the countdown timer and loads hero banner
  * Timer automatically progresses to category listing after 3 seconds
  */
-onMounted(() => {
+onMounted(async () => {
+  // Initialize the app to load dynamic configuration
+  try {
+    await initializeApp()
+    console.log('✅ App initialized for CategoryInterstitialView')
+  } catch (error) {
+    console.error('❌ Failed to initialize app for CategoryInterstitialView:', error)
+  }
+
+  // Ensure business data is loaded first
+  await businessStore.loadData()
+  console.log('📊 Business store loaded. Ads available:', !!businessStore.ads)
+
+  // Load interstitial ad data
+  ad.value = businessStore.getInterstitialAd(categoryName.value)
+  console.log('📢 Interstitial ad data:', ad.value)
+
+  // Initialize hero banner with category-specific ads using actual business images
+  heroBanner.value = businessStore.getBannerAd(categoryName.value, 'hero')
+
+  console.log('🔍 Checking heroBanner setup for category:', categoryName.value)
+  console.log('🔍 heroBanner from getBannerAd:', heroBanner.value)
+
+  if (!heroBanner.value) {
+    // Dynamic category-specific ads using tier-based selection
+    let featuredBusiness = null
+
+    const allBusinesses = getCurrentBusinesses.value || []
+    console.log('🔍 All businesses loaded:', allBusinesses.length)
+
+    // Get businesses for this specific category
+    const categoryBusinesses = allBusinesses.filter(b => b.category === categoryName.value)
+    console.log(`🔍 Businesses in ${categoryName.value}:`, categoryBusinesses.length, categoryBusinesses.map(b => ({ name: b.name, tier: b.tier })))
+
+    // Priority: Signature tier first, then Premier tier for interstitial ads
+    featuredBusiness = categoryBusinesses.find(b => b.tier === 'signature') ||
+                      categoryBusinesses.find(b => b.tier === 'premier') ||
+                      categoryBusinesses[0] // fallback to first business in category
+
+    console.log(`🎯 Selected featured business for ${categoryName.value}:`, featuredBusiness?.name, 'Tier:', featuredBusiness?.tier, 'ID:', featuredBusiness?.id)
+
+    if (featuredBusiness) {
+      console.log('✅ Featured business found for', categoryName.value, ':', featuredBusiness.name, 'ID:', featuredBusiness.id)
+      heroBanner.value = {
+        image: featuredBusiness.heroImage || featuredBusiness.logo || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&h=400&fit=crop&crop=center',
+        title: featuredBusiness.name,
+        business_id: featuredBusiness.id,
+        link: '#'
+      }
+      console.log('🔍 Created heroBanner:', heroBanner.value)
+    } else {
+      console.warn('❌ No featured business found for category:', categoryName.value)
+      heroBanner.value = {
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjMkY1MjMzIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjAwIiBmaWxsPSIjRDRBRjM3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSJib2xkIj5GZWF0dXJlZCBCdXNpbmVzczwvdGV4dD4KPC9zdmc+Cg==',
+        title: 'Featured Business',
+        link: '#'
+      }
+    }
+  }
+
+  // Start countdown timer
   countdownInterval = setInterval(() => {
     countdown.value--
     if (countdown.value <= 0) {

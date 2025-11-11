@@ -358,7 +358,7 @@ analytics.track('property_listings_view')
 <style scoped>
 .property-listings-view {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  background: var(--color-bg-primary);
   padding-bottom: 80px;
 }
 
@@ -415,8 +415,8 @@ analytics.track('property_listings_view')
 }
 
 .quick-filter-btn.active {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
-  border-color: #06b6d4;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .filters-section {
@@ -430,7 +430,7 @@ analytics.track('property_listings_view')
 .filters-toggle {
   background: none;
   border: none;
-  color: #06b6d4;
+  color: var(--color-primary);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -544,7 +544,7 @@ analytics.track('property_listings_view')
 }
 
 .clear-filters-btn {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  background: var(--color-primary);
   border: none;
   color: white;
   padding: 12px 24px;
@@ -640,9 +640,9 @@ analytics.track('property_listings_view')
 }
 
 .business-badge {
-  background: rgba(6, 182, 212, 0.2);
-  color: #06b6d4;
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: var(--color-primary-alpha-20);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary-alpha-30);
   padding: 2px 6px;
   border-radius: 8px;
   font-size: 11px;

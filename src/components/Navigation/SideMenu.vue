@@ -3,9 +3,17 @@
     <div class="side-menu" @click.stop>
       <!-- Menu Header -->
       <div class="side-menu-header">
-        <img src="/images/floz-logo.png" alt="FLOZ" class="menu-logo" />
-        <h2 class="side-menu-logo">FLOZ APP</h2>
-        <button class="side-menu-close" @click="$emit('close')">✕</button>
+        <div class="logo-section">
+          <svg class="menu-logo-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 22L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+          </svg>
+          <h2 class="side-menu-logo">The Greenville Social</h2>
+        </div>
+        <button class="side-menu-close" @click="$emit('close')">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/>
+          </svg>
+        </button>
       </div>
 
       <!-- Menu Items -->
@@ -23,12 +31,7 @@
 
       <!-- Install App Button -->
       <button class="btn btn-secondary" @click="handleInstall">
-        Install app
-      </button>
-
-      <!-- Sign In Button -->
-      <button class="btn btn-outline" @click="handleSignIn">
-        Sign In
+        Install App
       </button>
     </div>
   </div>
@@ -37,15 +40,15 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'show-community-modal'])
 const router = useRouter()
 
 const menuItems = [
-  { name: 'Contact Us', link: '/contact', internal: true },
-  { name: 'Ozarks Amphitheater', link: '/amphitheater', internal: false },
-  { name: 'Live Stream', link: '/live-stream', internal: false },
-  { name: 'Shootout 2025', link: '/shootout', internal: false },
-  { name: 'LOZ Podcast Network', link: '/podcast', internal: false }
+  { name: 'Community Website', link: '#', internal: false, action: 'community' },
+  { name: 'Business Advertising Tiers', link: '/tiers', internal: true },
+  { name: 'Announcements', link: '/spotlights', internal: true },
+  { name: 'Events', link: '/events', internal: true },
+  { name: 'Contact Us', link: '/contact', internal: true }
 ]
 
 const handleOverlayClick = () => {
@@ -54,7 +57,10 @@ const handleOverlayClick = () => {
 
 const handleMenuClick = (item) => {
   // Handle navigation or external links
-  if (item.internal) {
+  if (item.action === 'community') {
+    // Emit event for community website modal
+    emit('show-community-modal')
+  } else if (item.internal) {
     // Use Vue Router for internal navigation
     router.push(item.link)
   } else if (item.link.startsWith('http')) {
@@ -79,11 +85,6 @@ const handleInstall = () => {
   emit('close')
 }
 
-const handleSignIn = () => {
-  // Handle sign in
-  console.log('Sign in clicked')
-  emit('close')
-}
 </script>
 
 <!-- All styles moved to src/assets/styles/components/navigation.css -->

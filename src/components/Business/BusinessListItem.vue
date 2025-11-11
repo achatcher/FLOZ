@@ -6,8 +6,18 @@
       class="business-logo"
     />
     <div class="business-info">
-      <h3 class="business-name">{{ business.name }}</h3>
+      <div class="business-header">
+        <h3 class="business-name">{{ business.name }}</h3>
+        <span v-if="business.tier" class="tier-badge" :class="business.tier">
+          {{ getTierLabel(business.tier) }}
+        </span>
+      </div>
       <p class="business-category">{{ business.category }}</p>
+      <p v-if="business.priceRange" class="price-range">{{ business.priceRange }}</p>
+      <div v-if="business.memberPerks" class="member-perks">
+        <span class="perk-icon">✨</span>
+        <span class="perk-text">{{ business.memberPerks }}</span>
+      </div>
     </div>
     <span class="chevron">›</span>
   </div>
@@ -28,29 +38,45 @@ const emit = defineEmits(['click'])
 const handleClick = () => {
   emit('click')
 }
+
+const getTierLabel = (tier) => {
+  const tierLabels = {
+    signature: 'SIGNATURE',
+    premier: 'PREMIER',
+    curated: 'CURATED'
+  }
+  return tierLabels[tier] || ''
+}
 </script>
 
 <style scoped>
 .business-list-item {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 15px 20px;
-  background: #000;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-bg-secondary);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: var(--transition-all);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--color-border-secondary);
 }
 
-.business-list-item:active {
-  background: #111;
+.business-list-item:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-primary-alpha-20);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .business-logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-lg);
   object-fit: cover;
   flex-shrink: 0;
+  border: 2px solid var(--color-border-primary);
 }
 
 .business-info {
@@ -58,26 +84,92 @@ const handleClick = () => {
   min-width: 0;
 }
 
+.business-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
 .business-name {
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.tier-badge {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  flex-shrink: 0;
+}
+
+.tier-badge.signature {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: var(--color-bg-primary);
+  box-shadow: 0 2px 8px var(--color-primary-alpha-30);
+}
+
+.tier-badge.premier {
+  background: var(--color-platinum);
+  color: var(--color-bg-primary);
+  box-shadow: 0 2px 8px rgba(229, 228, 226, 0.3);
+}
+
+.tier-badge.curated {
+  background: var(--color-midnight);
+  color: var(--color-text-primary);
+  box-shadow: 0 2px 8px rgba(25, 25, 112, 0.3);
+}
+
 .business-category {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 14px;
-  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  margin: 0 0 var(--space-1) 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.price-range {
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.member-perks {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-primary-alpha-10);
+  border: 1px solid var(--color-primary-alpha-20);
+  border-radius: var(--radius-sm);
+  max-width: fit-content;
+}
+
+.perk-icon {
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+}
+
+.perk-text {
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
 }
 
 .chevron {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 24px;
-  font-weight: 300;
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-light);
   flex-shrink: 0;
 }
 </style>

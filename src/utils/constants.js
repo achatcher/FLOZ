@@ -1,11 +1,11 @@
 // utils/constants.js
 
-export const LAKE_CENTER = {
-  lat: 38.0881,
-  lng: -92.6308
+export const GREENVILLE_CENTER = {
+  lat: 34.8526,
+  lng: -82.3940
 }
 
-export const DEFAULT_ZOOM = 11
+export const DEFAULT_ZOOM = 15
 
 export const LISTING_TIERS = {
   PREMIUM: 'premium',
@@ -37,8 +37,8 @@ export const BADGE_TYPES = {
 }
 
 export const COLORS = {
-  PRIMARY_NAVY: '#1e3a8a',
-  PRIMARY_CYAN: '#06b6d4',
+  PRIMARY_GOLD: '#D4AF37',
+  PRIMARY_DARK: '#B8941F',
   BACKGROUND_BLACK: '#000000',
   TEXT_WHITE: '#ffffff',
   TEXT_GRAY: 'rgba(255, 255, 255, 0.6)'

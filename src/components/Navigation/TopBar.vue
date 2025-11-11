@@ -15,9 +15,15 @@
       ☰
     </button>
 
-    <h1 class="top-bar-title">{{ title }}</h1>
+    <h1 class="top-bar-title">The Greenville Social</h1>
 
-    <div class="spacer"></div>
+    <div class="top-bar-logo">
+      <img
+        src="/images/white.png"
+        alt="The Greenville Social"
+        class="nav-logo"
+      />
+    </div>
   </header>
 </template>
 
