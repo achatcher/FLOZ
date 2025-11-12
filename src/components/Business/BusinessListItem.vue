@@ -24,7 +24,8 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, onMounted } from 'vue'
+import analytics from '@/utils/analytics'
 
 const props = defineProps({
   business: {
@@ -36,8 +37,23 @@ const props = defineProps({
 const emit = defineEmits(['click'])
 
 const handleClick = () => {
+  // Track business click as a lead
+  analytics.trackBusinessLead(props.business, 'modal_view', {
+    placement: 'business_list',
+    list_position: 'unknown' // Can be passed as prop if needed
+  })
+
   emit('click')
 }
+
+// Track impression when component mounts (business becomes visible)
+onMounted(() => {
+  if (props.business) {
+    analytics.trackBusinessImpression(props.business, 'business_list', {
+      viewport_position: 'unknown' // Can be enhanced with intersection observer
+    })
+  }
+})
 
 const getTierLabel = (tier) => {
   const tierLabels = {

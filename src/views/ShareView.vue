@@ -1,12 +1,12 @@
 <template>
   <div class="share-view">
-    <TopBar title="Share The Greenville Social" :show-back="true" />
+    <TopBar :title="`Share ${appName}`" :show-back="true" />
 
     <main class="share-content">
       <!-- Hero Section -->
       <header class="hero-section">
-        <h1 class="hero-title">Share The Greenville Social</h1>
-        <p class="hero-subtitle">Invite others to discover authentic Greenville lifestyle experiences</p>
+        <h1 class="hero-title">Share {{ appName }}</h1>
+        <p class="hero-subtitle">{{ shareHeroSubtitle }}</p>
       </header>
 
       <!-- QR Code Section -->
@@ -25,7 +25,11 @@
             />
             <div class="qr-center-logo" aria-hidden="true">
               <div class="logo-circle">
-                <span class="logo-text">GS</span>
+                <img
+                  src="/images/green.png"
+                  :alt="`${appName} logo`"
+                  class="logo-image"
+                />
               </div>
             </div>
           </div>
@@ -38,7 +42,7 @@
             </svg>
             Scan & Access Instantly
           </h2>
-          <p class="qr-description">Point your camera at the QR code for immediate access to The Greenville Social</p>
+          <p class="qr-description">{{ qrDescription }}</p>
 
           <div class="share-url">
             <div class="url-container">
@@ -199,17 +203,48 @@ import { useAppConfig } from '@/composables/useAppConfig'
 import analytics from '@/utils/analytics'
 
 const businessStore = useBusinessStore()
-const { initializeApp, getCurrentBusinesses, getConfig } = useAppConfig()
+const { initializeApp, getCurrentBusinesses, getConfig, getAppInfo } = useAppConfig()
 
 const shareUrl = computed(() => window.location.origin)
 const qrSize = ref(250)
 const linkCopied = ref(false)
 const canInstall = ref(false)
 
+// Dynamic app content from JSON configuration
+const appName = computed(() => {
+  return getAppInfo.value?.name || 'The Greenville Social'
+})
+
+const appShortName = computed(() => {
+  return getAppInfo.value?.shortName || 'Greenville Social'
+})
+
+const appLocation = computed(() => {
+  return getAppInfo.value?.location || { city: 'Greenville', state: 'South Carolina' }
+})
+
+const shareHeroSubtitle = computed(() => {
+  const location = appLocation.value
+  return `Invite others to discover authentic ${location.city} lifestyle experiences`
+})
+
+const qrDescription = computed(() => {
+  return `Point your camera at the QR code for immediate access to ${appName.value}`
+})
+
+// Logo is now handled via image instead of text
+// const logoText = computed(() => {
+//   return appShortName.value
+//     .split(' ')
+//     .map(word => word.charAt(0).toUpperCase())
+//     .join('')
+//     .slice(0, 2)
+// })
+
 // Dynamic stats based on actual business data
 const dynamicStats = computed(() => {
   const businesses = getCurrentBusinesses.value || []
-  const config = getConfig.value || {}
+  const location = appLocation.value
 
   // Get unique categories from actual business data
   const categories = [...new Set(businesses.map(b => b.category))].filter(Boolean)
@@ -217,8 +252,50 @@ const dynamicStats = computed(() => {
   return {
     totalBusinesses: businesses.length,
     categoryCount: categories.length,
-    locationName: config.location || 'Greenville'
+    locationName: location.city || 'Greenville'
   }
+})
+
+// Dynamic share content from app configuration
+const shareTitle = computed(() => {
+  const info = getAppInfo.value
+  const location = appLocation.value
+  return info?.tagline || `${appName.value} - ${location.city} Community Lifestyle`
+})
+
+const shareText = computed(() => {
+  const info = getAppInfo.value
+  const location = appLocation.value
+  return info?.description
+    ? `Discover ${info.description.toLowerCase()} in ${location.city} - your guide to dining, exclusive access, and community connections.`
+    : `Discover ${location.city} lifestyle experiences - your guide to dining, outdoor adventures, and community connections.`
+})
+
+const emailSubject = computed(() => {
+  return `Check out ${appName.value} - ${appLocation.value.city} Community Lifestyle`
+})
+
+const emailBody = computed(() => {
+  const info = getAppInfo.value
+  const location = appLocation.value
+  const stats = dynamicStats.value
+
+  return `Hello!
+
+I wanted to share ${appName.value} with you - it's a curated guide to ${location.city} community lifestyle.
+
+${appName.value} features:
+• ${stats.totalBusinesses}+ local businesses
+• ${stats.categoryCount} different categories
+• ${info?.description || 'Fine dining establishments'}
+• Community events and experiences
+• Local services and amenities
+
+Check it out: ${shareUrl.value}
+
+I think you'll find it quite valuable for discovering the best of ${location.city}'s lifestyle.
+
+Best regards!`
 })
 
 // PWA Install Prompt
@@ -249,8 +326,8 @@ onMounted(async () => {
 
 const handleNativeShare = async () => {
   const shareData = {
-    title: 'The Greenville Social - Mountain Community Lifestyle',
-    text: 'Discover mountain lifestyle experiences in Greenville - your guide to dining, outdoor adventures, and community connections.',
+    title: shareTitle.value,
+    text: shareText.value,
     url: shareUrl.value
   }
 
@@ -261,7 +338,7 @@ const handleNativeShare = async () => {
       await navigator.share(shareData)
       analytics.track('share_completed', { method: 'native' })
       if (window.$toast) {
-        window.$toast.success('Thanks for sharing The Greenville Social!')
+        window.$toast.success(`Thanks for sharing ${appName.value}!`)
       }
     } catch (err) {
       if (err.name !== 'AbortError') {
@@ -275,27 +352,24 @@ const handleNativeShare = async () => {
 }
 
 const shareOnFacebook = () => {
-  const text = 'Discover mountain lifestyle experiences in Greenville - your guide to dining, outdoor adventures, and community connections.'
-  const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl.value)}&quote=${encodeURIComponent(text)}`
+  const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl.value)}&quote=${encodeURIComponent(shareText.value)}`
 
   analytics.track('share_completed', { method: 'facebook' })
   window.open(url, '_blank', 'width=600,height=500,scrollbars=yes,resizable=yes')
 }
 
 const shareOnTwitter = () => {
-  const text = 'Discover mountain lifestyle experiences in Greenville - your guide to dining, outdoor adventures, and community connections. #GreenvilleSocial'
-  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl.value)}`
+  const location = appLocation.value
+  const twitterText = `${shareText.value} #${location.city.replace(/\s+/g, '')}Social`
+  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}&url=${encodeURIComponent(shareUrl.value)}`
 
   analytics.track('share_completed', { method: 'twitter' })
   window.open(url, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes')
 }
 
 const shareViaEmail = () => {
-  const subject = 'Check out The Greenville Social - Mountain Community Lifestyle'
-  const body = `Hello!\n\nI wanted to share The Greenville Social with you - it's a curated guide to mountain community lifestyle in Greenville, SC.\n\nThe Greenville Social features:\n• Fine dining establishments\n• Hiking trails and outdoor recreation\n• Community events and experiences\n• Local services and amenities\n\nCheck it out: ${shareUrl.value}\n\nI think you'll find it quite valuable for discovering the best of Greenville's mountain lifestyle.\n\nBest regards!`
-
   analytics.track('share_completed', { method: 'email' })
-  window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  window.location.href = `mailto:?subject=${encodeURIComponent(emailSubject.value)}&body=${encodeURIComponent(emailBody.value)}`
 }
 
 const copyLink = async () => {
@@ -329,7 +403,7 @@ const installPWA = async () => {
     if (outcome === 'accepted') {
       canInstall.value = false
       if (window.$toast) {
-        window.$toast.success('The Greenville Social installed! Check your home screen!')
+        window.$toast.success(`${appName.value} installed! Check your home screen!`)
       }
     }
 
@@ -452,15 +526,23 @@ const installPWA = async () => {
 }
 
 .logo-circle {
-  width: 64px;
-  height: 64px;
-  background: #D4AF37;
+  width: 72px;
+  height: 72px;
+  background: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 4px solid #ffffff;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  padding: 4px;
+}
+
+.logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .logo-text {

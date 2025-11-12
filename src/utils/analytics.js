@@ -168,6 +168,66 @@ class Analytics {
   }
 
   /**
+   * Track business lead generation
+   */
+  trackBusinessLead(business, leadType, properties = {}) {
+    this.track('business_lead', {
+      business_id: business.id || business.business_id,
+      business_name: business.name || business.venue,
+      business_tier: business.tier || business.listing_tier,
+      business_category: business.category || business.subcategory,
+      lead_type: leadType, // 'call', 'directions', 'website', 'modal_view', 'hero_click'
+      lead_value: this.getLeadValue(leadType, business.tier),
+      placement: properties.placement || 'unknown', // 'hero', 'search', 'category', 'happy_hour'
+      ...properties
+    })
+  }
+
+  /**
+   * Track business impression (view without interaction)
+   */
+  trackBusinessImpression(business, placement, properties = {}) {
+    this.track('business_impression', {
+      business_id: business.id || business.business_id,
+      business_name: business.name || business.venue,
+      business_tier: business.tier || business.listing_tier,
+      business_category: business.category || business.subcategory,
+      placement: placement, // 'hero', 'search_results', 'category_listing', 'happy_hour'
+      viewport_position: properties.viewport_position || 'unknown',
+      ...properties
+    })
+  }
+
+  /**
+   * Track business modal/detail views
+   */
+  trackBusinessView(business, viewType = 'modal', properties = {}) {
+    this.track('business_view', {
+      business_id: business.id || business.business_id,
+      business_name: business.name || business.venue,
+      business_tier: business.tier || business.listing_tier,
+      business_category: business.category || business.subcategory,
+      view_type: viewType, // 'modal', 'detail_page', 'quick_view'
+      view_duration: properties.view_duration || null,
+      ...properties
+    })
+  }
+
+  /**
+   * Get lead value based on action and business tier
+   */
+  getLeadValue(leadType, tier) {
+    const values = {
+      signature: { call: 10, directions: 8, website: 5, modal_view: 2, hero_click: 3 },
+      premier: { call: 8, directions: 6, website: 4, modal_view: 1.5, hero_click: 2 },
+      standard: { call: 5, directions: 3, website: 2, modal_view: 1, hero_click: 1 }
+    }
+
+    const tierValues = values[tier] || values.standard
+    return tierValues[leadType] || 1
+  }
+
+  /**
    * Track search queries
    */
   trackSearch(query, results, category = null) {

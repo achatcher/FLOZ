@@ -7,7 +7,7 @@
           <svg class="menu-logo-icon" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 22L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
           </svg>
-          <h2 class="side-menu-logo">The Greenville Social</h2>
+          <h2 class="side-menu-logo">{{ appName }}</h2>
         </div>
         <button class="side-menu-close" @click="$emit('close')">
           <svg viewBox="0 0 24 24" fill="currentColor">
@@ -38,18 +38,62 @@
 </template>
 
 <script setup>
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAppConfig } from '@/composables/useAppConfig'
 
 const emit = defineEmits(['close', 'show-community-modal'])
 const router = useRouter()
+const { getAppInfo, initializeApp } = useAppConfig()
 
-const menuItems = [
-  { name: 'Community Website', link: '#', internal: false, action: 'community' },
-  { name: 'Business Advertising Tiers', link: '/tiers', internal: true },
-  { name: 'Announcements', link: '/spotlights', internal: true },
-  { name: 'Events', link: '/events', internal: true },
-  { name: 'Contact Us', link: '/contact', internal: true }
-]
+// Dynamic menu items based on app configuration
+const menuItems = computed(() => {
+  const info = getAppInfo.value
+  const appName = info?.name || 'The Greenville Social'
+
+  return [
+    {
+      name: 'Community Website',
+      link: info?.contact?.website || '#',
+      internal: false,
+      action: 'community'
+    },
+    {
+      name: 'Business Advertising Tiers',
+      link: '/tiers',
+      internal: true
+    },
+    {
+      name: 'Announcements',
+      link: '/spotlights',
+      internal: true
+    },
+    {
+      name: 'Events',
+      link: '/events',
+      internal: true
+    },
+    {
+      name: 'Contact Us',
+      link: '/contact',
+      internal: true
+    }
+  ]
+})
+
+// Dynamic app name for the header
+const appName = computed(() => {
+  return getAppInfo.value?.name || 'The Greenville Social'
+})
+
+// Initialize app config
+onMounted(async () => {
+  try {
+    await initializeApp()
+  } catch (error) {
+    console.error('Failed to initialize app config in SideMenu:', error)
+  }
+})
 
 const handleOverlayClick = () => {
   emit('close')
@@ -58,12 +102,17 @@ const handleOverlayClick = () => {
 const handleMenuClick = (item) => {
   // Handle navigation or external links
   if (item.action === 'community') {
-    // Emit event for community website modal
-    emit('show-community-modal')
+    // If we have a real website URL, open it; otherwise show modal
+    if (item.link && item.link !== '#' && item.link.startsWith('http')) {
+      window.open(item.link, '_blank')
+    } else {
+      // Emit event for community website modal
+      emit('show-community-modal')
+    }
   } else if (item.internal) {
     // Use Vue Router for internal navigation
     router.push(item.link)
-  } else if (item.link.startsWith('http')) {
+  } else if (item.link && item.link.startsWith('http')) {
     window.open(item.link, '_blank')
   } else {
     // For other internal routes that aren't implemented yet

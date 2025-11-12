@@ -45,7 +45,7 @@ import EventsView from '@/views/EventsView.vue'                // Events calenda
 // Utility and special pages
 import ContactView from '@/views/ContactView.vue'              // Contact information and support
 import ShareView from '@/views/ShareView.vue'                  // App sharing with QR codes
-// import SpotlightsView from '@/views/SpotlightsView.vue'        // Featured business spotlights (temporarily disabled due to syntax errors)
+import SpotlightsView from '@/views/SpotlightsView.vue'        // Community announcements and updates
 import CocktailHourView from '@/views/CocktailHourView.vue'    // Time-sensitive happy hour deals
 import ConfigTestView from '@/views/ConfigTestView.vue'        // Configuration system testing
 import TierVisualizationView from '@/views/TierVisualizationView.vue'  // Business tier comparison
@@ -237,21 +237,21 @@ const routes = [
   },
 
   /**
-   * BUSINESS SPOTLIGHTS ROUTE (TEMPORARILY DISABLED)
+   * ANNOUNCEMENTS ROUTE
    * Path: /spotlights
-   * Purpose: Featured business highlights and success stories
-   * Features: Business spotlights, success stories, premium content
+   * Purpose: Community announcements and updates
+   * Features: Dynamic announcements, community stats, app updates
    */
-  // {
-  //   path: '/spotlights',
-  //   name: 'Spotlights',
-  //   component: SpotlightsView,
-  //   meta: {
-  //     title: 'Business Spotlights - The Greenville Social',
-  //     description: 'Featured businesses and success stories',
-  //     requiresAuth: false
-  //   }
-  // },
+  {
+    path: '/spotlights',
+    name: 'Spotlights',
+    component: SpotlightsView,
+    meta: {
+      title: 'Announcements - The Greenville Social',
+      description: 'Stay updated with community news and announcements',
+      requiresAuth: false
+    }
+  },
 
   /**
    * COCKTAIL HOUR ROUTE

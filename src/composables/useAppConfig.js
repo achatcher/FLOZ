@@ -272,6 +272,14 @@ export function useAppConfig() {
   })
 
   /**
+   * Get app configuration (for compatibility with ShareView)
+   */
+  const getConfig = computed(() => {
+    if (!appConfig.value) return null
+    return appConfig.value.app
+  })
+
+  /**
    * Initialize the app with configuration
    */
   const initializeApp = async (location = 'greenville') => {
@@ -320,6 +328,7 @@ export function useAppConfig() {
     getTierStatistics,
     getEventsByTier,
     isFeatureEnabled,
-    getBranding
+    getBranding,
+    getConfig
   }
 }

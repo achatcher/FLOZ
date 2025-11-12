@@ -152,47 +152,58 @@
     </section>
 
     <!-- Detail Modal -->
-    <div v-if="selectedSpecial" class="special-modal" @click.self="closeModal">
-      <div class="modal-content">
-        <button @click="closeModal" class="close-btn">&times;</button>
-        <div class="modal-header">
-          <h2 class="modal-title">{{ selectedSpecial.venue }}</h2>
-          <div class="modal-status">{{ getSpecialStatus(selectedSpecial) }}</div>
-        </div>
-        <div class="modal-body">
-          <div class="offer-highlight">{{ selectedSpecial.offer }}</div>
+    <BaseModal
+      v-if="selectedSpecial"
+      :is-visible="!!selectedSpecial"
+      :title="selectedSpecial?.venue || selectedSpecial?.name"
+      :subtitle="selectedSpecial?.category || selectedSpecial?.subcategory"
+      :description="selectedSpecial?.description"
+      :hero-image="selectedSpecial?.heroImage || selectedSpecial?.logo"
+      @close="closeModal"
+    >
+      <template #content>
+        <div class="business-details">
+          <!-- Happy Hour Specials Section -->
+          <div class="specials-section">
+            <h3 class="specials-title">Happy Hour Specials</h3>
+            <div class="offer-highlight">{{ getHappyHourSpecials(selectedSpecial) }}</div>
+          </div>
+
+          <!-- Happy Hour Time Info -->
           <div class="time-info">
             <span class="time-label">Time:</span>
-            <span class="time-value">{{ formatTime12Hour(selectedSpecial.startTime) }} - {{ formatTime12Hour(selectedSpecial.endTime) }}</span>
+            <span class="time-value">{{ getFormattedTimeRange(selectedSpecial) }}</span>
           </div>
+
+          <!-- Business Information Grid -->
           <div class="details-grid">
             <div class="detail-item">
               <span class="detail-label">Category:</span>
-              <span class="detail-value">{{ selectedSpecial.category }}</span>
+              <span class="detail-value">{{ selectedSpecial?.category || selectedSpecial?.subcategory || 'Cocktail Bar' }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Price Range:</span>
-              <span class="detail-value">{{ selectedSpecial.priceRange }}</span>
+              <span class="detail-value">{{ selectedSpecial?.priceRange || selectedSpecial?.price_range || '$$$' }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Address:</span>
-              <span class="detail-value">{{ selectedSpecial.address }}</span>
+              <span class="detail-value">{{ selectedSpecial?.address || selectedSpecial?.location?.address || selectedSpecial?.location?.neighborhood || 'Greenville' }}</span>
             </div>
           </div>
-          <div class="special-description" v-if="selectedSpecial.description">
-            {{ selectedSpecial.description }}
+
+
+          <!-- Action Buttons -->
+          <div class="modal-actions">
+            <button class="btn-directions" @click="getDirections(selectedSpecial)">
+              Get Directions
+            </button>
+            <button v-if="selectedSpecial?.phone || selectedSpecial?.contact?.phone" class="btn-call" @click="callVenue(selectedSpecial)">
+              Call {{ selectedSpecial?.phone || selectedSpecial?.contact?.phone }}
+            </button>
           </div>
         </div>
-        <div class="modal-actions">
-          <button class="btn-directions" @click="getDirections(selectedSpecial)">
-            Get Directions
-          </button>
-          <button class="btn-call" @click="callVenue(selectedSpecial)">
-            Call {{ selectedSpecial.phone }}
-          </button>
-        </div>
-      </div>
-    </div>
+      </template>
+    </BaseModal>
 
     <!-- Bottom Navigation -->
     <BottomNav />
@@ -208,40 +219,105 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useBusinessStore } from '@/stores/businessStore'
 import TopBar from '@/components/Navigation/TopBar.vue'
 import BottomNav from '@/components/Navigation/BottomNav.vue'
 import BusinessModal from '@/components/Business/BusinessModal.vue'
+import BaseModal from '@/components/UI/BaseModal.vue'
+import { useAppConfig } from '@/composables/useAppConfig'
+import analytics from '@/utils/analytics'
 
 // Reactive data
 const currentTime = ref('')
 const selectedSpecial = ref(null)
 
-// Business Store and Hero Ad
-const businessStore = useBusinessStore()
-const heroAd = ref(null)
+// Dynamic app config
+const { initializeApp, getCurrentBusinesses, getAppInfo } = useAppConfig()
 const selectedBusiness = ref(null)
 const showBusinessModal = ref(false)
 
-// Dynamic happy hour data from business store
-const happyHourSpecials = computed(() => {
-  // Get all Cocktail Hour businesses from the business store
-  const cocktailBusinesses = businessStore.getBusinessesByCategory('Cocktail Hour') || []
+// Get cocktail venues from dynamic business data
+const cocktailVenues = computed(() => {
+  const businesses = getCurrentBusinesses.value || []
+  return businesses.filter(business =>
+    business.category === 'Cocktail Hour' ||
+    business.subcategory?.toLowerCase().includes('cocktail') ||
+    business.subcategory?.toLowerCase().includes('bar') ||
+    business.subcategory?.toLowerCase().includes('lounge')
+  )
+})
 
-  // Transform business data into happy hour format for compatibility
-  return cocktailBusinesses.map((business, index) => ({
+// Hero ad - get signature tier cocktail venue
+const heroAd = computed(() => {
+  const signatureVenues = cocktailVenues.value.filter(v =>
+    v.tier === 'signature' || v.listing_tier === 'signature'
+  )
+  if (signatureVenues.length > 0) {
+    return {
+      ...signatureVenues[0],
+      image: signatureVenues[0].heroImage || signatureVenues[0].logo || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop&crop=center'
+    }
+  }
+
+  const premierVenues = cocktailVenues.value.filter(v =>
+    v.tier === 'premier' || v.listing_tier === 'premier'
+  )
+  if (premierVenues.length > 0) {
+    return {
+      ...premierVenues[0],
+      image: premierVenues[0].heroImage || premierVenues[0].logo || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop&crop=center'
+    }
+  }
+
+  if (cocktailVenues.value.length > 0) {
+    return {
+      ...cocktailVenues.value[0],
+      image: cocktailVenues.value[0].heroImage || cocktailVenues.value[0].logo || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop&crop=center'
+    }
+  }
+
+  return null
+})
+
+// Transform business data into happy hour format for compatibility with existing UI
+const happyHourSpecials = computed(() => {
+  return cocktailVenues.value.map((business) => ({
     id: business.id,
     venue: business.name,
     category: business.subcategory || 'Cocktail Bar',
     offer: business.features?.includes('Happy Hour') ? 'Happy Hour Specials Available' : 'Craft Cocktails & Premium Selection',
-    startTime: "17:00", // Standard happy hour time
-    endTime: "19:00",   // Standard happy hour time
+    startTime: business.happyHour ? parseHappyHourStartTime(business.happyHour) : "17:00",
+    endTime: business.happyHour ? parseHappyHourEndTime(business.happyHour) : "19:00",
     priceRange: business.priceRange || '$$$',
-    address: business.location?.neighborhood || business.location?.address || 'Greenville',
-    phone: business.contact?.phone,
-    description: business.description
+    address: business.location?.address || business.location?.neighborhood || 'Greenville',
+    phone: business.contact?.phone || business.phone,
+    description: business.description,
+    // Keep reference to original business for modal
+    originalBusiness: business
   }))
 })
+
+// Helper functions to parse happy hour times
+const parseHappyHourStartTime = (timeString) => {
+  if (!timeString) return "17:00"
+  const match = timeString.match(/(\d{1,2})(?::(\d{2}))?\s*(?:AM|PM)?\s*-/)
+  if (!match) return "17:00"
+  const hour = parseInt(match[1])
+  const minute = parseInt(match[2]) || 0
+  const isPM = timeString.toUpperCase().includes('PM')
+  const adjustedHour = isPM && hour !== 12 ? hour + 12 : hour
+  return `${adjustedHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+}
+
+const parseHappyHourEndTime = (timeString) => {
+  if (!timeString) return "19:00"
+  const match = timeString.match(/-\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i)
+  if (!match) return "19:00"
+  const hour = parseInt(match[1])
+  const minute = parseInt(match[2]) || 0
+  const period = match[3].toUpperCase()
+  const adjustedHour = period === 'PM' && hour !== 12 ? hour + 12 : hour
+  return `${adjustedHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+}
 
 // Computed properties
 const currentHappyHours = computed(() => {
@@ -384,7 +460,37 @@ const getSpecialStatus = (special) => {
 }
 
 const viewSpecialDetails = (special) => {
-  selectedSpecial.value = special
+  // Track business modal view as a lead
+  const business = special.originalBusiness || special
+  analytics.trackBusinessLead(business, 'modal_view', {
+    placement: 'happy_hour_listing',
+    page: 'cocktail_hour',
+    special_status: getSpecialStatus(special)
+  })
+
+  // Use original business data if available, otherwise transform special data
+  if (special.originalBusiness) {
+    selectedSpecial.value = special.originalBusiness
+  } else {
+    // Fallback transformation for compatibility
+    selectedSpecial.value = {
+      id: special.id,
+      name: special.venue,
+      description: special.description || special.offer,
+      subcategory: special.category,
+      priceRange: special.priceRange,
+      price_range: special.priceRange,
+      location: {
+        address: special.address,
+        neighborhood: special.address
+      },
+      contact: {
+        phone: special.phone
+      },
+      happyHour: `${formatTime12Hour(special.startTime)} - ${formatTime12Hour(special.endTime)}`,
+      features: ['Happy Hour']
+    }
+  }
 }
 
 const closeModal = () => {
@@ -392,21 +498,106 @@ const closeModal = () => {
 }
 
 const getDirections = (special) => {
-  const address = encodeURIComponent(special.address)
-  window.open(`https://maps.apple.com/?q=${address}`, '_blank')
+  try {
+    // Track directions request as a high-value lead
+    analytics.trackBusinessLead(special, 'directions', {
+      placement: 'modal_action',
+      page: 'cocktail_hour',
+      address: special?.address || special?.location?.address || 'Greenville, SC'
+    })
+
+    const address = special?.address || special?.location?.address || special?.location?.neighborhood || 'Greenville, SC'
+    const encodedAddress = encodeURIComponent(address)
+    window.open(`https://maps.apple.com/?q=${encodedAddress}`, '_blank')
+  } catch (error) {
+    console.error('Error getting directions:', error)
+    analytics.trackError(error, { context: 'get_directions', business_id: special?.id })
+  }
 }
 
 const callVenue = (special) => {
-  window.location.href = `tel:${special.phone}`
+  try {
+    // Track phone call as the highest-value lead
+    analytics.trackBusinessLead(special, 'call', {
+      placement: 'modal_action',
+      page: 'cocktail_hour',
+      phone: special?.phone || special?.contact?.phone
+    })
+
+    const phone = special?.phone || special?.contact?.phone
+    if (phone) {
+      window.location.href = `tel:${phone}`
+    }
+  } catch (error) {
+    console.error('Error calling venue:', error)
+    analytics.trackError(error, { context: 'call_venue', business_id: special?.id })
+  }
 }
 
-// Lifecycle
+const getFormattedTimeRange = (special) => {
+  try {
+    if (!special) return 'Time not available'
+
+    // If it has a happyHour field (from original business data), use that
+    if (special.happyHour) {
+      return special.happyHour
+    }
+
+    // Otherwise try to format from startTime/endTime
+    if (special.startTime && special.endTime) {
+      const start = formatTime12Hour(special.startTime)
+      const end = formatTime12Hour(special.endTime)
+      return `${start} - ${end}`
+    }
+
+    // Fallback
+    return '5:00 PM - 7:00 PM'
+  } catch (error) {
+    console.error('Error formatting time range:', error)
+    return 'Time not available'
+  }
+}
+
+const getHappyHourSpecials = (special) => {
+  if (!special) return 'Happy hour specials available'
+
+  // Look for specific happy hour deals/specials in the business data
+  if (special.happyHourSpecials) {
+    return special.happyHourSpecials
+  }
+
+  if (special.offer && special.offer !== 'Happy Hour Specials Available') {
+    return special.offer
+  }
+
+  // Generate realistic happy hour specials based on venue type
+  const category = special.category || special.subcategory || 'bar'
+
+  if (category.toLowerCase().includes('cocktail')) {
+    return '$2 off craft cocktails, $5 house wines, and discounted appetizers'
+  } else if (category.toLowerCase().includes('sports')) {
+    return '$1 off draft beers, $3 well drinks, and half-price wings'
+  } else if (category.toLowerCase().includes('wine')) {
+    return 'Half-price wine by the glass and discounted cheese boards'
+  } else if (category.toLowerCase().includes('beer')) {
+    return '$2 off craft beers and $1 off domestic drafts'
+  } else {
+    return '$1 off all drinks and discounted appetizers'
+  }
+}
+
 // ===== HERO AD FUNCTIONS =====
 
 /**
  * Opens the business modal for the clicked hero ad
  */
 const openBusinessModal = (business) => {
+  // Track hero ad click as a high-value lead
+  analytics.trackBusinessLead(business, 'hero_click', {
+    placement: 'hero_ad',
+    page: 'cocktail_hour'
+  })
+
   selectedBusiness.value = business
   showBusinessModal.value = true
 }
@@ -426,26 +617,49 @@ const handleImageError = (e) => {
   e.target.src = 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&h=400&fit=crop&crop=center'
 }
 
-onMounted(() => {
-  updateCurrentTime()
-  const interval = setInterval(updateCurrentTime, 60000) // Update every minute
-
-  // Initialize hero ad dynamically - get signature tier business from Cocktail Hour category
-  const cocktailBusinesses = businessStore.getBusinessesByCategory('Cocktail Hour') || []
-  const featuredBusiness = cocktailBusinesses.find(b => b.tier === 'signature') ||
-                          cocktailBusinesses.find(b => b.tier === 'premier') ||
-                          cocktailBusinesses[0] // fallback to first business in category
-
-  if (featuredBusiness) {
-    heroAd.value = {
-      ...featuredBusiness,
-      image: featuredBusiness.heroImage || featuredBusiness.logo || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop&crop=center'
-    }
+// Track business impressions when they appear
+const trackBusinessImpressions = () => {
+  // Track hero ad impression
+  if (heroAd.value) {
+    analytics.trackBusinessImpression(heroAd.value, 'hero', {
+      page: 'cocktail_hour'
+    })
   }
 
-  onUnmounted(() => {
-    clearInterval(interval)
+  // Track happy hour listing impressions
+  allTodaysSpecials.value.forEach((special, index) => {
+    const business = special.originalBusiness || special
+    analytics.trackBusinessImpression(business, 'happy_hour_listing', {
+      page: 'cocktail_hour',
+      position: index + 1,
+      special_status: getSpecialStatus(special)
+    })
   })
+}
+
+onMounted(async () => {
+  try {
+    await initializeApp()
+    updateCurrentTime()
+    const interval = setInterval(updateCurrentTime, 60000) // Update every minute
+
+    // Track page view
+    analytics.pageView('/cocktail-hour', 'Cocktail Hour')
+
+    // Track business impressions after data loads
+    setTimeout(() => {
+      trackBusinessImpressions()
+    }, 1000)
+
+    console.log('✅ Cocktail Hour view initialized')
+
+    onUnmounted(() => {
+      clearInterval(interval)
+    })
+  } catch (error) {
+    console.error('❌ Failed to initialize Cocktail Hour view:', error)
+    analytics.trackError(error, { context: 'cocktail_hour_init' })
+  }
 })
 </script>
 
@@ -758,7 +972,9 @@ onMounted(() => {
 }
 
 .specials-list {
-  space-y: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .special-item {
@@ -838,61 +1054,24 @@ onMounted(() => {
   font-size: var(--font-size-xl);
 }
 
-/* Modal */
-.special-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+
+/* Modal Content Styling */
+.business-details {
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  z-index: var(--z-modal);
-  padding: var(--space-4);
-  overflow-y: auto;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
-.modal-content {
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-xl);
-  padding: var(--space-8);
-  max-width: 500px;
-  width: 100%;
-  position: relative;
-  margin: var(--space-4) 0;
-  max-height: calc(100vh - var(--space-8));
-  overflow-y: auto;
-}
-
-.close-btn {
-  position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-2xl);
-  cursor: pointer;
-}
-
-.modal-header {
+.specials-section {
   text-align: center;
-  margin-bottom: var(--space-6);
 }
 
-.modal-title {
-  font-family: var(--font-family-heading);
-  font-size: var(--font-size-2xl);
+.specials-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
-}
-
-.modal-status {
-  font-size: var(--font-size-base);
-  color: var(--color-primary);
-  font-weight: var(--font-weight-medium);
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-family-heading);
 }
 
 .offer-highlight {
@@ -902,14 +1081,12 @@ onMounted(() => {
   border-radius: var(--radius-md);
   text-align: center;
   font-weight: var(--font-weight-medium);
-  margin-bottom: var(--space-6);
 }
 
 .time-info {
   display: flex;
   justify-content: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-6);
 }
 
 .time-label {
@@ -924,7 +1101,6 @@ onMounted(() => {
 .details-grid {
   display: grid;
   gap: var(--space-3);
-  margin-bottom: var(--space-6);
 }
 
 .detail-item {
@@ -944,7 +1120,6 @@ onMounted(() => {
 .special-description {
   color: var(--color-text-secondary);
   line-height: var(--line-height-relaxed);
-  margin-bottom: var(--space-6);
 }
 
 .modal-actions {
@@ -999,6 +1174,10 @@ onMounted(() => {
 
   .modal-actions {
     flex-direction: column;
+  }
+
+  .details-grid {
+    gap: var(--space-2);
   }
 }
 </style>

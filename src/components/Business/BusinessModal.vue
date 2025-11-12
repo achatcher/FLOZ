@@ -100,9 +100,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import BaseModal from '@/components/UI/BaseModal.vue'
 import { ICONS } from '@/utils/icons'
+import analytics from '@/utils/analytics'
 
 const props = defineProps({
   business: {
@@ -116,6 +117,15 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
+
+// Track modal view when opened
+watch(() => props.business && props.isVisible, (newVal) => {
+  if (newVal && props.business) {
+    analytics.trackBusinessView(props.business, 'modal', {
+      placement: 'business_modal'
+    })
+  }
+})
 
 const closeModal = () => {
   emit('close')
@@ -171,18 +181,32 @@ const modalActions = computed(() => {
 // Action Functions
 const openWebsite = () => {
   if (props.business?.contact?.website) {
+    analytics.trackBusinessLead(props.business, 'website', {
+      placement: 'business_modal',
+      website: props.business.contact.website
+    })
     window.open(props.business.contact.website, '_blank')
   }
 }
 
 const callBusiness = () => {
   if (props.business?.contact?.phone) {
+    analytics.trackBusinessLead(props.business, 'call', {
+      placement: 'business_modal',
+      phone: props.business.contact.phone
+    })
     window.location.href = `tel:${props.business.contact.phone}`
   }
 }
 
 const openMaps = () => {
   const address = props.business?.contact?.address || props.business?.location?.address
+
+  analytics.trackBusinessLead(props.business, 'directions', {
+    placement: 'business_modal',
+    address: address
+  })
+
   if (address) {
     const encodedAddress = encodeURIComponent(address)
     const url = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`
@@ -195,6 +219,11 @@ const openMaps = () => {
 }
 
 const shareBusiness = async () => {
+  analytics.trackBusinessInteraction(props.business?.id, 'share', {
+    placement: 'business_modal',
+    business_name: props.business?.name
+  })
+
   const shareData = {
     title: props.business?.name,
     text: `Check out ${props.business?.name} - ${props.business?.description}`,
