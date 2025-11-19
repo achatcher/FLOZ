@@ -1,7 +1,6 @@
 // stores/locationStore.js
 import { defineStore } from 'pinia'
 import { getCurrentLocation, calculateDistance } from '@/utils/helpers'
-import { LAKE_CENTER } from '@/utils/constants'
 
 export const useLocationStore = defineStore('location', {
   state: () => ({
@@ -39,8 +38,8 @@ export const useLocationStore = defineStore('location', {
       } catch (error) {
         this.error = error.message
         this.permissionGranted = false
-        // Fallback to lake center
-        this.userLocation = LAKE_CENTER
+        // Fallback to default center (Greenville, SC)
+        this.userLocation = { lat: 34.8526, lng: -82.3940 }
         throw error
       } finally {
         this.loading = false

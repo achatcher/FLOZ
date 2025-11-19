@@ -1,26 +1,40 @@
 {
-  "name": "floz-app",
+  "name": "the-greenville-social",
   "version": "1.0.0",
-  "description": "Local business directory app for Lake of the Ozarks",
+  "description": "The Greenville Social - Mountain community lifestyle guide for Greenville, South Carolina featuring dining, outdoor adventures, and premium services",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-icons": "node scripts/generate-icons.js",
+    "icons": "npm run generate-icons",
+    "clean": "rm -rf dist node_modules/.vite .env.local",
+    "reset": "npm run clean && npm install"
   },
   "dependencies": {
-    "vue": "^3.3.4",
-    "vue-router": "^4.2.4",
+    "leaflet": "^1.9.4",
     "pinia": "^2.1.6",
-    "mapbox-gl": "^2.15.0",
-    "qrcode.vue": "^3.4.1"
+    "qrcode.vue": "^3.4.1",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.3.4",
+    "sharp": "^0.34.5",
     "vite": "^4.4.9",
     "vite-plugin-pwa": "^0.16.5"
   },
   "main": "vite.config.js",
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "greenville",
+    "south-carolina",
+    "lifestyle",
+    "dining",
+    "outdoor",
+    "pwa",
+    "vue",
+    "mountain-community"
+  ],
+  "author": "The Greenville Social",
   "license": "ISC"
 }

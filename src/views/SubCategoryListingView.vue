@@ -70,7 +70,6 @@
             <div class="signature-info">
               <div class="signature-header">
                 <h3 class="business-name">{{ business.name }}</h3>
-                <span class="price-range">{{ business.price_range }}</span>
               </div>
               <p class="business-description">{{ business.description }}</p>
 
@@ -111,9 +110,8 @@
               <h3 class="business-name">{{ business.name }}</h3>
               <p class="business-description-short">{{ truncate(business.description, 60) }}</p>
 
-              <!-- Price range and optional badge -->
+              <!-- Optional badge -->
               <div class="premier-meta">
-                <span class="price-range">{{ business.price_range }}</span>
                 <span v-if="business.badges && business.badges.length" class="badge-inline">
                   {{ business.badges[0] }}
                 </span>
@@ -149,9 +147,8 @@
               <p class="business-description-short">{{ truncate(business.description, 80) }}</p>
             </div>
 
-            <!-- Price and navigation indicator -->
+            <!-- Navigation indicator -->
             <div class="curated-meta">
-              <span class="price-range">{{ business.price_range }}</span>
               <span class="arrow">→</span>
             </div>
           </div>

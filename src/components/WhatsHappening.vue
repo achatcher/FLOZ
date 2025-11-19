@@ -15,8 +15,8 @@
           <div class="card-icon">🍻</div>
           <div class="card-content">
             <h4 class="card-name">{{ business.name }}</h4>
-            <p class="card-detail">{{ business.happyHour }}</p>
-            <p class="card-location">{{ business.location.address.split(',')[0] }}</p>
+            <p class="card-detail">{{ business.description }}</p>
+            <p class="card-location">{{ business.subcategory }}</p>
           </div>
         </div>
       </div>
@@ -35,8 +35,8 @@
           <div class="card-icon">🎵</div>
           <div class="card-content">
             <h4 class="card-name">{{ business.name }}</h4>
-            <p class="card-detail">{{ business.liveMusic.time }}</p>
-            <p class="card-location">{{ business.location.address.split(',')[0] }}</p>
+            <p class="card-detail">{{ business.description }}</p>
+            <p class="card-location">{{ business.subcategory }}</p>
           </div>
         </div>
       </div>
@@ -56,9 +56,8 @@
             <h4 class="restaurant-name">{{ business.name }}</h4>
             <p class="restaurant-description">{{ business.description }}</p>
             <div class="restaurant-details">
-              <span class="price-range">{{ business.price_range }}</span>
-              <span v-if="business.happyHour" class="happy-hour-tag">🍹 Happy Hour</span>
-              <span v-if="business.liveMusic" class="live-music-tag">🎵 Live Music</span>
+              <span v-if="business.features?.happy_hour" class="happy-hour-tag">🍹 Happy Hour</span>
+              <span v-if="business.features?.live_music" class="live-music-tag">🎵 Live Music</span>
             </div>
           </div>
           <div class="restaurant-contact">
@@ -84,7 +83,12 @@ defineEmits(['select-business'])
 
 // Computed
 const restaurants = computed(() => {
-  return businessStore.getBusinessesByCategory('Restaurants & Bars')
+  // Get businesses from multiple relevant categories
+  const cocktailBusinesses = businessStore.getBusinessesByCategory('Cocktail Hour')
+  const fineDiningBusinesses = businessStore.getBusinessesByCategory('Dining')
+  const casualDiningBusinesses = businessStore.getBusinessesByCategory('Casual Dining')
+
+  return [...cocktailBusinesses, ...fineDiningBusinesses, ...casualDiningBusinesses]
 })
 
 const currentHappyHours = computed(() => {
@@ -92,29 +96,11 @@ const currentHappyHours = computed(() => {
   const currentHour = now.getHours()
 
   return restaurants.value.filter(business => {
-    if (!business.happyHour) return false
+    // Check if business has happy hour feature
+    if (!business.features?.happy_hour) return false
 
-    // Simple happy hour detection - you could make this more sophisticated
-    const happyHourText = business.happyHour.toLowerCase()
-
-    // Check for common happy hour times
-    if (happyHourText.includes('daily') || happyHourText.includes('all day')) {
-      return currentHour >= 15 && currentHour < 18 // 3 PM - 6 PM
-    }
-
-    if (happyHourText.includes('2:00 pm') && happyHourText.includes('6:00 pm')) {
-      return currentHour >= 14 && currentHour < 18
-    }
-
-    if (happyHourText.includes('3:00 pm') && happyHourText.includes('6:00 pm')) {
-      return currentHour >= 15 && currentHour < 18
-    }
-
-    if (happyHourText.includes('4:00 pm') && happyHourText.includes('6:00 pm')) {
-      return currentHour >= 16 && currentHour < 18
-    }
-
-    return false
+    // Default happy hour detection for Greenville businesses (4-7 PM typical)
+    return currentHour >= 16 && currentHour < 19 // 4 PM - 7 PM
   })
 })
 

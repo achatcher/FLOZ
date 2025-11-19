@@ -20,6 +20,10 @@
 /* Atomic utility classes for rapid development */
 @import './utilities.css';
 
+/* ===== MOBILE PERFORMANCE ===== */
+/* Mobile-specific performance optimizations */
+@import './mobile-performance.css';
+
 /* ===== COMPONENT STYLES ===== */
 /* Reusable component classes */
 @import './components/buttons.css';
@@ -27,6 +31,7 @@
 @import './components/forms.css';
 @import './components/modals.css';
 @import './components/navigation.css';
+@import './components/tiers.css';
 
 /* ===== LAYOUT STYLES ===== */
 /* Page layout and grid systems */

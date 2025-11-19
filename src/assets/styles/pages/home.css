@@ -17,18 +17,65 @@
   padding-bottom: var(--space-5);
 }
 
-/* ===== HERO BANNER ===== */
+/* ===== LUXURY BRAND HEADER ===== */
 
-.hero-banner {
-  width: 100%;
-  padding: var(--space-4);
-  margin-bottom: var(--space-3);
+.luxury-brand-header {
+  background: var(--color-bg-luxury);
+  border-bottom: 2px solid var(--color-primary-alpha-10);
+  padding: var(--space-12) var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
-.hero-image {
-  width: 100%;
-  border-radius: var(--radius-xl);
+.brand-container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.brand-logo {
+  flex-shrink: 0;
+}
+
+.gs-logo {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
   display: block;
+}
+
+.brand-content {
+  text-align: center;
+  min-width: 0;
+}
+
+.brand-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1);
+  line-height: var(--line-height-tight);
+}
+
+.brand-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-2);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-relaxed);
+}
+
+.brand-features {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 /* ===== CATEGORY GRID SYSTEM ===== */
@@ -38,7 +85,8 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: var(--space-3);
-  padding: 0 var(--space-4);
+  padding: var(--space-6) var(--space-4);
+  margin-top: var(--space-4);
 }
 
 /* ===== CATEGORY CARD COMPONENTS ===== */
@@ -95,34 +143,45 @@
   background: var(--color-bg-surface);
 }
 
+/* Elegant SVG icons for category placeholders */
 .category-placeholder .icon {
-  font-size: 35px;
+  width: 35px;
+  height: 35px;
   opacity: 0.3;
-  font-style: normal;
+  color: var(--color-text-tertiary);
 }
 
 .category-card.large .category-placeholder .icon {
-  font-size: 40px;
+  width: 40px;
+  height: 40px;
 }
 
 /* ===== CATEGORY OVERLAY SYSTEM ===== */
 
-/* Gradient overlay for text readability */
+/* Brand secondary banner for text readability */
 .category-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+  background: color-mix(in srgb, var(--brand-secondary) 85%, transparent);
   padding: var(--space-3);
+  height: 58px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   z-index: 3;
   pointer-events: none;
+  backdrop-filter: blur(2px);
 }
 
 .category-card.large .category-overlay {
   padding: var(--space-3);
+  height: 58px;
+}
+
+.category-card.medium .category-overlay {
+  padding: var(--space-2);
+  height: 50px;
 }
 
 /* Category text container */
@@ -132,7 +191,7 @@
 
 /* Category subtitle (e.g., "WATCH NOW!", "NEW ARRIVALS") */
 .category-subtitle {
-  color: var(--color-text-primary);
+  color: #FFFFFF;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
@@ -147,13 +206,12 @@
 
 /* Category name (main title) */
 .category-name {
-  color: var(--color-primary);
+  color: #FFFFFF;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   margin: 0;
   letter-spacing: var(--letter-spacing-wide);
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
   line-height: var(--line-height-tight);
 }
 
@@ -201,13 +259,13 @@
 
 .category-card.coming-soon .category-subtitle {
   font-size: var(--font-size-xs);
-  color: var(--color-bg-primary);
+  color: #FFFFFF;
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-1);
 }
 
 .category-card.coming-soon .category-name {
-  color: var(--color-bg-primary);
+  color: #FFFFFF;
   font-size: var(--font-size-sm);
   text-shadow: none;
 }
@@ -314,8 +372,29 @@
     font-size: var(--font-size-base);
   }
 
-  .hero-banner {
-    padding: var(--space-5) var(--space-6);
+  .luxury-brand-header {
+    padding: var(--space-16) var(--space-6);
+  }
+
+  .brand-container {
+    gap: var(--space-6);
+  }
+
+  .gs-logo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .brand-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .brand-subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .brand-features {
+    font-size: var(--font-size-sm);
   }
 }
 
@@ -382,4 +461,120 @@
   .category-card.large .category-placeholder .icon {
     font-size: 75px;
   }
+}
+
+
+/* Tier Indicators */
+.tier-indicator {
+  display: inline-block;
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  margin-top: var(--space-2);
+}
+
+.tier-indicator.signature {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: var(--color-bg-primary);
+  box-shadow: 0 2px 8px var(--color-primary-alpha-30);
+}
+
+.tier-indicator.premier {
+  background: var(--color-platinum);
+  color: var(--color-forest-green-dark);
+  box-shadow: 0 2px 8px rgba(229, 228, 226, 0.3);
+}
+
+
+/* Exclusive Access Card */
+.category-card.exclusive-access {
+  background: linear-gradient(135deg, var(--color-primary-alpha-10), var(--color-primary-alpha-20));
+  border: 2px solid var(--color-primary-alpha-30);
+}
+
+.exclusive-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.exclusive-icon {
+  font-size: 45px;
+  margin-bottom: var(--space-2);
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.exclusive-content .category-subtitle {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--space-1);
+}
+
+.exclusive-content .category-name {
+  color: var(--color-primary);
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  text-shadow: none;
+  margin-bottom: var(--space-2);
+}
+
+
+@media (min-width: 1024px) {
+  .luxury-brand-header {
+    padding: var(--space-20) var(--space-8);
+  }
+
+  .brand-container {
+    gap: var(--space-8);
+  }
+
+  .gs-logo {
+    width: 90px;
+    height: 90px;
+  }
+
+  .brand-title {
+    font-size: var(--font-size-4xl);
+  }
+
+  .brand-subtitle {
+    font-size: var(--font-size-lg);
+  }
+
+  .brand-features {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* ===== TIER BADGE STYLING ===== */
+/* Matches the signature/premier badge styling from other pages */
+
+.tier-badge {
+  display: inline-block;
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+}
+
+.tier-badge.signature {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: var(--color-bg-primary);
+  box-shadow: 0 2px 8px var(--color-primary-alpha-30);
 }

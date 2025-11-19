@@ -3,9 +3,17 @@
     <div class="side-menu" @click.stop>
       <!-- Menu Header -->
       <div class="side-menu-header">
-        <img src="/images/floz-logo.png" alt="FLOZ" class="menu-logo" />
-        <h2 class="side-menu-logo">FLOZ APP</h2>
-        <button class="side-menu-close" @click="$emit('close')">✕</button>
+        <div class="logo-section">
+          <svg class="menu-logo-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 22L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+          </svg>
+          <h2 class="side-menu-logo">{{ appName }}</h2>
+        </div>
+        <button class="side-menu-close" @click="$emit('close')">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/>
+          </svg>
+        </button>
       </div>
 
       <!-- Menu Items -->
@@ -14,7 +22,7 @@
           <a
             :href="item.link"
             class="side-menu-link"
-            @click="handleMenuClick(item)"
+            @click="handleMenuClick($event, item)"
           >
             {{ item.name }}
           </a>
@@ -23,43 +31,80 @@
 
       <!-- Install App Button -->
       <button class="btn btn-secondary" @click="handleInstall">
-        Install app
-      </button>
-
-      <!-- Sign In Button -->
-      <button class="btn btn-outline" @click="handleSignIn">
-        Sign In
+        Install App
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAppConfig } from '@/composables/useAppConfig'
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'show-community-modal'])
 const router = useRouter()
+const { getAppInfo, initializeApp } = useAppConfig()
 
-const menuItems = [
-  { name: 'Contact Us', link: '/contact', internal: true },
-  { name: 'Ozarks Amphitheater', link: '/amphitheater', internal: false },
-  { name: 'Live Stream', link: '/live-stream', internal: false },
-  { name: 'Shootout 2025', link: '/shootout', internal: false },
-  { name: 'LOZ Podcast Network', link: '/podcast', internal: false }
-]
+// Dynamic menu items based on app configuration
+const menuItems = computed(() => {
+  const info = getAppInfo.value
+  const appName = info?.name || 'The Greenville Social'
+
+  return [
+    {
+      name: 'Community Website',
+      link: info?.contact?.website || '#',
+      internal: false,
+      action: 'community'
+    },
+    {
+      name: 'Contact Us',
+      link: '/contact',
+      internal: true
+    }
+  ]
+})
+
+// Dynamic app name for the header
+const appName = computed(() => {
+  return getAppInfo.value?.name || 'The Greenville Social'
+})
+
+// Initialize app config
+onMounted(async () => {
+  try {
+    await initializeApp()
+  } catch (error) {
+    console.error('Failed to initialize app config in SideMenu:', error)
+  }
+})
 
 const handleOverlayClick = () => {
   emit('close')
 }
 
-const handleMenuClick = (item) => {
+const handleMenuClick = (event, item) => {
   // Handle navigation or external links
-  if (item.internal) {
+  if (item.action === 'community') {
+    // If we have a real website URL, open it; otherwise show modal
+    if (item.link && item.link !== '#' && item.link.startsWith('http')) {
+      event.preventDefault() // Prevent default anchor navigation
+      window.open(item.link, '_blank')
+    } else {
+      event.preventDefault() // Prevent default anchor navigation
+      // Emit event for community website modal
+      emit('show-community-modal')
+    }
+  } else if (item.internal) {
+    event.preventDefault() // Prevent default anchor navigation
     // Use Vue Router for internal navigation
     router.push(item.link)
-  } else if (item.link.startsWith('http')) {
+  } else if (item.link && item.link.startsWith('http')) {
+    event.preventDefault() // Prevent default anchor navigation
     window.open(item.link, '_blank')
   } else {
+    event.preventDefault() // Prevent default anchor navigation
     // For other internal routes that aren't implemented yet
     console.log('Navigate to:', item.link)
   }
@@ -79,11 +124,6 @@ const handleInstall = () => {
   emit('close')
 }
 
-const handleSignIn = () => {
-  // Handle sign in
-  console.log('Sign in clicked')
-  emit('close')
-}
 </script>
 
 <!-- All styles moved to src/assets/styles/components/navigation.css -->
