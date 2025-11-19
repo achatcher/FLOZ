@@ -227,7 +227,7 @@ const handleImageError = (e) => {
 /* Action Buttons */
 .base-modal-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
   margin-bottom: var(--space-6);
 }
@@ -305,7 +305,8 @@ const handleImageError = (e) => {
   }
 
   .base-modal-actions {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
   }
 
   .base-modal-title {

@@ -287,7 +287,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(47, 82, 51, 0.6);
+  background: color-mix(in srgb, var(--brand-secondary) 60%, transparent);
   z-index: var(--z-modal-backdrop);
 }
 

@@ -47,7 +47,6 @@ import ContactView from '@/views/ContactView.vue'              // Contact inform
 import ShareView from '@/views/ShareView.vue'                  // App sharing with QR codes
 import SpotlightsView from '@/views/SpotlightsView.vue'        // Community announcements and updates
 import CocktailHourView from '@/views/CocktailHourView.vue'    // Time-sensitive happy hour deals
-import ConfigTestView from '@/views/ConfigTestView.vue'        // Configuration system testing
 import TierVisualizationView from '@/views/TierVisualizationView.vue'  // Business tier comparison
 
 /**
@@ -267,24 +266,6 @@ const routes = [
     meta: {
       title: 'Cocktail Hour - The Greenville Social',
       description: 'Live happy hour deals and special promotions',
-      requiresAuth: false
-    }
-  },
-
-  /**
-   * CONFIGURATION TEST ROUTE
-   * Path: /config-test
-   * Purpose: Testing dynamic configuration system functionality
-   * Features: Location switching, store testing, configuration validation
-   * Note: Development/testing route for configuration system
-   */
-  {
-    path: '/config-test',
-    name: 'ConfigTest',
-    component: ConfigTestView,
-    meta: {
-      title: 'Configuration Test - The Greenville Social',
-      description: 'Dynamic configuration system testing interface',
       requiresAuth: false
     }
   },

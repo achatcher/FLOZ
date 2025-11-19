@@ -22,7 +22,7 @@
           <a
             :href="item.link"
             class="side-menu-link"
-            @click="handleMenuClick(item)"
+            @click="handleMenuClick($event, item)"
           >
             {{ item.name }}
           </a>
@@ -59,21 +59,6 @@ const menuItems = computed(() => {
       action: 'community'
     },
     {
-      name: 'Business Advertising Tiers',
-      link: '/tiers',
-      internal: true
-    },
-    {
-      name: 'Announcements',
-      link: '/spotlights',
-      internal: true
-    },
-    {
-      name: 'Events',
-      link: '/events',
-      internal: true
-    },
-    {
       name: 'Contact Us',
       link: '/contact',
       internal: true
@@ -99,22 +84,27 @@ const handleOverlayClick = () => {
   emit('close')
 }
 
-const handleMenuClick = (item) => {
+const handleMenuClick = (event, item) => {
   // Handle navigation or external links
   if (item.action === 'community') {
     // If we have a real website URL, open it; otherwise show modal
     if (item.link && item.link !== '#' && item.link.startsWith('http')) {
+      event.preventDefault() // Prevent default anchor navigation
       window.open(item.link, '_blank')
     } else {
+      event.preventDefault() // Prevent default anchor navigation
       // Emit event for community website modal
       emit('show-community-modal')
     }
   } else if (item.internal) {
+    event.preventDefault() // Prevent default anchor navigation
     // Use Vue Router for internal navigation
     router.push(item.link)
   } else if (item.link && item.link.startsWith('http')) {
+    event.preventDefault() // Prevent default anchor navigation
     window.open(item.link, '_blank')
   } else {
+    event.preventDefault() // Prevent default anchor navigation
     // For other internal routes that aren't implemented yet
     console.log('Navigate to:', item.link)
   }

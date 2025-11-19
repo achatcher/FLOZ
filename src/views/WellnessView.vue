@@ -22,39 +22,21 @@
   <div class="wellness-view">
     <!-- ===== HERO ADVERTISEMENT ===== -->
     <!-- MONETIZATION: Premium advertising space for wellness & spa businesses -->
-    <div v-if="heroAd" class="hero-ad-section">
-      <div class="hero-ad-card" @click="openBusinessModal(heroAd)">
-        <img
-          :src="heroAd.image"
-          :alt="heroAd.name"
-          class="hero-ad-image"
-          @error="handleImageError"
-        />
-        <div class="hero-ad-overlay">
-          <div class="hero-ad-content">
-            <div class="tier-badge signature">FEATURED PARTNER</div>
-            <h2 class="hero-ad-title">{{ heroAd.name }}</h2>
-            <p class="hero-ad-subtitle">{{ heroAd.description }}</p>
-            <div class="hero-ad-features">
-              <span class="hero-ad-category">{{ heroAd.subcategory }}</span>
-              <span class="hero-ad-price">{{ heroAd.price_range || heroAd.priceRange }}</span>
-            </div>
-            <div class="hero-ad-cta">
-              <span>Experience Luxury Wellness</span>
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <HeroAdCard
+      v-if="heroAd"
+      :business="heroAd"
+      layout="split"
+      cta-text="Experience Luxury Wellness"
+      badge-text="FEATURED PARTNER"
+      @click="openBusinessModal"
+      @image-error="handleImageError"
+    />
 
     <!-- Elegant Page Header -->
     <header class="wellness-header">
       <div class="container">
-        <h1 class="page-title">Wellness & Beauty</h1>
-        <p class="page-subtitle">Rejuvenating spas, expert salons, and holistic wellness centers for mind, body, and spirit</p>
+        <h1 class="page-title">{{ pageConfig.displayName || 'Wellness & Beauty' }}</h1>
+        <p class="page-subtitle">{{ pageConfig.description || 'Rejuvenating spas, expert salons, and holistic wellness centers for mind, body, and spirit' }}</p>
 
         <!-- Service Categories Filter -->
         <div class="service-categories">
@@ -437,12 +419,24 @@
 
 import { ref, computed, onMounted } from 'vue'
 import { useBusinessStore } from '@/stores/businessStore'
+import { useAppConfig } from '@/composables/useAppConfig'
 import BottomNav from '@/components/Navigation/BottomNav.vue'
 import BusinessModal from '@/components/Business/BusinessModal.vue'
+import HeroAdCard from '@/components/Business/HeroAdCard.vue'
 
 // Store and reactive state
 const businessStore = useBusinessStore()
+const { getAppInfo } = useAppConfig()
 const selectedCategory = ref('all')
+
+// Get page configuration from centralized config
+const pageConfig = computed(() => {
+  const appInfo = getAppInfo.value
+  if (!appInfo?.navigation?.categories) return { displayName: 'Wellness & Beauty', description: 'Rejuvenating spas, expert salons, and holistic wellness centers for mind, body, and spirit' }
+
+  const wellnessCategory = appInfo.navigation.categories.find(cat => cat.id === 'wellness-spa')
+  return wellnessCategory || { displayName: 'Wellness & Beauty', description: 'Rejuvenating spas, expert salons, and holistic wellness centers for mind, body, and spirit' }
+})
 
 // Hero Ad and Business Modal state
 const heroAd = ref(null)
@@ -640,111 +634,6 @@ onMounted(() => {
   padding-bottom: var(--bottom-nav-height);
 }
 
-/* ===== HERO ADVERTISEMENT SECTION ===== */
-
-.hero-ad-section {
-  padding: var(--space-4);
-  margin-bottom: var(--space-4);
-}
-
-.hero-ad-card {
-  position: relative;
-  cursor: pointer;
-  border-radius: var(--radius-2xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-primary-lg);
-  transition: var(--transition-all);
-  border: 3px solid #FFD700;
-  background: var(--color-bg-secondary);
-}
-
-.hero-ad-card:active {
-  transform: scale(0.98);
-}
-
-.hero-ad-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: block;
-}
-
-.hero-ad-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
-  padding: var(--space-5) var(--space-4) var(--space-4);
-}
-
-.hero-ad-content {
-  color: white;
-}
-
-.hero-ad-title {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  font-family: var(--font-family-heading);
-  margin: var(--space-2) 0 var(--space-1);
-  line-height: var(--line-height-tight);
-}
-
-.hero-ad-subtitle {
-  font-size: var(--font-size-sm);
-  opacity: 0.9;
-  margin: 0 0 var(--space-3);
-  line-height: var(--line-height-relaxed);
-}
-
-.hero-ad-features {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--space-3);
-}
-
-.hero-ad-category {
-  color: var(--color-primary);
-}
-
-.hero-ad-price {
-  opacity: 0.8;
-}
-
-.hero-ad-cta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-primary);
-}
-
-.hero-ad-cta svg {
-  width: 16px;
-  height: 16px;
-}
-
-.tier-badge {
-  display: inline-block;
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-bold);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wider);
-  margin-top: var(--space-2);
-}
-
-.tier-badge.signature {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-  color: var(--color-bg-primary);
-  box-shadow: 0 2px 8px var(--color-primary-alpha-30);
-}
 
 /* ===== HEADER SECTION ===== */
 .wellness-header {

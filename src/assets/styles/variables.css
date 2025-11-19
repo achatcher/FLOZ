@@ -1,75 +1,134 @@
 /*
- * FLOZ Design System - CSS Variables Framework
+ * FLOZ Design System - Location-Customizable CSS Variables
  *
- * This file contains all customizable variables for the FLOZ app.
- * Update these values to rebrand or modify the design system.
+ * 🎨 EASY BRANDING CUSTOMIZATION FOR ANY LOCATION
+ * To create a new city theme, simply change the 6 brand colors below.
+ * All components automatically inherit your new colors.
  *
- * Organization:
- * 1. Brand Colors
- * 2. Typography
- * 3. Spacing & Layout
- * 4. Effects & Animations
- * 5. Component-Specific Variables
+ * 📍 LOCATION EXAMPLES:
+ * - Greenville: Gold & Forest Green (current)
+ * - Kalamazoo: Gold & Black
+ * - Charleston: Navy & Red
+ * - Miami: Turquoise & Coral
+ * - Nashville: Gold & Black
+ *
+ * 🚀 SUPER EASY SETUP:
+ * 1. Change the 6 main brand colors below
+ * 2. All buttons, navigation, text automatically update
+ * 3. Deploy - no other changes needed!
  */
 
 :root {
-  /* ===== BRAND COLORS ===== */
-  /* Primary Brand Colors - Mountain Green & Gold */
-  --color-primary: #D4AF37;           /* Gold accent */
-  --color-primary-dark: #B8941F;      /* Darker gold for gradients */
-  --color-primary-light: #E6C756;     /* Lighter gold for accents */
-  --color-primary-rgb: 212, 175, 55;  /* RGB values for rgba() usage */
-  --color-primary-alpha-10: rgba(212, 175, 55, 0.1);
-  --color-primary-alpha-20: rgba(212, 175, 55, 0.2);
-  --color-primary-alpha-30: rgba(212, 175, 55, 0.3);
+  /* ================================================================
+     🎨 LOCATION BRANDING - CHANGE THESE 6 COLORS FOR INSTANT REBRANDING
+     ================================================================ */
 
-  /* Forest Green Colors - Navigation & Branding */
-  --color-forest-green: #2F5233;      /* Forest green */
-  --color-forest-green-dark: #1E3521; /* Darker forest green */
-  --color-forest-green-light: #4A7C59; /* Lighter forest green */
-  --color-forest-green-rgb: 47, 82, 51; /* RGB values */
-  --color-forest-green-alpha-10: rgba(47, 82, 51, 0.1);
-  --color-forest-green-alpha-20: rgba(47, 82, 51, 0.2);
-  --color-forest-green-alpha-30: rgba(47, 82, 51, 0.3);
+  /* 🏷️ MAIN BRAND COLORS - Your Location's Identity */
+  --brand-primary: #D4AF37;          /* Primary color: buttons, highlights, call-to-actions */
+  --brand-secondary: #000000;        /* Secondary color: navigation bars, headers, accents */
+  --brand-background: #FFFFFF;       /* Main page background color */
+  --brand-surface: #F8F9FA;          /* Cards, panels, elevated surfaces */
+  --brand-text-primary: #000000;     /* Main text color (on light backgrounds) */
+  --brand-text-inverse: #FFFFFF;     /* Text color on dark backgrounds */
 
-  /* Background Colors - Clean White & Light Gray */
-  --color-bg-primary: #FFFFFF;        /* Clean white background */
-  --color-bg-secondary: #F8F9FA;      /* Light gray surfaces */
-  --color-bg-tertiary: #E9ECEF;       /* Card backgrounds */
-  --color-bg-surface: #F1F3F4;        /* Interactive surfaces */
-  --color-bg-luxury: linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%);  /* Natural gradient */
+  /* ================================================================
+     🔧 AUTO-GENERATED VARIATIONS - Don't change these, they auto-update!
+     ================================================================ */
+
+  /* Primary Color Variations */
+  --color-primary: var(--brand-primary);
+  --color-primary-light: color-mix(in srgb, var(--brand-primary) 80%, white 20%);
+  --color-primary-dark: color-mix(in srgb, var(--brand-primary) 80%, black 20%);
+  --color-primary-alpha-10: color-mix(in srgb, var(--brand-primary) 10%, transparent);
+  --color-primary-alpha-20: color-mix(in srgb, var(--brand-primary) 20%, transparent);
+  --color-primary-alpha-30: color-mix(in srgb, var(--brand-primary) 30%, transparent);
+
+  /* Secondary Color Variations */
+  --color-secondary: var(--brand-secondary);
+  --color-secondary-light: color-mix(in srgb, var(--brand-secondary) 80%, white 20%);
+  --color-secondary-dark: color-mix(in srgb, var(--brand-secondary) 80%, black 20%);
+  --color-secondary-alpha-10: color-mix(in srgb, var(--brand-secondary) 10%, transparent);
+  --color-secondary-alpha-20: color-mix(in srgb, var(--brand-secondary) 20%, transparent);
+  --color-secondary-alpha-30: color-mix(in srgb, var(--brand-secondary) 30%, transparent);
+
+  /* Background & Surface Colors */
+  --color-bg-primary: var(--brand-background);
+  --color-bg-secondary: var(--brand-surface);
+  --color-bg-tertiary: color-mix(in srgb, var(--brand-surface) 70%, var(--brand-background) 30%);
+  --color-bg-surface: var(--brand-surface);
 
   /* Text Colors */
-  --color-text-primary: #1E3521;      /* Dark forest green text */
-  --color-text-secondary: #2F5233;    /* Forest green text */
-  --color-text-tertiary: #495057;     /* Dark gray text */
-  --color-text-muted: #6C757D;        /* Muted gray text */
-  --color-text-disabled: #ADB5BD;     /* Disabled gray text */
+  --color-text-primary: var(--brand-text-primary);
+  --color-text-secondary: color-mix(in srgb, var(--brand-text-primary) 80%, transparent 20%);
+  --color-text-tertiary: color-mix(in srgb, var(--brand-text-primary) 60%, transparent 40%);
+  --color-text-muted: color-mix(in srgb, var(--brand-text-primary) 50%, transparent 50%);
+  --color-text-disabled: color-mix(in srgb, var(--brand-text-primary) 30%, transparent 70%);
+  --color-text-inverse: var(--brand-text-inverse);
 
-  /* Border & Divider Colors */
-  --color-border-primary: rgba(47, 82, 51, 0.2);
-  --color-border-secondary: rgba(47, 82, 51, 0.1);
-  --color-border-subtle: rgba(47, 82, 51, 0.15);
-  --color-border: rgba(47, 82, 51, 0.3);
-  --color-border-muted: rgba(47, 82, 51, 0.25);
+  /* Navigation Colors */
+  --color-nav-bg: var(--brand-secondary);
+  --color-nav-text: var(--brand-text-inverse);
+  --color-nav-accent: var(--brand-primary);
+
+  /* Border Colors */
+  --color-border-primary: var(--color-secondary-alpha-20);
+  --color-border-secondary: var(--color-secondary-alpha-10);
+  --color-border-subtle: color-mix(in srgb, var(--brand-secondary) 15%, transparent);
+  --color-border: var(--color-secondary-alpha-30);
+  --color-border-muted: color-mix(in srgb, var(--brand-secondary) 25%, transparent);
   --color-border-accent: var(--color-primary-alpha-30);
 
-  /* Status Colors */
-  --color-success: var(--color-forest-green);    /* Use forest green for success */
-  --color-warning: var(--color-primary);         /* Use gold for warnings */
-  --color-error: #DC3545;                        /* Keep red for errors */
-  --color-info: var(--color-forest-green);       /* Use forest green for info */
+  /* ================================================================
+     🎯 LEGACY SUPPORT - Keep existing variable names working
+     ================================================================ */
 
-  /* Mountain Theme Accent Colors */
-  --color-platinum: #F8F9FA;         /* Light background */
-  --color-champagne: #FFF8DC;        /* Warm cream */
-  --color-charcoal: var(--color-forest-green-dark);  /* Use dark forest green */
+  /* Forest Green Legacy Names (mapped to secondary color) */
+  --color-forest-green: var(--brand-secondary);
+  --color-forest-green-dark: var(--color-secondary-dark);
+  --color-forest-green-light: var(--color-secondary-light);
+  --color-forest-green-rgb: 47, 82, 51; /* Will be overridden by brand colors */
+  --color-forest-green-alpha-10: var(--color-secondary-alpha-10);
+  --color-forest-green-alpha-20: var(--color-secondary-alpha-20);
+  --color-forest-green-alpha-30: var(--color-secondary-alpha-30);
 
-  /* ===== TYPOGRAPHY ===== */
+  /* ================================================================
+     🎨 UNIVERSAL COLORS - These rarely change regardless of location
+     ================================================================ */
+
+  /* Status Colors - Universal across all locations */
+  --color-success: #10B981;          /* Green for success states */
+  --color-warning: #F59E0B;          /* Orange for warnings */
+  --color-error: #EF4444;            /* Red for errors */
+  --color-info: var(--brand-primary); /* Use brand primary for info */
+
+  /* Business Tier Colors - Standard across all locations */
+  --color-tier-signature: #FFD700;   /* Gold for signature tier */
+  --color-tier-premier: #C0C0C0;     /* Silver for premier tier */
+  --color-tier-curated: #CD7F32;     /* Bronze for curated tier */
+
+  /* Legacy Tier Names */
+  --color-tier-gold: var(--color-tier-signature);
+  --color-tier-silver: var(--color-tier-premier);
+  --color-tier-bronze: var(--color-tier-curated);
+
+  /* Universal Utility Colors */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-transparent: transparent;
+
+  /* Legacy Named Colors */
+  --color-platinum: var(--brand-surface);
+  --color-champagne: #FFF8DC;
+  --color-charcoal: var(--color-secondary-dark);
+
+  /* ================================================================
+     📝 TYPOGRAPHY SYSTEM - Universal across locations
+     ================================================================ */
+
   /* Font Families - Elegant & Sophisticated */
   --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
-  --font-family-heading: 'Playfair Display', 'Times New Roman', Georgia, serif;  /* Elegant serif for headings */
-  --font-family-luxury: 'Cormorant Garamond', 'Times New Roman', Georgia, serif; /* Ultra-luxury serif */
+  --font-family-heading: 'Playfair Display', 'Times New Roman', Georgia, serif;
+  --font-family-luxury: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
   --font-family-monospace: 'SF Mono', Monaco, 'Cascadia Code', monospace;
 
   /* Font Sizes - Mobile First */
@@ -107,7 +166,10 @@
   --letter-spacing-wider: 0.05em;
   --letter-spacing-widest: 0.1em;
 
-  /* ===== SPACING & LAYOUT ===== */
+  /* ================================================================
+     📏 SPACING & LAYOUT SYSTEM - Universal
+     ================================================================ */
+
   /* Spacing Scale - 8px Grid System */
   --space-1: 4px;     /* 0.5 * 8px */
   --space-2: 8px;     /* 1 * 8px */
@@ -148,7 +210,10 @@
   --z-tooltip: 1070;
   --z-toast: 1080;
 
-  /* ===== EFFECTS & ANIMATIONS ===== */
+  /* ================================================================
+     ✨ EFFECTS & ANIMATIONS - Universal
+     ================================================================ */
+
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-base: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
@@ -170,7 +235,9 @@
   --transition-slow: 300ms ease;
   --transition-all: all var(--transition-base);
 
-  /* ===== COMPONENT-SPECIFIC VARIABLES ===== */
+  /* ================================================================
+     📱 COMPONENT-SPECIFIC VARIABLES
+     ================================================================ */
 
   /* Mobile Touch Interactions */
   --touch-target-min: 44px;          /* iOS minimum touch target size */
@@ -195,7 +262,7 @@
   --card-background: var(--color-bg-secondary);
 
   /* Modal */
-  --modal-backdrop: rgba(47, 82, 51, 0.95);
+  --modal-backdrop: color-mix(in srgb, var(--brand-secondary) 95%, transparent 5%);
   --modal-max-width: 500px;
   --modal-border-radius: var(--radius-xl);
 
@@ -209,8 +276,9 @@
   --tier-curated-bg: var(--color-bg-secondary);
 }
 
-/* ===== RESPONSIVE BREAKPOINTS ===== */
-/* Mobile-First Design System */
+/* ================================================================
+   📱 RESPONSIVE BREAKPOINTS - Mobile-First Design System
+   ================================================================ */
 
 /* Base Mobile: 320px+ (Default) */
 :root {
@@ -266,3 +334,41 @@
     --space-10: 60px;
   }
 }
+
+/* ================================================================
+   🎨 LOCATION THEME EXAMPLES - Copy & paste for new locations!
+   ================================================================ */
+
+/*
+🏔️ KALAMAZOO THEME - Gold & Black
+--brand-primary: #FFD700;
+--brand-secondary: #000000;
+--brand-background: #000000;
+--brand-surface: #1A1A1A;
+--brand-text-primary: #FFFFFF;
+--brand-text-inverse: #FFD700;
+
+🌊 CHARLESTON THEME - Navy & Red
+--brand-primary: #DC143C;
+--brand-secondary: #1E3A8A;
+--brand-background: #FFFFFF;
+--brand-surface: #F1F5F9;
+--brand-text-primary: #1E3A8A;
+--brand-text-inverse: #FFFFFF;
+
+🌴 MIAMI THEME - Turquoise & Coral
+--brand-primary: #FF7F7F;
+--brand-secondary: #20B2AA;
+--brand-background: #FFFFFF;
+--brand-surface: #F0FDFA;
+--brand-text-primary: #20B2AA;
+--brand-text-inverse: #FFFFFF;
+
+🎵 NASHVILLE THEME - Gold & Black
+--brand-primary: #FFD700;
+--brand-secondary: #000000;
+--brand-background: #FFFFFF;
+--brand-surface: #F8F9FA;
+--brand-text-primary: #000000;
+--brand-text-inverse: #FFFFFF;
+*/

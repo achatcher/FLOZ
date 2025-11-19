@@ -47,8 +47,8 @@ export function useAppConfig() {
   /**
    * Load location-specific data (businesses, events)
    */
-  const loadLocationData = async (location = currentLocation.value) => {
-    if (locationCache[location]) {
+  const loadLocationData = async (location = currentLocation.value, forceReload = false) => {
+    if (locationCache[location] && !forceReload) {
       return locationCache[location]
     }
 
@@ -56,10 +56,13 @@ export function useAppConfig() {
     error.value = null
 
     try {
+      // Add cache-busting timestamp for force reload
+      const timestamp = forceReload ? `?t=${Date.now()}` : ''
+
       // Load businesses and events in parallel
       const [businessesResponse, eventsResponse] = await Promise.all([
-        fetch(`/config/locations/${location}/businesses.json`),
-        fetch(`/config/locations/${location}/events.json`)
+        fetch(`/config/locations/${location}/businesses.json${timestamp}`),
+        fetch(`/config/locations/${location}/events.json${timestamp}`)
       ])
 
       if (!businessesResponse.ok || !eventsResponse.ok) {
@@ -118,9 +121,9 @@ export function useAppConfig() {
   /**
    * Switch to a different location
    */
-  const setLocation = async (newLocation) => {
+  const setLocation = async (newLocation, forceReload = false) => {
     // Check if data is already loaded for this location
-    if (newLocation === currentLocation.value && locationCache[newLocation]) {
+    if (newLocation === currentLocation.value && locationCache[newLocation] && !forceReload) {
       console.log(`✅ Location ${newLocation} already loaded`)
       return
     }
@@ -129,7 +132,17 @@ export function useAppConfig() {
     currentLocation.value = newLocation
 
     // Load data for the new location
-    await loadLocationData(newLocation)
+    await loadLocationData(newLocation, forceReload)
+  }
+
+  /**
+   * Force refresh current location data
+   */
+  const forceRefreshLocation = async () => {
+    console.log('🔄 Force refreshing location data...')
+    // Clear cache for current location
+    delete locationCache[currentLocation.value]
+    await loadLocationData(currentLocation.value, true)
   }
 
   /**
@@ -311,6 +324,7 @@ export function useAppConfig() {
     loadAppConfig,
     loadLocationData,
     setLocation,
+    forceRefreshLocation,
     initializeApp,
 
     // Getters

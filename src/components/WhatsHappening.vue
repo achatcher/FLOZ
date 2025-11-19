@@ -56,7 +56,6 @@
             <h4 class="restaurant-name">{{ business.name }}</h4>
             <p class="restaurant-description">{{ business.description }}</p>
             <div class="restaurant-details">
-              <span class="price-range">{{ business.price_range }}</span>
               <span v-if="business.features?.happy_hour" class="happy-hour-tag">🍹 Happy Hour</span>
               <span v-if="business.features?.live_music" class="live-music-tag">🎵 Live Music</span>
             </div>

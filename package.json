@@ -8,13 +8,11 @@
     "preview": "vite preview",
     "generate-icons": "node scripts/generate-icons.js",
     "icons": "npm run generate-icons",
-
     "clean": "rm -rf dist node_modules/.vite .env.local",
     "reset": "npm run clean && npm install"
   },
   "dependencies": {
     "leaflet": "^1.9.4",
-    "mapbox-gl": "^2.15.0",
     "pinia": "^2.1.6",
     "qrcode.vue": "^3.4.1",
     "vue": "^3.3.4",
@@ -22,11 +20,21 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.3.4",
+    "sharp": "^0.34.5",
     "vite": "^4.4.9",
     "vite-plugin-pwa": "^0.16.5"
   },
   "main": "vite.config.js",
-  "keywords": ["greenville", "south-carolina", "lifestyle", "dining", "outdoor", "pwa", "vue", "mountain-community"],
+  "keywords": [
+    "greenville",
+    "south-carolina",
+    "lifestyle",
+    "dining",
+    "outdoor",
+    "pwa",
+    "vue",
+    "mountain-community"
+  ],
   "author": "The Greenville Social",
   "license": "ISC"
 }

@@ -137,8 +137,6 @@ npm install
 # Start development server
 npm run dev
 
-# View configuration test page
-# Navigate to http://localhost:3001/config-test
 ```
 
 ### Deploy to New City
@@ -196,7 +194,6 @@ FLOZ copy 2/
 │   │
 │   ├── 📁 views/               # Page components
 │   │   ├── 📄 HomeView.vue            # 🌍 Dynamic home page
-│   │   ├── 📄 ConfigTestView.vue      # Configuration testing page
 │   │   └── 📄 CategoryListingView.vue # Business category pages
 │   │
 │   ├── 📁 components/          # Vue components
@@ -207,8 +204,6 @@ FLOZ copy 2/
 │   └── 📁 assets/              # Application assets
 │       └── 📁 styles/          # FLOZ CSS Framework
 │
-├── 📄 test-config.html         # Configuration validation test
-├── 📄 test-summary.md         # Testing documentation
 └── 📄 README.md               # This documentation
 ```
 
@@ -374,13 +369,6 @@ const restaurants = businessStore.getBusinessesByCategory('Dining')
 const featured = businessStore.getFeaturedBusinesses
 ```
 
-### Testing Configuration
-
-Visit `/config-test` in your app to:
-- ✅ Verify all configuration files load
-- ✅ Test location switching
-- ✅ Validate data structure
-- ✅ Debug configuration issues
 
 ---
 
@@ -548,16 +536,14 @@ Follow the deployment guide above to add your city. The system supports:
 ### Getting Started (New Developer)
 1. **Clone and Setup**: `git clone` → `npm install` → `npm run dev`
 2. **Understand Configuration**: Review `public/config/app-config.json`
-3. **Test Configuration**: Visit `/config-test` to see dynamic system in action
-4. **Explore Data Flow**: Configuration → Composable → Stores → Components
-5. **Add New Location**: Follow multi-location deployment guide
+3. **Explore Data Flow**: Configuration → Composable → Stores → Components
+4. **Add New Location**: Follow multi-location deployment guide
 
 ### Key Files to Understand
 - **useAppConfig.js**: Central configuration management system
 - **app-config.json**: Master application configuration
 - **HomeView.vue**: Dynamic home page using configuration
 - **dynamicBusinessStore.js**: Location-aware business data
-- **ConfigTestView.vue**: Testing interface for configuration
 
 ---
 
@@ -567,7 +553,6 @@ Follow the deployment guide above to add your city. The system supports:
 - **No Code Changes**: Deploy to new cities with just JSON updates
 - **Hot Module Replacement**: See configuration changes instantly
 - **Type Safety**: Structured schemas with validation
-- **Easy Testing**: Built-in testing interface at `/config-test`
 
 ### 💼 For Business
 - **Rapid Scaling**: Launch in new cities in hours, not weeks

@@ -9,8 +9,8 @@
     </div>
 
     <div class="map-container">
-      <!-- Search Bar -->
-      <div class="map-search-bar">
+      <!-- Search Bar and Filter Button -->
+      <div class="search-bar-wrapper">
         <div class="search-input-group">
           <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
             <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14Z"/>
@@ -18,50 +18,59 @@
           <input
             v-model="mapSearchQuery"
             type="text"
-            placeholder="Search luxury establishments..."
+            placeholder="Search establishments..."
             class="search-input"
           />
+          <button
+            v-if="mapSearchQuery"
+            class="btn btn-clear"
+            @click="clearSearch"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/>
+            </svg>
+          </button>
         </div>
-        <button class="view-toggle-btn" @click="toggleViewMode">
-          <svg class="toggle-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z"/>
-          </svg>
-          View List
-        </button>
-        <button class="filter-btn-map" @click="toggleCategorySort">
+        <button class="btn btn-filter" @click="toggleCategorySort" :class="{ active: showCategorySort }">
           <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z"/>
+            <path d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z"/>
           </svg>
-          Sort
+          <span class="filter-text">Filter</span>
         </button>
       </div>
 
       <!-- Category Sort Filter -->
-      <div v-if="showCategorySort" class="category-filter-section">
-        <div class="category-filter-header">
-          <h3>Sort by Category</h3>
-          <button class="clear-filter-btn" @click="clearCategoryFilter">
-            All Categories
-          </button>
+      <transition name="slide-down">
+        <div v-if="showCategorySort" class="category-filter-section">
+          <div class="category-filter-header">
+            <h3>Filter by Category</h3>
+            <button
+              v-if="selectedCategory"
+              class="btn btn-ghost btn-sm"
+              @click="clearCategoryFilter"
+            >
+              Clear Filter
+            </button>
+          </div>
+          <div class="category-chips">
+            <button
+              v-for="category in availableCategories"
+              :key="category"
+              class="category-chip"
+              :class="{ active: selectedCategory === category }"
+              @click="selectCategory(category)"
+            >
+              {{ category }}
+            </button>
+          </div>
         </div>
-        <div class="category-chips">
-          <button
-            v-for="category in availableCategories"
-            :key="category"
-            class="category-chip"
-            :class="{ active: selectedCategory === category }"
-            @click="selectCategory(category)"
-          >
-            {{ category }}
-          </button>
-        </div>
-      </div>
+      </transition>
 
       <!-- Map -->
       <div ref="mapContainer" class="map"></div>
 
       <!-- Location Button -->
-      <button class="location-btn" @click="centerOnUserLocation">
+      <button class="btn btn-primary location-btn-position" @click="centerOnUserLocation">
         <svg class="location-icon" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
         </svg>
@@ -88,7 +97,6 @@
               </p>
               <div class="result-meta">
                 <span class="result-subcategory" v-if="business.subcategory">{{ business.subcategory }}</span>
-                <span class="result-price" v-if="business.price_range || business.priceRange">{{ business.price_range || business.priceRange }}</span>
               </div>
             </div>
             <div class="result-action">
@@ -153,7 +161,7 @@ import L from 'leaflet'
 import { useBusinessStore } from '@/stores/businessStore'
 import { useLocationStore } from '@/stores/locationStore'
 import { useAppConfig } from '@/composables/useAppConfig'
-import { GREENVILLE_CENTER, DEFAULT_ZOOM } from '@/utils/constants'
+import { getLocationCenter, getDefaultZoom } from '@/utils/constants'
 import TopBar from '@/components/Navigation/TopBar.vue'
 import BottomNav from '@/components/Navigation/BottomNav.vue'
 import BusinessListItem from '@/components/Business/BusinessListItem.vue'
@@ -243,7 +251,8 @@ onUnmounted(() => {
 })
 
 const initializeMap = () => {
-  map.value = L.map(mapContainer.value).setView([GREENVILLE_CENTER.lat, GREENVILLE_CENTER.lng], DEFAULT_ZOOM)
+  const center = getLocationCenter()
+  map.value = L.map(mapContainer.value).setView([center.lat, center.lng], getDefaultZoom())
 
   // Add OpenStreetMap tiles
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -404,6 +413,10 @@ const clearCategoryFilter = () => {
   showCategorySort.value = false
 }
 
+const clearSearch = () => {
+  mapSearchQuery.value = ''
+}
+
 const selectBusiness = (business) => {
   console.log('🔍 Search result clicked - Business:', business.name, 'ID:', business.id)
 
@@ -464,13 +477,15 @@ const closeBusinessModal = () => {
 .map-container {
   flex: 1;
   position: relative;
-  padding: 20px 15px 100px;
+  padding: var(--space-6) var(--space-4) 100px;
 }
 
-.map-search-bar {
+
+.search-bar-wrapper {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
   position: relative;
   z-index: 10;
 }
@@ -481,17 +496,26 @@ const closeBusinessModal = () => {
   align-items: center;
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-3) var(--space-4);
-  gap: var(--space-2);
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-all);
   backdrop-filter: var(--backdrop-blur-base);
+  height: 44px;
+}
+
+.search-input-group:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-alpha-10);
 }
 
 .search-icon {
-  width: 18px;
-  height: 18px;
-  opacity: 0.6;
+  width: 20px;
+  height: 20px;
   color: var(--color-primary);
+  opacity: 0.7;
+  flex-shrink: 0;
 }
 
 .search-input {
@@ -500,90 +524,102 @@ const closeBusinessModal = () => {
   border: none;
   color: var(--color-text-primary);
   font-size: var(--font-size-base);
-  outline: none;
   font-family: var(--font-family-primary);
+  outline: none;
+  line-height: 1.4;
 }
 
 .search-input::placeholder {
   color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-normal);
 }
 
-.view-toggle-btn {
-  background: var(--color-primary);
-  border: none;
-  border-radius: var(--radius-lg);
-  padding: var(--space-3) var(--space-5);
-  color: var(--color-bg-primary);
-  font-weight: var(--font-weight-semibold);
+.btn-clear {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-secondary);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  justify-content: center;
+  font-size: var(--font-size-sm);
   transition: var(--transition-all);
-  font-family: var(--font-family-primary);
+  flex-shrink: 0;
 }
 
-.view-toggle-btn:hover {
-  background: var(--color-primary-light);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-primary);
+.btn-clear svg {
+  width: 14px;
+  height: 14px;
 }
 
-.filter-btn-map {
-  background: var(--color-primary);
-  border: none;
-  border-radius: var(--radius-lg);
+.btn-clear:hover {
+  background: var(--color-primary-alpha-10);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: scale(1.05);
+}
+
+.btn-filter {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
   padding: var(--space-3) var(--space-4);
-  color: var(--color-bg-primary);
-  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
   cursor: pointer;
-  white-space: nowrap;
+  transition: var(--transition-all);
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  transition: var(--transition-all);
-  font-family: var(--font-family-primary);
+  font-weight: var(--font-weight-medium);
+  backdrop-filter: var(--backdrop-blur-base);
+  height: 44px;
 }
 
-.filter-btn-map:hover {
-  background: var(--color-primary-light);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-primary);
+.btn-filter:hover {
+  background: var(--color-primary-alpha-10);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-filter.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-bg-primary);
+}
+
+.filter-text {
+  font-size: var(--font-size-sm);
 }
 
 .toggle-icon,
 .filter-icon {
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
 }
 
 /* Category Filter Section */
 .category-filter-section {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
-  margin-bottom: var(--space-4);
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: var(--backdrop-blur-base);
 }
 
 .category-filter-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-5);
 }
 
 .category-filter-header h3 {
@@ -592,49 +628,35 @@ const closeBusinessModal = () => {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
   margin: 0;
-}
-
-.clear-filter-btn {
-  background: none;
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-md);
-  padding: var(--space-2) var(--space-3);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  transition: var(--transition-all);
-}
-
-.clear-filter-btn:hover {
-  background: var(--color-bg-tertiary);
-  border-color: var(--color-primary);
-  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .category-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .category-chip {
   background: var(--color-bg-tertiary);
   border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-2) var(--space-3);
   color: var(--color-text-secondary);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: var(--transition-all);
   white-space: nowrap;
+  font-family: var(--font-family-primary);
 }
 
 .category-chip:hover {
   background: var(--color-primary-alpha-10);
   border-color: var(--color-primary);
   color: var(--color-primary);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .category-chip.active {
@@ -642,6 +664,27 @@ const closeBusinessModal = () => {
   border-color: var(--color-primary);
   color: var(--color-bg-primary);
   font-weight: var(--font-weight-semibold);
+  box-shadow: var(--shadow-md);
+}
+
+.category-chip:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Slide down transition */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 .map {
@@ -653,35 +696,37 @@ const closeBusinessModal = () => {
   z-index: 1;
 }
 
-.location-btn {
+.location-btn-position {
   position: absolute;
   bottom: 120px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 10;
   background: var(--color-primary);
-  border: none;
-  border-radius: var(--radius-lg);
-  padding: var(--space-4) var(--space-6);
   color: var(--color-bg-primary);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-base);
-  cursor: pointer;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: var(--backdrop-blur-base);
+  transition: var(--transition-all);
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  box-shadow: var(--shadow-primary-lg);
-  z-index: 10;
-  transition: var(--transition-all);
-  font-family: var(--font-family-primary);
 }
 
-.location-btn:active {
-  transform: translateX(-50%) scale(0.98);
+.location-btn-position:hover {
+  background: var(--color-primary-light);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: var(--shadow-xl);
 }
 
 .location-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 /* List View Modal */
@@ -840,12 +885,6 @@ const closeBusinessModal = () => {
   color: var(--color-text-tertiary);
 }
 
-.result-price {
-  font-size: var(--font-size-xs);
-  color: var(--color-primary);
-  font-weight: var(--font-weight-medium);
-}
-
 .result-action {
   margin-left: var(--space-3);
 }
@@ -897,6 +936,49 @@ const closeBusinessModal = () => {
   line-height: var(--line-height-relaxed);
   margin: 0;
 }
+
+/* Mobile responsive adjustments */
+@media (max-width: 767px) {
+  .map-container {
+    padding: var(--space-4) var(--space-3) 100px;
+  }
+
+  .search-bar-wrapper {
+    gap: var(--space-2);
+  }
+
+
+  .filter-text {
+    display: none;
+  }
+
+
+  .category-filter-section {
+    padding: var(--space-4);
+  }
+
+  .category-filter-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .category-chips {
+    gap: var(--space-2);
+  }
+
+  .category-chip {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (min-width: 768px) {
+  .search-bar-wrapper {
+    align-items: center;
+  }
+}
+
 
 /* Responsive styles for page title */
 @media (min-width: 640px) {

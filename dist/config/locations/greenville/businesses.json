@@ -165,7 +165,12 @@
         "features": ["Rooftop Views", "Craft Cocktails", "Small Plates", "City Views"],
         "tags": ["rooftop", "cocktails", "views", "upscale"],
         "rating": 4.8,
-        "reviewCount": 342
+        "reviewCount": 342,
+        "happyHour": {
+          "available": true,
+          "schedule": "Monday-Friday 4:00 PM - 7:00 PM",
+          "deals": "$2 off craft cocktails, $6 wine by the glass, and discounted small plates"
+        }
       },
       {
         "id": 5,
@@ -420,7 +425,12 @@
         "features": ["Southern Cuisine", "Local Ingredients", "Craft Cocktails", "Downtown Location"],
         "tags": ["southern", "upscale", "local", "innovative"],
         "rating": 4.6,
-        "reviewCount": 324
+        "reviewCount": 324,
+        "happyHour": {
+          "available": true,
+          "schedule": "Monday-Friday 5:00 PM - 6:30 PM",
+          "deals": "Half-price appetizers, $2 off wine by the glass, and discounted southern small plates"
+        }
       },
       {
         "id": 21,
@@ -456,7 +466,12 @@
         "features": ["Handmade Pasta", "Wood-Fired Pizza", "Italian Wine", "Romantic"],
         "tags": ["italian", "pasta", "pizza", "wine"],
         "rating": 4.7,
-        "reviewCount": 287
+        "reviewCount": 287,
+        "happyHour": {
+          "available": true,
+          "schedule": "Wednesday-Friday 5:00 PM - 6:30 PM",
+          "deals": "Half-price wine by the glass, $12 wood-fired pizzas, and discounted antipasti"
+        }
       },
       {
         "id": 22,
@@ -492,7 +507,12 @@
         "features": ["Historic Hotel", "Live Music", "Craft Cocktails", "Elegant"],
         "tags": ["historic", "cocktails", "live music", "elegant"],
         "rating": 4.6,
-        "reviewCount": 234
+        "reviewCount": 234,
+        "happyHour": {
+          "available": true,
+          "schedule": "Tuesday-Thursday 5:00 PM - 7:00 PM",
+          "deals": "$3 off premium cocktails, $8 wine selections, and complimentary appetizers"
+        }
       },
       {
         "id": 23,
@@ -567,7 +587,12 @@
         "features": ["Craft Beer", "Gastropub Fare", "Late Night", "Downtown"],
         "tags": ["gastropub", "craft beer", "casual", "downtown"],
         "rating": 4.4,
-        "reviewCount": 198
+        "reviewCount": 198,
+        "happyHour": {
+          "available": true,
+          "schedule": "Monday-Friday 4:00 PM - 7:00 PM",
+          "deals": "$1 off draft beers, $3 well drinks, and half-price wings and appetizers"
+        }
       },
       {
         "id": 41,
@@ -711,7 +736,12 @@
         "features": ["House-made Spirits", "Craft Cocktails", "Speakeasy Atmosphere", "Small Plates"],
         "tags": ["cocktails", "craft", "speakeasy", "intimate"],
         "rating": 4.5,
-        "reviewCount": 156
+        "reviewCount": 156,
+        "happyHour": {
+          "available": true,
+          "schedule": "Tuesday-Thursday 5:00 PM - 7:00 PM",
+          "deals": "$2 off house cocktails, $4 off premium spirits, and complimentary small plates"
+        }
       },
       {
         "id": 46,

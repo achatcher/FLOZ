@@ -149,44 +149,6 @@
         </div>
       </section>
 
-      <!-- Community Stats -->
-      <section class="stats-section" aria-labelledby="stats-heading">
-        <h2 id="stats-heading" class="section-title">
-          <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 22L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
-          </svg>
-          Join Our Thriving Community
-        </h2>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h2v-2h2v-2h2v8z"/>
-              </svg>
-            </div>
-            <div class="stat-number">{{ dynamicStats.totalBusinesses }}+</div>
-            <div class="stat-label">Authentic Local Businesses</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 2C5.45 2 5 2.45 5 3V4H4C2.9 4 2 4.9 2 6V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V6C22 4.9 21.1 4 20 4H19V3C19 2.45 18.55 2 18 2S17 2.45 17 3V4H7V3C7 2.45 6.55 2 6 2Z"/>
-              </svg>
-            </div>
-            <div class="stat-number">{{ dynamicStats.categoryCount }}</div>
-            <div class="stat-label">Business Categories</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-              </svg>
-            </div>
-            <div class="stat-number">100%</div>
-            <div class="stat-label">{{ dynamicStats.locationName }} Focused</div>
-          </div>
-        </div>
-      </section>
     </main>
 
     <BottomNav />
@@ -198,12 +160,10 @@ import { ref, computed, onMounted } from 'vue'
 import QrcodeVue from 'qrcode.vue'
 import TopBar from '@/components/Navigation/TopBar.vue'
 import BottomNav from '@/components/Navigation/BottomNav.vue'
-import { useBusinessStore } from '@/stores/businessStore'
 import { useAppConfig } from '@/composables/useAppConfig'
 import analytics from '@/utils/analytics'
 
-const businessStore = useBusinessStore()
-const { initializeApp, getCurrentBusinesses, getConfig, getAppInfo } = useAppConfig()
+const { initializeApp, getConfig, getAppInfo } = useAppConfig()
 
 const shareUrl = computed(() => window.location.origin)
 const qrSize = ref(250)
@@ -241,20 +201,6 @@ const qrDescription = computed(() => {
 //     .slice(0, 2)
 // })
 
-// Dynamic stats based on actual business data
-const dynamicStats = computed(() => {
-  const businesses = getCurrentBusinesses.value || []
-  const location = appLocation.value
-
-  // Get unique categories from actual business data
-  const categories = [...new Set(businesses.map(b => b.category))].filter(Boolean)
-
-  return {
-    totalBusinesses: businesses.length,
-    categoryCount: categories.length,
-    locationName: location.city || 'Greenville'
-  }
-})
 
 // Dynamic share content from app configuration
 const shareTitle = computed(() => {
@@ -278,15 +224,12 @@ const emailSubject = computed(() => {
 const emailBody = computed(() => {
   const info = getAppInfo.value
   const location = appLocation.value
-  const stats = dynamicStats.value
 
   return `Hello!
 
 I wanted to share ${appName.value} with you - it's a curated guide to ${location.city} community lifestyle.
 
 ${appName.value} features:
-• ${stats.totalBusinesses}+ local businesses
-• ${stats.categoryCount} different categories
 • ${info?.description || 'Fine dining establishments'}
 • Community events and experiences
 • Local services and amenities
@@ -302,10 +245,9 @@ Best regards!`
 let deferredPrompt = null
 
 onMounted(async () => {
-  // Initialize app configuration and load business data
+  // Initialize app configuration
   try {
     await initializeApp()
-    await businessStore.loadData()
   } catch (error) {
     console.error('Failed to initialize app data for ShareView:', error)
   }
@@ -869,70 +811,6 @@ const installPWA = async () => {
   line-height: 1.5;
 }
 
-/* ===== STATS SECTION ===== */
-.stats-section {
-  margin-bottom: 64px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 32px;
-  max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.stat-card {
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-xl);
-  padding: 28px 20px;
-  text-align: center;
-  transition: var(--transition-all);
-  box-shadow: var(--shadow-sm);
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
-  background: var(--color-bg-tertiary);
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-primary);
-}
-
-.stat-icon {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-primary);
-  background: var(--color-primary-alpha-10);
-  border-radius: var(--radius-lg);
-}
-
-.stat-icon svg {
-  width: 28px;
-  height: 28px;
-}
-
-.stat-number {
-  color: var(--color-text-primary);
-  font-size: 32px;
-  font-weight: 800;
-  display: block;
-  margin-bottom: 8px;
-  font-family: var(--font-family-heading);
-}
-
-.stat-label {
-  color: var(--color-text-secondary);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.3;
-}
 
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -1024,27 +902,6 @@ const installPWA = async () => {
     font-size: 11px;
   }
 
-  .stats-section {
-    margin-bottom: 48px;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    max-width: 280px;
-  }
-
-  .stat-card {
-    padding: 20px 16px;
-  }
-
-  .stat-number {
-    font-size: 28px;
-  }
-
-  .stat-label {
-    font-size: 13px;
-  }
 
   .install-card {
     flex-direction: column;
@@ -1074,8 +931,5 @@ const installPWA = async () => {
     grid-template-columns: repeat(4, 1fr);
   }
 
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 </style>

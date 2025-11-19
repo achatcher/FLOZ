@@ -53,7 +53,7 @@ export const useBusinessStore = defineStore('business', {
 
     /**
      * Gets interstitial advertisement for a specific category
-     * TODO: Move ads to dynamic configuration system
+     * Note: This provides basic ad functionality - extend as needed
      */
     getInterstitialAd: (state) => (categoryName) => {
       return state.ads.find(
@@ -64,7 +64,7 @@ export const useBusinessStore = defineStore('business', {
 
     /**
      * Gets banner advertisement for a category and position
-     * TODO: Move ads to dynamic configuration system
+     * Note: This provides basic ad functionality - extend as needed
      */
     getBannerAd: (state) => (categoryName, position = 'hero') => {
       return state.ads.find(
@@ -110,7 +110,7 @@ export const useBusinessStore = defineStore('business', {
     },
 
     async fetchAds() {
-      // Simplified ads - TODO: Move to dynamic configuration
+      // Simplified ads - extend as needed for location-aware functionality
       return [
         // Basic interstitial ads for major categories
         {

@@ -34,11 +34,9 @@ import { createPinia } from 'pinia'       // Modern state management
 import App from './App.vue'              // Root application component
 import router from './router'            // Client-side routing configuration
 
-// ===== LOCATION-BASED CONFIGURATION =====
-// Multi-location configuration system that allows easy adaptation to new markets
-// Provides centralized management of branding, theming, and business categories
-import { getLocationConfig } from './config/locations'
-import { themeUtils } from './composables/useLocationTheme'
+// ===== APP CONFIGURATION =====
+// Centralized app configuration system for easy customization
+// Managed through app-config.json and useAppConfig composable
 
 // ===== STYLING SYSTEM =====
 // Modular CSS Framework - Complete design system with:
@@ -87,13 +85,8 @@ import { useEventsStore } from './stores/eventsStore'
 const businessStore = useBusinessStore()  // Business directory, search, categories
 const eventsStore = useEventsStore()      // Events calendar, featured events
 
-// ===== LOCATION-BASED INITIALIZATION =====
-// Initialize location configuration and theming before data loading
-// This ensures consistent branding throughout the application lifecycle
-const locationConfig = getLocationConfig()
-
-// Apply location-specific theme immediately for consistent styling
-themeUtils.applyGlobalTheme()
+// ===== APP INITIALIZATION =====
+// Initialize core app functionality
 
 // ===== PRELOAD CRITICAL DATA =====
 // Load essential data before mounting the application
@@ -119,7 +112,6 @@ Promise.all([
   // This allows any component to access performance data and gesture handlers
   app.config.globalProperties.$performance = performanceMonitor
   app.config.globalProperties.$gestures = mobileGestures
-  app.config.globalProperties.$location = locationConfig
 
   // ===== APPLICATION MOUNTING =====
   // Mount the application to the DOM
@@ -130,9 +122,7 @@ Promise.all([
   // Log successful initialization in development environment
   // Helps developers confirm all systems are properly initialized
   if (import.meta.env.DEV) {
-    console.log(`🚀 ${locationConfig.branding.appName} initialized successfully`)
-    console.log(`📍 Location: ${locationConfig.name}, ${locationConfig.state}`)
-    console.log(`🎨 Theme applied: ${locationConfig.theme.colors.primary}`)
+    console.log('🚀 App initialized successfully')
     console.log('📱 Mobile optimizations active')
     console.log('📊 Performance monitoring enabled')
     console.log('👆 Touch gestures configured')

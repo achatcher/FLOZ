@@ -22,9 +22,6 @@
         <!-- Event Date & Time -->
         <div class="event-datetime">
           <div class="datetime-item">
-            <svg class="datetime-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 3H18V1H16V3H8V1H6V3H5C3.89 3 3.01 3.9 3.01 5L3 19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V8H19V19ZM7 10H12V15H7Z"/>
-            </svg>
             <div class="datetime-content">
               <h4 class="datetime-label">Date</h4>
               <p class="datetime-value">{{ formatEventDate(event.date) }}</p>
@@ -32,9 +29,6 @@
           </div>
 
           <div v-if="event.time" class="datetime-item">
-            <svg class="datetime-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2ZM12 20C7.59 20 4 16.41 4 12S7.59 4 12 4 20 7.59 20 12 16.41 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z"/>
-            </svg>
             <div class="datetime-content">
               <h4 class="datetime-label">Time</h4>
               <p class="datetime-value">{{ event.time }}</p>
@@ -44,9 +38,6 @@
 
         <!-- Event Location -->
         <div v-if="event.location" class="event-location">
-          <svg class="location-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22S19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9S10.62 6.5 12 6.5 14.5 7.62 14.5 9 13.38 11.5 12 11.5Z"/>
-          </svg>
           <div class="location-content">
             <h4 class="location-label">Location</h4>
             <p class="location-value">{{ event.location }}</p>
@@ -251,19 +242,6 @@ const formatEventDate = (dateString) => {
 .datetime-item {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  background: var(--color-bg-tertiary);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border-primary);
-}
-
-.datetime-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--color-primary);
-  flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .datetime-content {
@@ -290,19 +268,6 @@ const formatEventDate = (dateString) => {
 .event-location {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  background: var(--color-bg-tertiary);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border-primary);
-}
-
-.location-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--color-primary);
-  flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .location-content {
@@ -355,11 +320,6 @@ const formatEventDate = (dateString) => {
 @media (max-width: 768px) {
   .event-datetime {
     grid-template-columns: 1fr;
-  }
-
-  .datetime-item,
-  .event-location {
-    padding: var(--space-3);
   }
 }
 </style>

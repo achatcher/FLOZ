@@ -56,9 +56,6 @@
         <!-- All Announcements -->
         <section class="all-announcements">
           <h2 class="section-title">
-            <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"/>
-            </svg>
             Recent Updates
           </h2>
 
@@ -95,29 +92,6 @@
           </div>
         </section>
 
-        <!-- Community Stats -->
-        <section class="community-stats">
-          <h2 class="section-title">
-            <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M16 6L18.29 8.29L13.41 13.17L9.41 9.17L2 16.59L3.41 18L9.41 12L13.41 16L20.29 9.12L22 10.83V6H16Z"/>
-            </svg>
-            Community Updates
-          </h2>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-number">{{ communityStats.totalBusinesses }}+</div>
-              <div class="stat-label">Local Partners</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">{{ communityStats.categoryCount }}</div>
-              <div class="stat-label">Categories</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">{{ communityStats.recentUpdates }}</div>
-              <div class="stat-label">Recent Updates</div>
-            </div>
-          </div>
-        </section>
       </div>
     </main>
 
@@ -165,17 +139,6 @@ const featuredAnnouncement = computed(() => {
   return announcements.value.length > 0 ? announcements.value[0] : null
 })
 
-// Community statistics
-const communityStats = computed(() => {
-  const businesses = getCurrentBusinesses.value || []
-  const categories = [...new Set(businesses.map(b => b.category))].filter(Boolean)
-
-  return {
-    totalBusinesses: businesses.length,
-    categoryCount: categories.length,
-    recentUpdates: announcements.value.length
-  }
-})
 
 // Generate dynamic community announcements based on local data
 const generateCommunityAnnouncements = () => {

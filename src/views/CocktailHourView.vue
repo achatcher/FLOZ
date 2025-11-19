@@ -1,155 +1,125 @@
 <template>
   <div class="cocktail-hour-view">
-    <TopBar title="Cocktail Hour" :show-back="true" />
+    <TopBar :title="pageConfig.displayName || 'Cocktail Hour'" :show-back="true" />
 
     <!-- ===== HERO ADVERTISEMENT ===== -->
     <!-- MONETIZATION: Premium advertising space for cocktail lounges -->
-    <div v-if="heroAd" class="hero-ad-section">
-      <div class="hero-ad-card" @click="openBusinessModal(heroAd)">
-        <div class="hero-ad-image-container">
-          <img
-            :src="heroAd.image"
-            :alt="heroAd.name"
-            class="hero-ad-image"
-            @error="handleImageError"
-          />
-          <div class="tier-badge signature">FEATURED PARTNER</div>
-        </div>
-        <div class="hero-ad-info">
-          <h2 class="hero-ad-name">{{ heroAd.name }}</h2>
-          <p class="hero-ad-description">{{ heroAd.description }}</p>
-          <div class="hero-ad-features">
-            <span class="hero-ad-category">{{ heroAd.subcategory }}</span>
-            <span class="hero-ad-price">{{ heroAd.price_range || heroAd.priceRange }}</span>
-          </div>
-          <div class="hero-ad-cta">
-            <span>View Details</span>
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
+    <HeroAdCard
+      v-if="heroAd"
+      :business="heroAd"
+      layout="split"
+      cta-text="View Details"
+      badge-text="SIGNATURE"
+      @click="openBusinessModal"
+      @image-error="handleImageError"
+    />
 
     <!-- Header -->
     <div class="cocktail-header">
       <div class="container">
-        <h1 class="page-title">Cocktail Hour</h1>
-        <p class="page-subtitle">{{ getCurrentDateString() }} • Live Happy Hour Specials</p>
-        <div class="time-indicator">
-          <span class="current-time">{{ currentTime }}</span>
-          <span class="status-badge" :class="getStatusClass()">{{ getStatusText() }}</span>
-        </div>
+        <h1 class="page-title">{{ pageConfig.displayName || 'Cocktail Hour' }}</h1>
+        <p class="page-subtitle">{{ getCurrentDateString() }} • Happy Hour Specials</p>
       </div>
     </div>
 
-    <!-- Current Happy Hours -->
-    <section class="current-specials" v-if="currentHappyHours.length > 0">
+    <!-- Day Selector & Happy Hour Specials -->
+    <section class="daily-specials">
       <div class="container">
-        <h2 class="section-title">
-          <svg class="title-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M5 7L10 12V22H14V12L19 7V5H5V7ZM7.5 9H16.5L14 11.5V20H10V11.5L7.5 9Z"/>
-          </svg>
-          Happening Now
-        </h2>
-        <div class="specials-grid">
-          <div
-            v-for="special in currentHappyHours"
-            :key="special.id"
-            class="special-card active"
-            @click="viewSpecialDetails(special)"
-          >
-            <div class="card-header">
-              <h3 class="venue-name">{{ special.venue }}</h3>
-              <div class="time-remaining">{{ getTimeRemaining(special.endTime) }}</div>
-            </div>
-            <div class="special-details">
-              <div class="special-offer">{{ special.offer }}</div>
-              <div class="special-time">{{ formatTime12Hour(special.startTime) }} - {{ formatTime12Hour(special.endTime) }}</div>
-            </div>
-            <div class="card-footer">
-              <span class="venue-type">{{ special.category }}</span>
-              <span class="price-range">{{ special.priceRange }}</span>
-            </div>
+        <!-- Day Selector -->
+        <div class="day-selector">
+          <div class="section-header">
+            <h2 class="section-title">Happy Hour Specials</h2>
+            <button class="btn btn-filter" @click="toggleCategoryFilter" :class="{ active: showCategoryFilter }">
+              <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z"/>
+              </svg>
+              <span class="filter-text">Filter</span>
+            </button>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Upcoming Today -->
-    <section class="upcoming-today" v-if="upcomingToday.length > 0">
-      <div class="container">
-        <h2 class="section-title">
-          <svg class="title-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2ZM12 20C7.59 20 4 16.41 4 12S7.59 4 12 4 20 7.59 20 12 16.41 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z"/>
-          </svg>
-          Starting Soon
-        </h2>
-        <div class="specials-grid">
-          <div
-            v-for="special in upcomingToday"
-            :key="special.id"
-            class="special-card upcoming"
-            @click="viewSpecialDetails(special)"
-          >
-            <div class="card-header">
-              <h3 class="venue-name">{{ special.venue }}</h3>
-              <div class="starts-in">Starts {{ getStartsIn(special.startTime) }}</div>
-            </div>
-            <div class="special-details">
-              <div class="special-offer">{{ special.offer }}</div>
-              <div class="special-time">{{ formatTime12Hour(special.startTime) }} - {{ formatTime12Hour(special.endTime) }}</div>
-            </div>
-            <div class="card-footer">
-              <span class="venue-type">{{ special.category }}</span>
-              <span class="price-range">{{ special.priceRange }}</span>
-            </div>
+          <div class="day-tabs">
+            <button
+              v-for="day in daysOfWeek"
+              :key="day.value"
+              class="day-tab"
+              :class="{ active: selectedDay === day.value }"
+              @click="selectDay(day.value)"
+            >
+              <span class="day-short">{{ day.short }}</span>
+              <span class="day-full">{{ day.full }}</span>
+            </button>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- All Today's Specials -->
-    <section class="all-todays-specials">
-      <div class="container">
-        <h2 class="section-title">
-          <svg class="title-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 3H18V1H16V3H8V1H6V3H5C3.89 3 3.01 3.9 3.01 5L3 19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V8H19V19ZM7 10H12V15H7Z"/>
-          </svg>
-          All Today's Happy Hours
-        </h2>
-        <div class="specials-list">
-          <div
-            v-for="special in allTodaysSpecials"
-            :key="special.id"
-            class="special-item"
-            :class="{
-              active: isCurrentlyActive(special),
-              upcoming: isUpcoming(special),
-              ended: hasEnded(special)
-            }"
-            @click="viewSpecialDetails(special)"
-          >
-            <div class="item-time">
-              <div class="time-range">{{ formatTime12Hour(special.startTime) }} - {{ formatTime12Hour(special.endTime) }}</div>
-              <div class="status-indicator">{{ getSpecialStatus(special) }}</div>
-            </div>
-            <div class="item-content">
-              <h4 class="venue-name">{{ special.venue }}</h4>
-              <p class="special-offer">{{ special.offer }}</p>
-              <div class="item-meta">
-                <span class="category">{{ special.category }}</span>
-                <span class="price">{{ special.priceRange }}</span>
+          <!-- Category Filter -->
+          <transition name="slide-down">
+            <div v-if="showCategoryFilter" class="category-filter">
+              <div class="filter-header">
+                <h3>Filter by Special Type</h3>
+                <button
+                  v-if="selectedCategory"
+                  class="btn btn-ghost btn-sm"
+                  @click="clearCategoryFilter"
+                >
+                  Clear Filter
+                </button>
+              </div>
+              <div class="category-chips">
+                <button
+                  v-for="category in availableCategories"
+                  :key="category"
+                  class="category-chip"
+                  :class="{ active: selectedCategory === category }"
+                  @click="selectCategory(category)"
+                >
+                  {{ category }}
+                </button>
               </div>
             </div>
-            <div class="item-action">
-              <span class="chevron">›</span>
+          </transition>
+        </div>
+
+        <!-- Selected Day's Specials -->
+        <div class="day-specials-list">
+          <div
+            v-for="special in selectedDaySpecials"
+            :key="special.id"
+            class="business-list-item"
+            @click="viewSpecialDetails(special)"
+          >
+            <div class="business-image-section">
+              <img
+                :src="special.logo || special.image || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=200&h=200&fit=crop&crop=center'"
+                :alt="special.venue"
+                class="business-logo"
+              />
+              <div class="time-badge">
+                {{ formatTimeShort(special.startTime) }} - {{ formatTimeShort(special.endTime) }}
+              </div>
             </div>
+            <div class="business-info">
+              <div class="business-header">
+                <h3 class="business-name">{{ special.venue }}</h3>
+                <span v-if="special.tier && special.tier !== BUSINESS_TIERS.CURATED" class="tier-badge" :class="special.tier">
+                  {{ getTierLabel(special.tier) }}
+                </span>
+              </div>
+              <p class="business-category">{{ special.category }}</p>
+              <div class="special-offer-display">
+                <span class="perk-text">{{ getHappyHourSpecials(special) }}</span>
+              </div>
+            </div>
+            <span class="chevron">›</span>
           </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="selectedDaySpecials.length === 0" class="no-specials">
+          <h3>No Specials {{ getCurrentDayName() }}</h3>
+          <p>Try selecting a different day to see available happy hour specials.</p>
         </div>
       </div>
     </section>
+
 
     <!-- Detail Modal -->
     <BaseModal
@@ -178,14 +148,6 @@
           <!-- Business Information Grid -->
           <div class="details-grid">
             <div class="detail-item">
-              <span class="detail-label">Category:</span>
-              <span class="detail-value">{{ selectedSpecial?.category || selectedSpecial?.subcategory || 'Cocktail Bar' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Price Range:</span>
-              <span class="detail-value">{{ selectedSpecial?.priceRange || selectedSpecial?.price_range || '$$$' }}</span>
-            </div>
-            <div class="detail-item">
               <span class="detail-label">Address:</span>
               <span class="detail-value">{{ selectedSpecial?.address || selectedSpecial?.location?.address || selectedSpecial?.location?.neighborhood || 'Greenville' }}</span>
             </div>
@@ -194,8 +156,8 @@
 
           <!-- Action Buttons -->
           <div class="modal-actions">
-            <button class="btn-directions" @click="getDirections(selectedSpecial)">
-              Get Directions
+            <button class="btn-directions" @click="openWebsite(selectedSpecial)">
+              Website
             </button>
             <button v-if="selectedSpecial?.phone || selectedSpecial?.contact?.phone" class="btn-call" @click="callVenue(selectedSpecial)">
               Call {{ selectedSpecial?.phone || selectedSpecial?.contact?.phone }}
@@ -212,6 +174,7 @@
     <BusinessModal
       :business="selectedBusiness"
       :is-visible="showBusinessModal"
+      :show-happy-hour="true"
       @close="closeBusinessModal"
     />
   </div>
@@ -223,136 +186,156 @@ import TopBar from '@/components/Navigation/TopBar.vue'
 import BottomNav from '@/components/Navigation/BottomNav.vue'
 import BusinessModal from '@/components/Business/BusinessModal.vue'
 import BaseModal from '@/components/UI/BaseModal.vue'
+import HeroAdCard from '@/components/Business/HeroAdCard.vue'
 import { useAppConfig } from '@/composables/useAppConfig'
 import analytics from '@/utils/analytics'
+import { BUSINESS_TIERS, TIER_LABELS } from '@/utils/constants'
+import {
+  getTierLabel,
+  getHeroBusiness,
+  timeToMinutes,
+  getCurrentTimeInMinutes,
+  formatTime12Hour,
+  formatTimeShort,
+  convertTo24Hour,
+  isCurrentlyActive,
+  isUpcoming,
+  hasEnded,
+  getSpecialStatus,
+  getTimeRemaining,
+  parseHappyHourSchedule,
+  getSpecialTypeFromDeals,
+  getCurrentDateString
+} from '@/utils/businessUtils'
 
 // Reactive data
 const currentTime = ref('')
 const selectedSpecial = ref(null)
+const selectedCategory = ref('')
+const selectedDay = ref(new Date().getDay()) // 0 = Sunday, 1 = Monday, etc.
+const showCategoryFilter = ref(false)
+
+// Days of the week data
+const daysOfWeek = [
+  { value: 0, short: 'Sun', full: 'Sunday' },
+  { value: 1, short: 'Mon', full: 'Monday' },
+  { value: 2, short: 'Tue', full: 'Tuesday' },
+  { value: 3, short: 'Wed', full: 'Wednesday' },
+  { value: 4, short: 'Thu', full: 'Thursday' },
+  { value: 5, short: 'Fri', full: 'Friday' },
+  { value: 6, short: 'Sat', full: 'Saturday' }
+]
 
 // Dynamic app config
-const { initializeApp, getCurrentBusinesses, getAppInfo } = useAppConfig()
+const { initializeApp, getCurrentBusinesses, getAppInfo, forceRefreshLocation } = useAppConfig()
 const selectedBusiness = ref(null)
 const showBusinessModal = ref(false)
 
-// Get cocktail venues from dynamic business data
+// Get page configuration from centralized config
+const pageConfig = computed(() => {
+  const appInfo = getAppInfo.value
+  if (!appInfo?.navigation?.categories) return { displayName: 'Cocktail Hour' }
+
+  const cocktailCategory = appInfo.navigation.categories.find(cat => cat.id === 'cocktail-hour')
+  return cocktailCategory || { displayName: 'Cocktail Hour' }
+})
+
+// Get all businesses with happy hours from dynamic business data
 const cocktailVenues = computed(() => {
-  const businesses = getCurrentBusinesses.value || []
-  return businesses.filter(business =>
-    business.category === 'Cocktail Hour' ||
-    business.subcategory?.toLowerCase().includes('cocktail') ||
-    business.subcategory?.toLowerCase().includes('bar') ||
-    business.subcategory?.toLowerCase().includes('lounge')
-  )
+  const businessData = getCurrentBusinesses.value || {}
+
+  // Handle both old tier-based structure and new flat array structure
+  let allBusinesses = []
+  if (businessData.businesses && Array.isArray(businessData.businesses)) {
+    // New flat array structure
+    allBusinesses = businessData.businesses
+  } else if (businessData.businesses) {
+    // Old tier-based structure - flatten all tiers
+    const { signature = [], premier = [], curated = [] } = businessData.businesses
+    allBusinesses = [...signature, ...premier, ...curated]
+  }
+
+  return allBusinesses.filter(business => {
+    const category = (business.category || '').toLowerCase()
+    const subcategory = (business.subcategory || '').toLowerCase()
+
+    return category === 'cocktail hour' ||
+           category.includes('dining') ||
+           subcategory.includes('cocktail') ||
+           subcategory.includes('bar') ||
+           subcategory.includes('lounge') ||
+           subcategory.includes('rooftop') ||
+           subcategory.includes('gastropub')
+  })
 })
 
 // Hero ad - get signature tier cocktail venue
 const heroAd = computed(() => {
-  const signatureVenues = cocktailVenues.value.filter(v =>
-    v.tier === 'signature' || v.listing_tier === 'signature'
+  return getHeroBusiness(
+    cocktailVenues.value,
+    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop&crop=center'
   )
-  if (signatureVenues.length > 0) {
-    return {
-      ...signatureVenues[0],
-      image: signatureVenues[0].heroImage || signatureVenues[0].logo || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop&crop=center'
-    }
-  }
-
-  const premierVenues = cocktailVenues.value.filter(v =>
-    v.tier === 'premier' || v.listing_tier === 'premier'
-  )
-  if (premierVenues.length > 0) {
-    return {
-      ...premierVenues[0],
-      image: premierVenues[0].heroImage || premierVenues[0].logo || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop&crop=center'
-    }
-  }
-
-  if (cocktailVenues.value.length > 0) {
-    return {
-      ...cocktailVenues.value[0],
-      image: cocktailVenues.value[0].heroImage || cocktailVenues.value[0].logo || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop&crop=center'
-    }
-  }
-
-  return null
 })
 
-// Transform business data into happy hour format for compatibility with existing UI
+// Transform business data into day-specific happy hour format
 const happyHourSpecials = computed(() => {
-  return cocktailVenues.value.map((business) => ({
-    id: business.id,
-    venue: business.name,
-    category: business.subcategory || 'Cocktail Bar',
-    offer: business.features?.includes('Happy Hour') ? 'Happy Hour Specials Available' : 'Craft Cocktails & Premium Selection',
-    startTime: business.happyHour ? parseHappyHourStartTime(business.happyHour) : "17:00",
-    endTime: business.happyHour ? parseHappyHourEndTime(business.happyHour) : "19:00",
-    priceRange: business.priceRange || '$$$',
-    address: business.location?.address || business.location?.neighborhood || 'Greenville',
-    phone: business.contact?.phone || business.phone,
-    description: business.description,
-    // Keep reference to original business for modal
-    originalBusiness: business
-  }))
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+  const selectedDayName = dayNames[selectedDay.value]
+
+  let specials = cocktailVenues.value
+    .filter(business => {
+      // Must have happy hour available
+      if (!business.happyHour?.available) return false
+
+      // Must have day-specific data for the selected day
+      const dayData = business.happyHour?.days?.[selectedDayName]
+      return dayData && dayData.available
+    })
+    .map((business) => {
+      const dayData = business.happyHour.days[selectedDayName]
+
+      return {
+        id: business.id,
+        venue: business.name,
+        category: business.subcategory || 'Bar',
+        offer: dayData.deals || business.happyHour?.deals || 'Happy Hour Specials Available',
+        startTime: dayData.startTime || '5:00 PM',
+        endTime: dayData.endTime || '7:00 PM',
+        address: business.location?.address || business.location?.neighborhood || 'Greenville',
+        phone: business.contact?.phone || business.phone,
+        description: business.description,
+        tier: business.tier,
+        logo: business.logo,
+        image: business.image,
+        // Keep reference to original business for modal
+        originalBusiness: business,
+        // Add type for filtering based on actual deals
+        type: getSpecialTypeFromDeals(dayData.deals || business.happyHour?.deals || '')
+      }
+    })
+
+  // Apply category filter if selected
+  if (selectedCategory.value) {
+    specials = specials.filter(special => special.type === selectedCategory.value)
+  }
+
+  return specials
 })
 
-// Helper functions to parse happy hour times
-const parseHappyHourStartTime = (timeString) => {
-  if (!timeString) return "17:00"
-  const match = timeString.match(/(\d{1,2})(?::(\d{2}))?\s*(?:AM|PM)?\s*-/)
-  if (!match) return "17:00"
-  const hour = parseInt(match[1])
-  const minute = parseInt(match[2]) || 0
-  const isPM = timeString.toUpperCase().includes('PM')
-  const adjustedHour = isPM && hour !== 12 ? hour + 12 : hour
-  return `${adjustedHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-}
-
-const parseHappyHourEndTime = (timeString) => {
-  if (!timeString) return "19:00"
-  const match = timeString.match(/-\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i)
-  if (!match) return "19:00"
-  const hour = parseInt(match[1])
-  const minute = parseInt(match[2]) || 0
-  const period = match[3].toUpperCase()
-  const adjustedHour = period === 'PM' && hour !== 12 ? hour + 12 : hour
-  return `${adjustedHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-}
-
-// Computed properties
-const currentHappyHours = computed(() => {
-  const now = getCurrentTimeInMinutes()
-  return happyHourSpecials.value.filter(special => {
-    const start = timeToMinutes(special.startTime)
-    const end = timeToMinutes(special.endTime)
-    return now >= start && now <= end
-  })
+// Get available categories - always show all three
+const availableCategories = computed(() => {
+  return ['Beer', 'Cocktails', 'Food']
 })
 
-const upcomingToday = computed(() => {
-  const now = getCurrentTimeInMinutes()
-  return happyHourSpecials.value.filter(special => {
-    const start = timeToMinutes(special.startTime)
-    return start > now && start <= now + 120 // Next 2 hours
-  }).sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime))
+
+
+// Computed properties for day-based specials
+const selectedDaySpecials = computed(() => {
+  return happyHourSpecials.value.sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime))
 })
 
-const allTodaysSpecials = computed(() => {
-  return [...happyHourSpecials.value].sort((a, b) =>
-    timeToMinutes(a.startTime) - timeToMinutes(b.startTime)
-  )
-})
 
 // Methods
-const getCurrentDateString = () => {
-  const today = new Date()
-  return today.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric'
-  })
-}
-
 const updateCurrentTime = () => {
   const now = new Date()
   currentTime.value = now.toLocaleTimeString('en-US', {
@@ -362,102 +345,22 @@ const updateCurrentTime = () => {
   })
 }
 
-const getCurrentTimeInMinutes = () => {
-  const now = new Date()
-  return now.getHours() * 60 + now.getMinutes()
-}
-
-const timeToMinutes = (timeString) => {
-  const [hours, minutes] = timeString.split(':').map(Number)
-  return hours * 60 + minutes
-}
-
-const formatTime12Hour = (timeString) => {
-  const [hours, minutes] = timeString.split(':').map(Number)
-  const ampm = hours >= 12 ? 'PM' : 'AM'
-  const displayHours = hours % 12 || 12
-  const displayMinutes = minutes.toString().padStart(2, '0')
-  return `${displayHours}:${displayMinutes} ${ampm}`
-}
-
 const minutesToTime = (minutes) => {
   const hours = Math.floor(minutes / 60)
   const mins = minutes % 60
   return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
 }
 
-const getStatusClass = () => {
-  if (currentHappyHours.value.length > 0) return 'active'
-  if (upcomingToday.value.length > 0) return 'upcoming'
-  return 'none'
+// Day selector methods
+const selectDay = (dayValue) => {
+  selectedDay.value = dayValue
 }
 
-const getStatusText = () => {
-  if (currentHappyHours.value.length > 0) {
-    return `${currentHappyHours.value.length} Active Now`
-  }
-  if (upcomingToday.value.length > 0) {
-    return 'Coming Up Soon'
-  }
-  return 'Check Back Later'
+const getCurrentDayName = () => {
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  return dayNames[selectedDay.value]
 }
 
-const getTimeRemaining = (endTime) => {
-  const now = getCurrentTimeInMinutes()
-  const end = timeToMinutes(endTime)
-  const remaining = end - now
-
-  if (remaining <= 0) return 'Ending Soon'
-
-  const hours = Math.floor(remaining / 60)
-  const minutes = remaining % 60
-
-  if (hours > 0) {
-    return `${hours}h ${minutes}m left`
-  }
-  return `${minutes}m left`
-}
-
-const getStartsIn = (startTime) => {
-  const now = getCurrentTimeInMinutes()
-  const start = timeToMinutes(startTime)
-  const until = start - now
-
-  if (until <= 0) return 'now'
-
-  const hours = Math.floor(until / 60)
-  const minutes = until % 60
-
-  if (hours > 0) {
-    return `in ${hours}h ${minutes}m`
-  }
-  return `in ${minutes}m`
-}
-
-const isCurrentlyActive = (special) => {
-  const now = getCurrentTimeInMinutes()
-  const start = timeToMinutes(special.startTime)
-  const end = timeToMinutes(special.endTime)
-  return now >= start && now <= end
-}
-
-const isUpcoming = (special) => {
-  const now = getCurrentTimeInMinutes()
-  const start = timeToMinutes(special.startTime)
-  return start > now
-}
-
-const hasEnded = (special) => {
-  const now = getCurrentTimeInMinutes()
-  const end = timeToMinutes(special.endTime)
-  return now > end
-}
-
-const getSpecialStatus = (special) => {
-  if (isCurrentlyActive(special)) return 'Active Now'
-  if (isUpcoming(special)) return getStartsIn(special.startTime)
-  return 'Ended'
-}
 
 const viewSpecialDetails = (special) => {
   // Track business modal view as a lead
@@ -478,8 +381,6 @@ const viewSpecialDetails = (special) => {
       name: special.venue,
       description: special.description || special.offer,
       subcategory: special.category,
-      priceRange: special.priceRange,
-      price_range: special.priceRange,
       location: {
         address: special.address,
         neighborhood: special.address
@@ -497,21 +398,29 @@ const closeModal = () => {
   selectedSpecial.value = null
 }
 
-const getDirections = (special) => {
+const openWebsite = (special) => {
   try {
-    // Track directions request as a high-value lead
-    analytics.trackBusinessLead(special, 'directions', {
+    // Track website visit as a high-value lead
+    analytics.trackBusinessLead(special, 'website', {
       placement: 'modal_action',
-      page: 'cocktail_hour',
-      address: special?.address || special?.location?.address || 'Greenville, SC'
+      page: 'cocktail_hour'
     })
 
-    const address = special?.address || special?.location?.address || special?.location?.neighborhood || 'Greenville, SC'
-    const encodedAddress = encodeURIComponent(address)
-    window.open(`https://maps.apple.com/?q=${encodedAddress}`, '_blank')
+    // Check if the special has original business data with a website
+    const business = special?.originalBusiness || special
+    const website = business?.website || business?.contact?.website
+
+    if (website) {
+      window.open(website, '_blank')
+    } else {
+      // Fallback to Google search for the business
+      const businessName = special?.venue || special?.name || 'business'
+      const searchQuery = encodeURIComponent(`${businessName} Greenville SC`)
+      window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank')
+    }
   } catch (error) {
-    console.error('Error getting directions:', error)
-    analytics.trackError(error, { context: 'get_directions', business_id: special?.id })
+    console.error('Error opening website:', error)
+    analytics.trackError(error, { context: 'open_website', business_id: special?.id })
   }
 }
 
@@ -538,9 +447,9 @@ const getFormattedTimeRange = (special) => {
   try {
     if (!special) return 'Time not available'
 
-    // If it has a happyHour field (from original business data), use that
-    if (special.happyHour) {
-      return special.happyHour
+    // If it has a happyHour field (from original business data), use the schedule
+    if (special.happyHour?.schedule) {
+      return special.happyHour.schedule
     }
 
     // Otherwise try to format from startTime/endTime
@@ -561,29 +470,23 @@ const getFormattedTimeRange = (special) => {
 const getHappyHourSpecials = (special) => {
   if (!special) return 'Happy hour specials available'
 
-  // Look for specific happy hour deals/specials in the business data
-  if (special.happyHourSpecials) {
-    return special.happyHourSpecials
-  }
-
+  // The offer field contains the deals text from the transformation
   if (special.offer && special.offer !== 'Happy Hour Specials Available') {
     return special.offer
   }
 
-  // Generate realistic happy hour specials based on venue type
-  const category = special.category || special.subcategory || 'bar'
-
-  if (category.toLowerCase().includes('cocktail')) {
-    return '$2 off craft cocktails, $5 house wines, and discounted appetizers'
-  } else if (category.toLowerCase().includes('sports')) {
-    return '$1 off draft beers, $3 well drinks, and half-price wings'
-  } else if (category.toLowerCase().includes('wine')) {
-    return 'Half-price wine by the glass and discounted cheese boards'
-  } else if (category.toLowerCase().includes('beer')) {
-    return '$2 off craft beers and $1 off domestic drafts'
-  } else {
-    return '$1 off all drinks and discounted appetizers'
+  // Check for deals in the original business data
+  if (special.originalBusiness?.happyHour?.deals) {
+    return special.originalBusiness.happyHour.deals
   }
+
+  // Check for direct happyHour deals (for modal when passed original business)
+  if (special.happyHour?.deals) {
+    return special.happyHour.deals
+  }
+
+  // Fallback
+  return 'Happy hour specials available'
 }
 
 // ===== HERO AD FUNCTIONS =====
@@ -611,10 +514,23 @@ const closeBusinessModal = () => {
 }
 
 /**
- * Handles image loading errors with fallback
+ * Handles image loading errors from HeroAdCard component
  */
-const handleImageError = (e) => {
-  e.target.src = 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&h=400&fit=crop&crop=center'
+const handleImageError = (errorData) => {
+  console.warn('Hero ad image failed to load:', errorData)
+}
+
+// Category filter functions
+const toggleCategoryFilter = () => {
+  showCategoryFilter.value = !showCategoryFilter.value
+}
+
+const selectCategory = (category) => {
+  selectedCategory.value = selectedCategory.value === category ? '' : category
+}
+
+const clearCategoryFilter = () => {
+  selectedCategory.value = ''
 }
 
 // Track business impressions when they appear
@@ -627,7 +543,7 @@ const trackBusinessImpressions = () => {
   }
 
   // Track happy hour listing impressions
-  allTodaysSpecials.value.forEach((special, index) => {
+  selectedDaySpecials.value.forEach((special, index) => {
     const business = special.originalBusiness || special
     analytics.trackBusinessImpression(business, 'happy_hour_listing', {
       page: 'cocktail_hour',
@@ -639,7 +555,7 @@ const trackBusinessImpressions = () => {
 
 onMounted(async () => {
   try {
-    await initializeApp()
+    await forceRefreshLocation()
     updateCurrentTime()
     const interval = setInterval(updateCurrentTime, 60000) // Update every minute
 
@@ -650,8 +566,6 @@ onMounted(async () => {
     setTimeout(() => {
       trackBusinessImpressions()
     }, 1000)
-
-    console.log('✅ Cocktail Hour view initialized')
 
     onUnmounted(() => {
       clearInterval(interval)
@@ -670,123 +584,6 @@ onMounted(async () => {
   padding-bottom: var(--bottom-nav-height);
 }
 
-/* ===== HERO ADVERTISEMENT SECTION ===== */
-
-.hero-ad-section {
-  padding: var(--space-4);
-  margin-bottom: var(--space-4);
-}
-
-.hero-ad-card {
-  cursor: pointer;
-  transition: var(--transition-all);
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-2xl);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.hero-ad-card:active {
-  transform: scale(0.98);
-}
-
-.hero-ad-image-container {
-  position: relative;
-  border: 3px solid #FFD700;
-  border-radius: var(--radius-2xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-primary-lg);
-  margin-bottom: var(--space-4);
-}
-
-.hero-ad-image-container .tier-badge {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-}
-
-.hero-ad-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: block;
-}
-
-.hero-ad-overlay {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-}
-
-.hero-ad-info {
-  padding: 0 var(--space-4) var(--space-4);
-}
-
-.hero-ad-name {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  font-family: var(--font-family-heading);
-  margin: 0 0 var(--space-2);
-  line-height: var(--line-height-tight);
-  color: var(--color-text-primary);
-}
-
-.hero-ad-description {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-3);
-  line-height: var(--line-height-relaxed);
-}
-
-.hero-ad-features {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--space-3);
-}
-
-.hero-ad-category {
-  color: var(--color-primary);
-}
-
-.hero-ad-price {
-  color: var(--color-text-tertiary);
-}
-
-.hero-ad-cta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-primary);
-}
-
-.hero-ad-cta svg {
-  width: 16px;
-  height: 16px;
-}
-
-.tier-badge {
-  display: inline-block;
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-bold);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wider);
-  margin-top: var(--space-2);
-}
-
-.tier-badge.signature {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-  color: var(--color-bg-primary);
-  box-shadow: 0 2px 8px var(--color-primary-alpha-30);
-}
 
 /* Header */
 .cocktail-header {
@@ -794,6 +591,149 @@ onMounted(async () => {
   padding: var(--space-8) 0 var(--space-6);
   text-align: center;
   border-bottom: 1px solid var(--color-border-primary);
+}
+
+.btn-filter {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: var(--transition-all);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-medium);
+  backdrop-filter: var(--backdrop-blur-base);
+  font-size: var(--font-size-sm);
+}
+
+.btn-filter:hover {
+  background: var(--color-primary-alpha-10);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-filter.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-bg-primary);
+}
+
+.filter-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.filter-text {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Slide down transition */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Category Filter Section */
+.category-filter-section {
+  margin-top: var(--space-4);
+  text-align: left;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: var(--backdrop-blur-base);
+}
+
+.category-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.category-filter-header h3 {
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--color-primary-alpha-30);
+  color: var(--color-primary);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-all);
+}
+
+.btn-ghost:hover {
+  background: var(--color-primary-alpha-10);
+  border-color: var(--color-primary);
+}
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.category-chip {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-secondary);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-all);
+  white-space: nowrap;
+  font-family: var(--font-family-primary);
+}
+
+.category-chip:hover {
+  background: var(--color-primary-alpha-10);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.category-chip.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-bg-primary);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--shadow-md);
+}
+
+.category-chip:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .page-title {
@@ -807,48 +747,17 @@ onMounted(async () => {
 .page-subtitle {
   color: var(--color-text-secondary);
   font-size: var(--font-size-lg);
-  margin-bottom: var(--space-4);
-}
-
-.time-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-}
-
-.current-time {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.status-badge {
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wider);
-}
-
-.status-badge.active {
-  background: var(--color-success);
-  color: var(--color-bg-primary);
-}
-
-.status-badge.upcoming {
-  background: var(--color-warning);
-  color: var(--color-bg-primary);
-}
-
-.status-badge.none {
-  background: var(--color-bg-surface);
-  color: var(--color-text-tertiary);
+  margin: 0;
 }
 
 /* Section Titles */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
 .section-title {
   display: flex;
   align-items: center;
@@ -857,6 +766,11 @@ onMounted(async () => {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* For section titles not in header containers */
+.section-title:not(.section-header .section-title) {
   margin-bottom: var(--space-6);
 }
 
@@ -866,108 +780,206 @@ onMounted(async () => {
   color: var(--color-primary);
 }
 
-/* Current Specials Grid */
-.current-specials {
+/* ===== DAILY SPECIALS SECTION ===== */
+
+.daily-specials {
   padding: var(--space-8) 0;
 }
 
-.specials-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-4);
-}
-
-.special-card {
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  cursor: pointer;
-  transition: var(--transition-all);
-  border: 2px solid transparent;
-}
-
-.special-card.active {
-  border-color: var(--color-success);
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
-}
-
-.special-card.upcoming {
-  border-color: var(--color-warning);
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
-}
-
-.special-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-.card-header {
+/* Section Headers */
+.section-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--space-3);
-}
-
-.venue-name {
-  font-family: var(--font-family-heading);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  margin: 0;
-}
-
-.time-remaining, .starts-in {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
-}
-
-.time-remaining {
-  background: var(--color-success);
-  color: white;
-}
-
-.starts-in {
-  background: var(--color-warning);
-  color: white;
-}
-
-.special-details {
   margin-bottom: var(--space-4);
 }
 
-.special-offer {
-  font-size: var(--font-size-base);
-  color: var(--color-primary);
+/* Filter Button */
+.btn-filter {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: var(--transition-all);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   font-weight: var(--font-weight-medium);
-  margin-bottom: var(--space-2);
-}
-
-.special-time {
+  backdrop-filter: var(--backdrop-blur-base);
   font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
 }
 
-.card-footer {
+.btn-filter:hover {
+  background: var(--color-primary-alpha-10);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-filter.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-bg-primary);
+}
+
+.filter-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.filter-text {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Day Selector */
+.day-selector {
+  margin-bottom: var(--space-8);
+}
+
+.day-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+/* Slide down transition */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Category Filter */
+.category-filter {
+  margin-top: var(--space-4);
+  text-align: left;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: var(--backdrop-blur-base);
+}
+
+.filter-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: var(--space-4);
 }
 
-.venue-type {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-tertiary);
+.filter-header h3 {
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  letter-spacing: var(--letter-spacing-wide);
 }
 
-.price-range {
-  font-size: var(--font-size-sm);
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--color-primary-alpha-30);
   color: var(--color-primary);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-all);
+}
+
+.btn-ghost:hover {
+  background: var(--color-primary-alpha-10);
+  border-color: var(--color-primary);
+}
+
+.day-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border-secondary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition-all);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.day-tab:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-primary-alpha-30);
+  transform: translateY(-2px);
+}
+
+.day-tab.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.day-short {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+.day-full {
+  font-size: var(--font-size-xs);
+  opacity: 0.8;
   font-weight: var(--font-weight-medium);
 }
 
+/* Day Specials List */
+.day-specials-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Empty State */
+.no-specials {
+  text-align: center;
+  padding: var(--space-12) var(--space-4);
+  color: var(--color-text-tertiary);
+}
+
+.no-specials h3 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-2);
+}
+
+.no-specials p {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
 /* All Specials List */
-.upcoming-today, .all-todays-specials {
+.all-todays-specials {
   padding: var(--space-8) 0;
 }
 
@@ -994,9 +1006,6 @@ onMounted(async () => {
   background: var(--color-bg-tertiary);
 }
 
-.special-item.upcoming {
-  border-left-color: var(--color-warning);
-}
 
 .special-item.ended {
   opacity: 0.6;
@@ -1044,7 +1053,7 @@ onMounted(async () => {
   gap: var(--space-4);
 }
 
-.category, .price {
+.category {
   font-size: var(--font-size-xs);
   color: var(--color-text-tertiary);
 }
@@ -1160,16 +1169,101 @@ onMounted(async () => {
   padding: 0 var(--space-4);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .specials-grid {
-    grid-template-columns: 1fr;
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet and Up: 640px+ */
+@media (min-width: 640px) {
+  .day-tabs {
+    justify-content: center;
+    overflow-x: visible;
   }
 
-  .card-header {
+  .day-tab {
+    min-width: 100px;
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .special-venue {
+    font-size: var(--font-size-2xl);
+  }
+
+  .special-offer {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* Large Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .day-tabs {
+    gap: var(--space-3);
+  }
+
+  .day-tab {
+    min-width: 120px;
+    padding: var(--space-5) var(--space-6);
+  }
+
+  .special-item {
+    padding: var(--space-6);
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 639px) {
+  .section-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .day-tabs {
+    gap: var(--space-1);
+    padding: 0 var(--space-2);
+  }
+
+  .day-tab {
+    min-width: 70px;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .day-short {
+    font-size: var(--font-size-base);
+  }
+
+  .day-full {
+    font-size: var(--font-size-2xs);
+  }
+
+  .filter-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .filter-header h3 {
+    font-size: var(--font-size-base);
+  }
+
+  .filter-text {
+    display: none;
+  }
+
+  .category-filter {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+  }
+
+  .filter-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .category-chips {
     gap: var(--space-2);
+  }
+
+  .category-chip {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
   }
 
   .modal-actions {
@@ -1180,4 +1274,109 @@ onMounted(async () => {
     gap: var(--space-2);
   }
 }
+
+/* Business List Item Styles (matching search page) */
+.business-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-bg-secondary);
+  cursor: pointer;
+  transition: var(--transition-all);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--color-border-secondary);
+}
+
+.business-list-item:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-primary-alpha-20);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.business-image-section {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.business-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  border: 2px solid var(--color-border-primary);
+}
+
+.time-badge {
+  background: var(--color-primary-alpha-10);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  white-space: nowrap;
+  border: 1px solid var(--color-primary-alpha-20);
+  min-width: 60px;
+}
+
+.business-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.business-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.business-name {
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-perks, .special-offer-display {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-primary-alpha-10);
+  border: 1px solid var(--color-primary-alpha-20);
+  border-radius: var(--radius-sm);
+  max-width: fit-content;
+  margin-bottom: var(--space-1);
+}
+
+.perk-icon {
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+}
+
+.perk-text {
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.chevron {
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-light);
+  flex-shrink: 0;
+}
+
 </style>

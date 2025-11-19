@@ -8,12 +8,11 @@
     <div class="business-info">
       <div class="business-header">
         <h3 class="business-name">{{ business.name }}</h3>
-        <span v-if="business.tier" class="tier-badge" :class="business.tier">
-          {{ getTierLabel(business.tier) }}
+        <span v-if="(business.listing_tier || business.tier) && (business.listing_tier || business.tier) !== 'curated'" class="tier-badge" :class="business.listing_tier || business.tier">
+          {{ getTierLabel(business.listing_tier || business.tier) }}
         </span>
       </div>
       <p class="business-category">{{ business.category }}</p>
-      <p v-if="business.priceRange" class="price-range">{{ business.priceRange }}</p>
       <div v-if="business.memberPerks" class="member-perks">
         <span class="perk-icon">✨</span>
         <span class="perk-text">{{ business.memberPerks }}</span>
@@ -103,6 +102,7 @@ const getTierLabel = (tier) => {
 .business-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-2);
   margin-bottom: var(--space-1);
 }
@@ -136,28 +136,16 @@ const getTierLabel = (tier) => {
 
 .tier-badge.premier {
   background: var(--color-platinum);
-  color: var(--color-bg-primary);
+  color: var(--color-forest-green-dark);
   box-shadow: 0 2px 8px rgba(229, 228, 226, 0.3);
 }
 
-.tier-badge.curated {
-  background: var(--color-midnight);
-  color: var(--color-text-primary);
-  box-shadow: 0 2px 8px rgba(25, 25, 112, 0.3);
-}
 
 .business-category {
   color: var(--color-text-secondary);
   font-size: var(--font-size-base);
   margin: 0 0 var(--space-1) 0;
   font-weight: var(--font-weight-medium);
-}
-
-.price-range {
-  color: var(--color-primary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  margin: 0 0 var(--space-2) 0;
 }
 
 .member-perks {

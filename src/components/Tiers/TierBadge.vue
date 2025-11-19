@@ -1,5 +1,5 @@
 <template>
-  <div class="tier-badge" :class="tierType">
+  <div v-if="tier !== 'curated'" class="tier-badge" :class="tierType">
     <slot>{{ badgeText }}</slot>
   </div>
 </template>
@@ -53,13 +53,8 @@ const badgeText = computed(() => {
 
 .tier-badge.premier {
   background: var(--color-platinum);
-  color: var(--color-text-primary);
+  color: var(--color-forest-green-dark);
   box-shadow: 0 2px 8px rgba(229, 228, 226, 0.3);
 }
 
-.tier-badge.curated {
-  background: var(--color-midnight);
-  color: var(--color-text-primary);
-  box-shadow: 0 2px 8px rgba(25, 25, 112, 0.3);
-}
 </style>

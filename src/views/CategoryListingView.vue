@@ -27,7 +27,6 @@
             <p class="hero-description">{{ heroListing.description }}</p>
             <div class="hero-features">
               <span class="hero-category">{{ heroListing.subcategory || heroListing.category }}</span>
-              <span class="hero-price">{{ heroListing.price_range || heroListing.priceRange }}</span>
             </div>
           </div>
         </div>
@@ -86,7 +85,6 @@
               <h4 class="standard-title">{{ business.name }}</h4>
               <p class="standard-subtitle">{{ business.subcategory || business.category }}</p>
               <div class="standard-meta">
-                <span class="standard-price">{{ business.price_range || business.priceRange }}</span>
                 <TierBadge tier="curated" />
               </div>
             </div>
@@ -146,7 +144,7 @@ import TierBadge from '@/components/Tiers/TierBadge.vue'
 const router = useRouter()
 const route = useRoute()
 const businessStore = useBusinessStore()
-const { initializeApp } = useAppConfig()
+const { initializeApp, getAppInfo } = useAppConfig()
 
 const categoryName = computed(() => route.params.categoryName || 'Category')
 
@@ -223,26 +221,29 @@ const closeBusinessModal = () => {
 }
 
 /**
- * Gets business image with fallback to placeholder
+ * Gets business image with fallback to placeholder using centralized config
  */
 const getBusinessImage = (business) => {
   if (business.logo) {
     return business.logo
   }
 
-  // Generate image based on business category for consistency
-  const categoryImages = {
-    'Dining': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop&crop=center',
-    'Private Clubs': 'https://images.unsplash.com/photo-1544642899-f024de1e4a7d?w=800&h=600&fit=crop&crop=center',
-    'Cocktail Hour': 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&h=600&fit=crop&crop=center',
-    'Luxury Shopping': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop&crop=center',
-    'Wellness & Spa': 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=600&fit=crop&crop=center',
-    'Luxury Real Estate': 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop&crop=center',
-    'Arts & Culture': 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&h=600&fit=crop&crop=center',
-    'Athletics': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDgwMCA2MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIiBmaWxsPSIjMkY1MjMzIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMzAwIiBmaWxsPSIjRDRBRjM3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzYiIGZvbnQtd2VpZ2h0PSJib2xkIj5BdGhsZXRpY3M8L3RleHQ+Cjwvc3ZnPgo='
+  // Get category image from centralized configuration
+  const appInfo = getAppInfo.value
+  if (appInfo?.navigation?.categories) {
+    const categoryConfig = appInfo.navigation.categories.find(cat =>
+      cat.name === business.category ||
+      cat.mappedCategory === business.category ||
+      cat.displayName === business.category
+    )
+
+    if (categoryConfig?.image) {
+      return categoryConfig.image.replace('w=400&h=400', 'w=800&h=600')
+    }
   }
 
-  return categoryImages[business.category] || categoryImages['Dining']
+  // Fallback to dining image if no category config found
+  return 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop&crop=center'
 }
 
 /**

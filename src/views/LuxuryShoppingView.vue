@@ -22,39 +22,21 @@
   <div class="luxury-shopping-view">
     <!-- ===== HERO ADVERTISEMENT ===== -->
     <!-- MONETIZATION: Premium advertising space for luxury shopping businesses -->
-    <div v-if="heroAd" class="hero-ad-section">
-      <div class="hero-ad-card" @click="openBusinessModal(heroAd)">
-        <img
-          :src="heroAd.image"
-          :alt="heroAd.name"
-          class="hero-ad-image"
-          @error="handleImageError"
-        />
-        <div class="hero-ad-overlay">
-          <div class="hero-ad-content">
-            <div class="tier-badge signature">FEATURED PARTNER</div>
-            <h2 class="hero-ad-title">{{ heroAd.name }}</h2>
-            <p class="hero-ad-subtitle">{{ heroAd.description }}</p>
-            <div class="hero-ad-features">
-              <span class="hero-ad-category">{{ heroAd.subcategory }}</span>
-              <span class="hero-ad-price">{{ heroAd.price_range || heroAd.priceRange }}</span>
-            </div>
-            <div class="hero-ad-cta">
-              <span>Discover Luxury Collections</span>
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <HeroAdCard
+      v-if="heroAd"
+      :business="heroAd"
+      layout="split"
+      cta-text="Discover Luxury Collections"
+      badge-text="FEATURED PARTNER"
+      @click="openBusinessModal"
+      @image-error="handleImageError"
+    />
 
     <!-- Elegant Page Header -->
     <header class="shopping-header">
       <div class="container">
-        <h1 class="page-title">Luxury Shopping</h1>
-        <p class="page-subtitle">Exquisite boutiques, premier jewelry stores, and exclusive collections for discerning tastes</p>
+        <h1 class="page-title">{{ pageConfig.displayName || 'Luxury Shopping' }}</h1>
+        <p class="page-subtitle">{{ pageConfig.description || 'Exquisite boutiques, premier jewelry stores, and exclusive collections for discerning tastes' }}</p>
 
         <!-- Shopping Categories Filter -->
         <div class="shopping-categories">
@@ -239,12 +221,24 @@
 
 import { ref, computed, onMounted } from 'vue'
 import { useBusinessStore } from '@/stores/businessStore'
+import { useAppConfig } from '@/composables/useAppConfig'
 import BottomNav from '@/components/Navigation/BottomNav.vue'
 import BusinessModal from '@/components/Business/BusinessModal.vue'
+import HeroAdCard from '@/components/Business/HeroAdCard.vue'
 
 // Store and reactive state
 const businessStore = useBusinessStore()
+const { getAppInfo } = useAppConfig()
 const selectedCategory = ref('all')
+
+// Get page configuration from centralized config
+const pageConfig = computed(() => {
+  const appInfo = getAppInfo.value
+  if (!appInfo?.navigation?.categories) return { displayName: 'Luxury Shopping', description: 'Exquisite boutiques, premier jewelry stores, and exclusive collections for discerning tastes' }
+
+  const shoppingCategory = appInfo.navigation.categories.find(cat => cat.id === 'luxury-shopping')
+  return shoppingCategory || { displayName: 'Luxury Shopping', description: 'Exquisite boutiques, premier jewelry stores, and exclusive collections for discerning tastes' }
+})
 
 // Hero Ad and Business Modal state
 const heroAd = ref(null)
@@ -391,10 +385,10 @@ const closeBusinessModal = () => {
 }
 
 /**
- * Handles image loading errors with fallback
+ * Handles image loading errors from HeroAdCard component
  */
-const handleImageError = (e) => {
-  e.target.src = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=400&fit=crop&crop=center'
+const handleImageError = (errorData) => {
+  console.warn('Hero ad image failed to load:', errorData)
 }
 
 // Initialize data on component mount
@@ -447,7 +441,7 @@ onMounted(() => {
   overflow: hidden;
   box-shadow: var(--shadow-primary-lg);
   transition: var(--transition-all);
-  border: 3px solid #FFD700;
+  border: 3px solid var(--color-tier-gold);
   background: var(--color-bg-secondary);
 }
 
@@ -687,11 +681,11 @@ onMounted(() => {
 }
 
 .signature-card {
-  border: 2px solid #FFD700;
+  border: 2px solid var(--color-tier-gold);
 }
 
 .premier-card {
-  border: 2px solid #C0C0C0;
+  border: 2px solid var(--color-tier-silver);
 }
 
 .store-image-wrapper {
@@ -778,7 +772,7 @@ onMounted(() => {
 }
 
 .curated-item {
-  border: 2px solid #CD7F32;
+  border: 2px solid var(--color-tier-bronze);
 }
 
 .store-item .store-image-wrapper {

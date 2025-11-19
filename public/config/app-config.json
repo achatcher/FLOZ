@@ -346,6 +346,53 @@
       "trackingId": ""
     }
   },
+  "business": {
+    "tiers": {
+      "signature": {
+        "id": "signature",
+        "name": "Signature",
+        "label": "SIGNATURE",
+        "color": "#FFD700",
+        "priority": 1
+      },
+      "premier": {
+        "id": "premier",
+        "name": "Premier",
+        "label": "PREMIER",
+        "color": "#C0C0C0",
+        "priority": 2
+      },
+      "curated": {
+        "id": "curated",
+        "name": "Curated",
+        "label": "CURATED",
+        "color": "#CD7F32",
+        "priority": 3
+      }
+    },
+    "happyHourCategories": [
+      {
+        "id": "beer",
+        "name": "Beer",
+        "keywords": ["beer", "draft", "brewery", "well drinks"]
+      },
+      {
+        "id": "cocktails",
+        "name": "Cocktails",
+        "keywords": ["cocktail", "drink", "spirits", "wine"]
+      },
+      {
+        "id": "food",
+        "name": "Food",
+        "keywords": ["appetizer", "wings", "food", "small plates", "antipasti", "pizza"]
+      }
+    ],
+    "defaultImages": {
+      "cocktailHour": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop&crop=center",
+      "luxuryShopping": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=400&fit=crop&crop=center",
+      "dining": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=400&fit=crop&crop=center"
+    }
+  },
   "version": "1.0.0",
   "lastUpdated": "2025-01-15T00:00:00Z"
 }
